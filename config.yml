@@ -1,0 +1,6 @@
+logging:
+  level: INFO
+  loggers:
+    com.github.geoio: DEBUG
+server:
+  rootPath: /api/
