@@ -1,6 +1,8 @@
 package com.github.geoio;
 
+import com.github.geoio.db.GeopackageDatabase;
 import com.github.geoio.resources.CollectionResource;
+import com.github.geoio.service.CollectionService;
 
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -30,8 +32,14 @@ public class GeoIOApplication extends Application<GeoIOConfiguration> {
 
     @Override
     public void run(final GeoIOConfiguration configuration,
-                    final Environment environment) {
-        final CollectionResource collectionsResource = new CollectionResource();
+            final Environment environment) {
+        final GeopackageDatabase database =
+            new GeopackageDatabase(configuration.getCollectionDb());
+
+        final CollectionService collectionService =
+            new CollectionService(database);
+
+        final CollectionResource collectionsResource = new CollectionResource(collectionService);
 
         environment.jersey().register(collectionsResource);
     }

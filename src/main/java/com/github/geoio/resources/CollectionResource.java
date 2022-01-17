@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.github.geoio.api.Collection;
+import com.github.geoio.api.FeatureCollection;
+import com.github.geoio.service.CollectionService;
 
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
@@ -28,6 +30,12 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class CollectionResource {
+
+  private CollectionService collectionService;
+
+  public CollectionResource(CollectionService collectionService) {
+    this.collectionService = collectionService;
+  }
 
   private static final List<Collection> collections = new ArrayList<>();
 
@@ -71,18 +79,24 @@ public class CollectionResource {
   @GET
   @Path("/collections")
   public List<Collection> addCollection() {
-    return collections;
+    return collectionService.getCollections();
   }
 
   @GET
   @Path("/collections/{collectionId}")
   public Collection getCollection(@PathParam("collectionId") String collectionId) {
-    for (Collection collection : collections) {
+    for (Collection collection : collectionService.getCollections()) {
       if (collection.getId().equals(collectionId)) {
         return collection;
       }
     }
 
     throw new NotFoundException("No collection with ID equals " + collectionId + " found.");
+  }
+
+  @GET
+  @Path("/collections/{collectionId}/items")
+  public FeatureCollection getItems(@PathParam("collectionId") String collectionId) {
+    return collectionService.getItems(collectionId);
   }
 }
