@@ -54,7 +54,7 @@ public class CollectionResource {
       @FormDataParam("file") FormDataBodyPart body) {
     String UPLOAD_PATH = "/workspaces/geoio/data/";
 
-    for(BodyPart part : body.getParent().getBodyParts()){
+    for (BodyPart part : body.getParent().getBodyParts()) {
       InputStream fileInputStream = part.getEntityAs(InputStream.class);
       ContentDisposition fileMetaData = part.getContentDisposition();
 
@@ -78,14 +78,15 @@ public class CollectionResource {
 
   @GET
   @Path("/collections")
-  public List<Collection> addCollection() {
-    return collectionService.getCollections();
+  public List<Collection> getCollections(@PathParam("serviceId") String serviceId) {
+    return collectionService.getCollections(serviceId);
   }
 
   @GET
   @Path("/collections/{collectionId}")
-  public Collection getCollection(@PathParam("collectionId") String collectionId) {
-    for (Collection collection : collectionService.getCollections()) {
+  public Collection getCollection(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId) {
+    for (Collection collection : collectionService.getCollections(serviceId)) {
       if (collection.getId().equals(collectionId)) {
         return collection;
       }
@@ -96,7 +97,8 @@ public class CollectionResource {
 
   @GET
   @Path("/collections/{collectionId}/items")
-  public FeatureCollection getItems(@PathParam("collectionId") String collectionId) {
-    return collectionService.getItems(collectionId);
+  public FeatureCollection getItems(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId) {
+    return collectionService.getItems(serviceId, collectionId);
   }
 }

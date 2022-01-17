@@ -5,4 +5,4 @@ logging:
 server:
   rootPath: /api/
 
-collectionDb: /workspaces/geoio/data.gpkg
+collectionDb: /workspaces/geoio/data/

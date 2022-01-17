@@ -1,7 +1,8 @@
 package com.github.geoio;
 
-import com.github.geoio.db.GeopackageDatabase;
+import com.github.geoio.db.GeopackageService;
 import com.github.geoio.resources.CollectionResource;
+import com.github.geoio.resources.ServiceResource;
 import com.github.geoio.service.CollectionService;
 
 import io.dropwizard.Application;
@@ -33,15 +34,13 @@ public class GeoIOApplication extends Application<GeoIOConfiguration> {
     @Override
     public void run(final GeoIOConfiguration configuration,
             final Environment environment) {
-        final GeopackageDatabase database =
-            new GeopackageDatabase(configuration.getCollectionDb());
+        final GeopackageService geopackageService = new GeopackageService(configuration.getCollectionDb());
+        final CollectionService collectionService = new CollectionService(geopackageService);
 
-        final CollectionService collectionService =
-            new CollectionService(database);
+        final CollectionResource collectionResource = new CollectionResource(collectionService);
+        final ServiceResource serviceResource = new ServiceResource(geopackageService, collectionResource);
 
-        final CollectionResource collectionsResource = new CollectionResource(collectionService);
-
-        environment.jersey().register(collectionsResource);
+        environment.jersey().register(serviceResource);
     }
 
 }

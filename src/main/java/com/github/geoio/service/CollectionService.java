@@ -1,20 +1,16 @@
 package com.github.geoio.service;
 
-import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.github.geoio.api.Collection;
 import com.github.geoio.api.FeatureCollection;
-import com.github.geoio.db.GeopackageDatabase;
+import com.github.geoio.db.GeopackageService;
 
 import mil.nga.geopackage.GeoPackage;
-import mil.nga.geopackage.GeoPackageManager;
 import mil.nga.geopackage.contents.Contents;
 import mil.nga.geopackage.features.user.FeatureDao;
 import mil.nga.geopackage.features.user.FeatureResultSet;
@@ -22,23 +18,22 @@ import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.features.user.FeatureTable;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
-import mil.nga.oapi.features.json.FeaturesConverter;
 import mil.nga.sf.Geometry;
 import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
 public class CollectionService {
 
-  private GeopackageDatabase database;
+  private GeopackageService geopackageService;
 
-  public CollectionService(GeopackageDatabase database) {
-    this.database = database;
+  public CollectionService(GeopackageService geopackageService) {
+    this.geopackageService = geopackageService;
   }
 
-  public List<Collection> getCollections() {
+  public List<Collection> getCollections(String serviceId) {
     List<Collection> collections = new ArrayList<>();
 
-    try (GeoPackage gpkg = database.open()) {
+    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
 
       List<String> featureTables = gpkg.getFeatureTables();
 
@@ -52,18 +47,18 @@ public class CollectionService {
     return collections;
   }
 
-  public Collection getCollection(String id) throws IOException {
-    try (GeoPackage gpkg = database.open()) {
+  public Collection getCollection(String serviceId, String id) throws IOException {
+    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
       FeatureTable table = gpkg.getFeatureDao(id).getTable();
 
       return createCollection(table.getContents());
     }
   }
 
-  public FeatureCollection getItems(String id) {
+  public FeatureCollection getItems(String serviceId, String id) {
     FeatureCollection featureCollection = new FeatureCollection();
 
-    try (GeoPackage gpkg = database.open()) {
+    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(id);
       String idColumn = featureDao.getIdColumnName();
 
