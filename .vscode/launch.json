@@ -11,6 +11,13 @@
       "mainClass": "com.github.geoio.GeoIOApplication",
       "projectName": "geoio",
       "args": "server config.yml"
+    },
+    {
+      "type": "java",
+      "name": "JDBC Test",
+      "request": "launch",
+      "mainClass": "com.github.geoio.core.Connect",
+      "projectName": "geoio",
     }
   ]
 }
