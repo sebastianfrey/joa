@@ -1,13 +1,14 @@
-package com.github.geoio.api;
+package com.github.joa.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Collection {
-  private List<Link> links;
+  private List<Link> links = new ArrayList<>();
   private String id;
-  private String title;
-  private String description;
-  private Extent extent;
+  private String title = "";
+  private String description = "";
+  private Extent extent = new Extent();
   private String itemType;
   private List<String> crs;
 
@@ -17,6 +18,11 @@ public class Collection {
   public void setLinks(List<Link> links) {
     this.links = links;
   }
+
+  public void addLink(Link link) {
+    this.links.add(link);
+  }
+
   public String getId() {
     return id;
   }

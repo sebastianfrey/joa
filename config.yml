@@ -1,8 +1,9 @@
 logging:
   level: INFO
   loggers:
-    com.github.geoio: DEBUG
+    com.github.joa: DEBUG
 server:
   rootPath: /api/
-
-collectionDb: /workspaces/geoio/data/
+swagger:
+  resourcePackage: com.github.joa.resources
+dataDirectory: /workspaces/joa/data/

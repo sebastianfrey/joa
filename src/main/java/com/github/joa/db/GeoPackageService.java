@@ -1,4 +1,4 @@
-package com.github.geoio.db;
+package com.github.joa.db;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,10 +14,10 @@ import java.util.Set;
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageManager;
 
-public class GeopackageService {
+public class GeoPackageService {
   private File root;
 
-  public GeopackageService(String path) {
+  public GeoPackageService(String path) {
     root = new File(path);
   }
 
@@ -42,7 +42,11 @@ public class GeopackageService {
   }
 
   public GeoPackage open(String file) {
-    File path = Paths.get(root.getAbsolutePath(), file).toFile();
+    File path = Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile();
     return GeoPackageManager.open(path);
+  }
+
+  public boolean exists(String file) {
+    return Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile().exists();
   }
 }

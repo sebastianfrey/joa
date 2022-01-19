@@ -6,18 +6,18 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Launch GeoIOApplication",
+      "name": "Launch JoaApplication",
       "request": "launch",
-      "mainClass": "com.github.geoio.GeoIOApplication",
-      "projectName": "geoio",
+      "mainClass": "com.github.joa.JoaApplication",
+      "projectName": "joa",
       "args": "server config.yml"
     },
     {
       "type": "java",
       "name": "JDBC Test",
       "request": "launch",
-      "mainClass": "com.github.geoio.core.Connect",
-      "projectName": "geoio",
+      "mainClass": "com.github.joa.core.Connect",
+      "projectName": "joa",
     }
   ]
 }

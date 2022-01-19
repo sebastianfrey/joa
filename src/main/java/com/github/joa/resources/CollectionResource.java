@@ -1,15 +1,14 @@
-package com.github.geoio.resources;
+package com.github.joa.resources;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
+import javax.validation.Valid;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,17 +17,23 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.github.geoio.api.Collection;
-import com.github.geoio.api.FeatureCollection;
-import com.github.geoio.service.CollectionService;
+import com.github.joa.api.Capabilities;
+import com.github.joa.api.Collection;
+import com.github.joa.api.Collections;
+import com.github.joa.api.Conformance;
+import com.github.joa.api.FeatureCollection;
+import com.github.joa.resources.beans.FeatureQueryBean;
+import com.github.joa.services.CollectionService;
 
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
+import mil.nga.sf.geojson.Feature;
+
 @Path("/")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({ MediaType.APPLICATION_JSON, "application/geo+json" })
 public class CollectionResource {
 
   private CollectionService collectionService;
@@ -37,22 +42,11 @@ public class CollectionResource {
     this.collectionService = collectionService;
   }
 
-  private static final List<Collection> collections = new ArrayList<>();
-
-  static {
-    Collection collection = new Collection();
-
-    collection.setId("test");
-    collection.setLinks(new ArrayList<>());
-
-    collections.add(collection);
-  }
-
   @POST
   @Path("/collections")
   public Response getCollections(
       @FormDataParam("file") FormDataBodyPart body) {
-    String UPLOAD_PATH = "/workspaces/geoio/data/";
+    String UPLOAD_PATH = "/workspaces/joa/data/";
 
     for (BodyPart part : body.getParent().getBodyParts()) {
       InputStream fileInputStream = part.getEntityAs(InputStream.class);
@@ -77,8 +71,19 @@ public class CollectionResource {
   }
 
   @GET
+  public Capabilities getCapabilities(@PathParam("serviceId") String serviceId) {
+    return collectionService.getCapabilities(serviceId);
+  }
+
+  @GET
+  @Path("/conformance")
+  public Conformance getConformance(@PathParam("serviceId") String serviceId) {
+    return collectionService.getConformance(serviceId);
+  }
+
+  @GET
   @Path("/collections")
-  public List<Collection> getCollections(@PathParam("serviceId") String serviceId) {
+  public Collections getCollections(@PathParam("serviceId") String serviceId) {
     return collectionService.getCollections(serviceId);
   }
 
@@ -86,19 +91,21 @@ public class CollectionResource {
   @Path("/collections/{collectionId}")
   public Collection getCollection(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
-    for (Collection collection : collectionService.getCollections(serviceId)) {
-      if (collection.getId().equals(collectionId)) {
-        return collection;
-      }
-    }
-
-    throw new NotFoundException("No collection with ID equals " + collectionId + " found.");
+    return collectionService.getCollection(serviceId, collectionId);
   }
 
   @GET
   @Path("/collections/{collectionId}/items")
   public FeatureCollection getItems(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId) {
-    return collectionService.getItems(serviceId, collectionId);
+      @PathParam("collectionId") String collectionId,
+      @BeanParam @Valid FeatureQueryBean featureQuery) {
+    return collectionService.getItems(serviceId, collectionId, featureQuery);
+  }
+
+  @GET
+  @Path("/collections/{collectionId}/items/{featureId}")
+  public Feature getItem(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
+    return collectionService.getItem(serviceId, collectionId, featureId);
   }
 }

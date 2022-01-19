@@ -1,4 +1,4 @@
-package com.github.geoio.util;
+package com.github.joa.util;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

@@ -1,4 +1,4 @@
-package com.github.geoio.service;
+package com.github.joa.services;
 
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
