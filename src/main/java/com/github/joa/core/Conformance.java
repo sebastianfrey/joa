@@ -1,4 +1,4 @@
-package com.github.joa.api;
+package com.github.joa.core;
 
 import java.util.ArrayList;
 import java.util.List;

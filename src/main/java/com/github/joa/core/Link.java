@@ -1,4 +1,4 @@
-package com.github.joa.api;
+package com.github.joa.core;
 
 public class Link {
   private String href;

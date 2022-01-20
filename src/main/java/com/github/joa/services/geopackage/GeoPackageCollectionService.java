@@ -15,12 +15,12 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 
-import com.github.joa.api.Capabilities;
-import com.github.joa.api.Collection;
-import com.github.joa.api.Collections;
-import com.github.joa.api.Conformance;
-import com.github.joa.api.FeatureCollection;
-import com.github.joa.api.FeatureQuery;
+import com.github.joa.core.Capabilities;
+import com.github.joa.core.Collection;
+import com.github.joa.core.Collections;
+import com.github.joa.core.Conformance;
+import com.github.joa.core.FeatureCollection;
+import com.github.joa.core.FeatureQuery;
 import com.github.joa.services.CollectionService;
 import com.github.joa.util.CollectionUtils;
 import com.github.joa.util.FeatureUtils;

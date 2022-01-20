@@ -5,8 +5,8 @@ import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 
-import com.github.joa.api.DateTime;
-import com.github.joa.api.FeatureQuery;
+import com.github.joa.core.DateTime;
+import com.github.joa.core.FeatureQuery;
 import com.github.joa.resources.params.BboxParam;
 import com.github.joa.resources.params.DateTimeParam;
 import com.github.joa.resources.validators.ValidBbox;

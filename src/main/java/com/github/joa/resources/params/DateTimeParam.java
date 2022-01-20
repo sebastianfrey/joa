@@ -3,7 +3,7 @@ package com.github.joa.resources.params;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.github.joa.api.DateTime;
+import com.github.joa.core.DateTime;
 
 public class DateTimeParam {
 

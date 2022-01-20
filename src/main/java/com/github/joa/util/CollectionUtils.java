@@ -2,8 +2,8 @@ package com.github.joa.util;
 
 import java.util.List;
 
-import com.github.joa.api.Collection;
-import com.github.joa.api.Link;
+import com.github.joa.core.Collection;
+import com.github.joa.core.Link;
 
 import mil.nga.geopackage.contents.Contents;
 import mil.nga.geopackage.features.user.FeatureDao;

@@ -1,4 +1,4 @@
-package com.github.joa.api;
+package com.github.joa.core;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
