@@ -5,10 +5,9 @@ import java.util.EnumSet;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
-import com.github.joa.db.GeoPackageService;
 import com.github.joa.resources.CollectionResource;
-import com.github.joa.resources.ServiceResource;
-import com.github.joa.services.GeopackageCollectionService;
+import com.github.joa.services.CollectionService;
+import com.github.joa.services.geopackage.GeoPackageCollectionService;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
@@ -57,13 +56,11 @@ public class JoaApplication extends Application<JoaConfiguration> {
         final String dataDirectory = configuration.getDataDirectory();
 
         // set up services
-        final GeoPackageService geopackageService = new GeoPackageService(dataDirectory);
-        final GeopackageCollectionService collectionService = new GeopackageCollectionService(geopackageService);
+        final CollectionService collectionService = new GeoPackageCollectionService(dataDirectory);
 
         // set up resources
         final CollectionResource collectionResource = new CollectionResource(collectionService);
-        final ServiceResource serviceResource = new ServiceResource(geopackageService, collectionResource);
 
-        environment.jersey().register(serviceResource);
+        environment.jersey().register(collectionResource);
     }
 }

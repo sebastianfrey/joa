@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -42,8 +43,19 @@ public class CollectionResource {
     this.collectionService = collectionService;
   }
 
+  @GET
+  public List<String> getServices() throws IOException {
+    return collectionService.getServices();
+  }
+
+  @GET
+  @Path("/{serviceId}/")
+  public Capabilities getCapabilities(@PathParam("serviceId") String serviceId) {
+    return collectionService.getCapabilities(serviceId);
+  }
+
   @POST
-  @Path("/collections")
+  @Path("/{serviceId}/collections")
   public Response getCollections(
       @FormDataParam("file") FormDataBodyPart body) {
     String UPLOAD_PATH = "/workspaces/joa/data/";
@@ -71,31 +83,26 @@ public class CollectionResource {
   }
 
   @GET
-  public Capabilities getCapabilities(@PathParam("serviceId") String serviceId) {
-    return collectionService.getCapabilities(serviceId);
-  }
-
-  @GET
-  @Path("/conformance")
+  @Path("/{serviceId}/conformance")
   public Conformance getConformance(@PathParam("serviceId") String serviceId) {
     return collectionService.getConformance(serviceId);
   }
 
   @GET
-  @Path("/collections")
+  @Path("/{serviceId}/collections")
   public Collections getCollections(@PathParam("serviceId") String serviceId) {
     return collectionService.getCollections(serviceId);
   }
 
   @GET
-  @Path("/collections/{collectionId}")
+  @Path("/{serviceId}/collections/{collectionId}")
   public Collection getCollection(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
     return collectionService.getCollection(serviceId, collectionId);
   }
 
   @GET
-  @Path("/collections/{collectionId}/items")
+  @Path("/{serviceId}/collections/{collectionId}/items")
   public FeatureCollection getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryBean featureQuery) {
@@ -103,7 +110,7 @@ public class CollectionResource {
   }
 
   @GET
-  @Path("/collections/{collectionId}/items/{featureId}")
+  @Path("/{serviceId}/collections/{collectionId}/items/{featureId}")
   public Feature getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
     return collectionService.getItem(serviceId, collectionId, featureId);

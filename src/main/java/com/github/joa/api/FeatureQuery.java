@@ -1,9 +1,10 @@
 package com.github.joa.api;
 
-import java.util.List;
+import mil.nga.sf.GeometryEnvelope;
 
 public interface FeatureQuery {
-  public List<Double> getBbox();
+  public GeometryEnvelope getBbox();
+  public DateTime getDateTime();
   public Long getOffset();
   public Integer getLimit();
 }

@@ -1,9 +1,19 @@
-package com.github.joa.services;
+package com.github.joa.services.geopackage;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response.Status;
 
 import com.github.joa.api.Capabilities;
 import com.github.joa.api.Collection;
@@ -11,26 +21,50 @@ import com.github.joa.api.Collections;
 import com.github.joa.api.Conformance;
 import com.github.joa.api.FeatureCollection;
 import com.github.joa.api.FeatureQuery;
-import com.github.joa.db.GeoPackageService;
+import com.github.joa.services.CollectionService;
 import com.github.joa.util.CollectionUtils;
+import com.github.joa.util.FeatureUtils;
 
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
+import mil.nga.geopackage.GeoPackageManager;
 import mil.nga.geopackage.features.user.FeatureDao;
 import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.sf.geojson.Feature;
 
-public class GeopackageCollectionService implements CollectionService {
+public class GeoPackageCollectionService implements CollectionService {
 
-  private GeoPackageService geopackageService;
+  private File root;
 
-  public GeopackageCollectionService(GeoPackageService geopackageService) {
-    this.geopackageService = geopackageService;
+  public GeoPackageCollectionService(String root) {
+    this.root = new File(root);
+  }
+
+  public List<String> getServices() {
+    Set<String> fileList = new HashSet<>();
+
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath())) {
+      for (Path path : stream) {
+        if (!Files.isDirectory(path)) {
+          String fileName = path.getFileName().toString();
+
+          if (fileName.endsWith(".gpkg")) {
+            fileName = fileName.replaceAll(".gpkg", "");
+
+            fileList.add(fileName);
+          }
+        }
+      }
+    } catch (IOException ex) {
+      throw new WebApplicationException(ex, Status.NO_CONTENT);
+    }
+
+    return new ArrayList<String>(fileList);
   }
 
   public Capabilities getCapabilities(String serviceId) {
-    if (!geopackageService.exists(serviceId)) {
+    if (!exists(serviceId)) {
       throw new NotFoundException();
     }
 
@@ -58,7 +92,7 @@ public class GeopackageCollectionService implements CollectionService {
   public Collections getCollections(String serviceId) {
     Collections collections = new Collections(serviceId);
 
-    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
+    try (GeoPackage gpkg = open(serviceId)) {
 
       List<String> collectionIds = gpkg.getFeatureTables();
 
@@ -81,7 +115,7 @@ public class GeopackageCollectionService implements CollectionService {
    * @throws IOException
    */
   public Collection getCollection(String serviceId, String collectionId) {
-    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
+    try (GeoPackage gpkg = open(serviceId)) {
       return getCollection(gpkg, serviceId, collectionId);
     } catch (GeoPackageException ex) {
       throw new NotFoundException("Collection with ID '" + collectionId + "' does not exist.", ex);
@@ -102,7 +136,7 @@ public class GeopackageCollectionService implements CollectionService {
   }
 
   /**
-   * Return all items of
+   * Return all items of a collection from a given service.
    *
    * @param serviceId
    * @param collectionId
@@ -111,7 +145,7 @@ public class GeopackageCollectionService implements CollectionService {
   public FeatureCollection getItems(String serviceId, String collectionId, FeatureQuery query) {
     FeatureCollection featureCollection = new FeatureCollection();
 
-    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
+    try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
       String orderBy =  featureDao.getIdColumnName();
@@ -127,7 +161,7 @@ public class GeopackageCollectionService implements CollectionService {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          Feature feature = CollectionUtils.createFeature(featureRow);
+          Feature feature = FeatureUtils.createFeature(featureRow);
 
           if (feature != null) {
             featureCollection.addFeature(feature);
@@ -142,7 +176,7 @@ public class GeopackageCollectionService implements CollectionService {
   }
 
   public Feature getItem(String serviceId, String collectionId, Long featureId) {
-    try (GeoPackage gpkg = geopackageService.open(serviceId)) {
+    try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
       FeatureResultSet featureResultSet = featureDao.queryForId(featureId);
@@ -151,7 +185,7 @@ public class GeopackageCollectionService implements CollectionService {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          return CollectionUtils.createFeature(featureRow);
+          return FeatureUtils.createFeature(featureRow);
         }
       } finally {
         featureResultSet.close();
@@ -159,5 +193,14 @@ public class GeopackageCollectionService implements CollectionService {
     }
 
     throw new NotFoundException("Feature with ID '" + featureId + "' does not exist.");
+  }
+
+  public GeoPackage open(String file) {
+    File path = Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile();
+    return GeoPackageManager.open(path);
+  }
+
+  public boolean exists(String file) {
+    return Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile().exists();
   }
 }

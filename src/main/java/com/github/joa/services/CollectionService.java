@@ -1,5 +1,7 @@
 package com.github.joa.services;
 
+import java.util.List;
+
 import com.github.joa.api.Capabilities;
 import com.github.joa.api.Collection;
 import com.github.joa.api.Collections;
@@ -11,6 +13,7 @@ import mil.nga.sf.geojson.Feature;
 
 
 public interface CollectionService {
+  public List<String> getServices();
   public Capabilities getCapabilities(String serviceId);
   public Conformance getConformance(String serviceId);
   public Collections getCollections(String serviceId);
