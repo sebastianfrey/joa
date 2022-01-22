@@ -3,8 +3,19 @@ package com.github.joa.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Link;
+import javax.ws.rs.core.MediaType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.glassfish.jersey.linking.InjectLink;
+import org.glassfish.jersey.linking.InjectLinks;
+
 public class Collections {
   private List<Collection> collections = new ArrayList<>();
+  @InjectLinks({
+    @InjectLink(value = "/{serviceId}/collections", rel = "self", type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
+  })
+  @XmlJavaTypeAdapter(LinkAdapter.class)
   private List<Link> links = new ArrayList<>();
   private String title = "";
   private String description = "";

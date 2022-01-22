@@ -6,7 +6,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +20,7 @@ import com.github.joa.core.Collections;
 import com.github.joa.core.Conformance;
 import com.github.joa.core.FeatureCollection;
 import com.github.joa.core.FeatureQuery;
+import com.github.joa.core.Services;
 import com.github.joa.services.CollectionService;
 import com.github.joa.util.CollectionUtils;
 import com.github.joa.util.FeatureUtils;
@@ -41,7 +41,7 @@ public class GeoPackageCollectionService implements CollectionService {
     this.root = new File(root);
   }
 
-  public List<String> getServices() {
+  public Services getServices() {
     Set<String> fileList = new HashSet<>();
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath())) {
@@ -60,7 +60,7 @@ public class GeoPackageCollectionService implements CollectionService {
       throw new WebApplicationException(ex, Status.NO_CONTENT);
     }
 
-    return new ArrayList<String>(fileList);
+    return new Services(fileList);
   }
 
   public Capabilities getCapabilities(String serviceId) {

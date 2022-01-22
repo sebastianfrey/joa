@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -23,6 +22,8 @@ import com.github.joa.core.Collection;
 import com.github.joa.core.Collections;
 import com.github.joa.core.Conformance;
 import com.github.joa.core.FeatureCollection;
+import com.github.joa.core.MediaTypeExt;
+import com.github.joa.core.Services;
 import com.github.joa.resources.beans.FeatureQueryBean;
 import com.github.joa.services.CollectionService;
 
@@ -34,7 +35,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import mil.nga.sf.geojson.Feature;
 
 @Path("/")
-@Produces({ MediaType.APPLICATION_JSON, "application/geo+json" })
+@Produces({ MediaType.APPLICATION_JSON, MediaTypeExt.APPLICATION_GEO_JSON })
 public class CollectionResource {
 
   private CollectionService collectionService;
@@ -44,13 +45,14 @@ public class CollectionResource {
   }
 
   @GET
-  public List<String> getServices() throws IOException {
+  public Services getServices() throws IOException {
     return collectionService.getServices();
   }
 
   @GET
   @Path("/{serviceId}/")
-  public Capabilities getCapabilities(@PathParam("serviceId") String serviceId) {
+  public Capabilities getCapabilities(
+      @PathParam("serviceId") String serviceId) {
     return collectionService.getCapabilities(serviceId);
   }
 
@@ -68,14 +70,16 @@ public class CollectionResource {
         int read = 0;
         byte[] bytes = new byte[1024];
 
-        OutputStream out = new FileOutputStream(new File(UPLOAD_PATH + fileMetaData.getFileName()));
+        OutputStream out = new FileOutputStream(
+            new File(UPLOAD_PATH + fileMetaData.getFileName()));
         while ((read = fileInputStream.read(bytes)) != -1) {
           out.write(bytes, 0, read);
         }
         out.flush();
         out.close();
       } catch (IOException e) {
-        throw new WebApplicationException("Error while uploading file. Please try again !!");
+        throw new WebApplicationException(
+            "Error while uploading file. Please try again !!");
       }
     }
 
@@ -112,7 +116,8 @@ public class CollectionResource {
   @GET
   @Path("/{serviceId}/collections/{collectionId}/items/{featureId}")
   public Feature getItem(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
+      @PathParam("collectionId") String collectionId,
+      @PathParam("featureId") Long featureId) {
     return collectionService.getItem(serviceId, collectionId, featureId);
   }
 }

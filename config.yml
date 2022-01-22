@@ -3,7 +3,5 @@ logging:
   loggers:
     com.github.joa: DEBUG
 server:
-  rootPath: /api/
-swagger:
-  resourcePackage: com.github.joa.resources
+  rootPath: /api
 dataDirectory: /workspaces/joa/data/

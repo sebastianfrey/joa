@@ -1,7 +1,6 @@
 package com.github.joa;
 
 import io.dropwizard.Configuration;
-import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotEmpty;
@@ -9,9 +8,6 @@ import javax.validation.constraints.NotEmpty;
 public class JoaConfiguration extends Configuration {
     @NotEmpty
     private String dataDirectory;
-
-    @JsonProperty("swagger")
-    public SwaggerBundleConfiguration swaggerBundleConfiguration;
 
     @JsonProperty
     public String getDataDirectory() {

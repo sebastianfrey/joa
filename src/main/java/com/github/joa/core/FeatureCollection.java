@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Link;
+
 import mil.nga.sf.geojson.Feature;
 
 public class FeatureCollection {

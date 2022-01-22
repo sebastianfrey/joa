@@ -1,19 +1,18 @@
 package com.github.joa.services;
 
-import java.util.List;
-
 import com.github.joa.core.Capabilities;
 import com.github.joa.core.Collection;
 import com.github.joa.core.Collections;
 import com.github.joa.core.Conformance;
 import com.github.joa.core.FeatureCollection;
 import com.github.joa.core.FeatureQuery;
+import com.github.joa.core.Services;
 
 import mil.nga.sf.geojson.Feature;
 
 
 public interface CollectionService {
-  public List<String> getServices();
+  public Services getServices();
   public Capabilities getCapabilities(String serviceId);
   public Conformance getConformance(String serviceId);
   public Collections getCollections(String serviceId);

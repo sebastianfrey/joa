@@ -3,7 +3,6 @@ package com.github.joa.util;
 import java.util.List;
 
 import com.github.joa.core.Collection;
-import com.github.joa.core.Link;
 
 import mil.nga.geopackage.contents.Contents;
 import mil.nga.geopackage.features.user.FeatureDao;
@@ -25,9 +24,9 @@ public class CollectionUtils {
     collection.setCrs(List.of(crs));
     collection.setItemType("feature");
     collection.getExtent().getSpatial().addBbox(contents.getBoundingBox());
-    collection.addLink(Link.builder()
+/*     collection.addLink(Link.builder()
       .withRel("items")
-      .withHref("http://localhost:8080/api/pot_WEG_Luebz_linie/collections/" + id + "/items").build());
+      .withHref("http://localhost:8080/api/pot_WEG_Luebz_linie/collections/" + id + "/items").build()); */
 
     return collection;
   }
