@@ -16,11 +16,14 @@
 		}
 	},
 
+
+	"appPort": ["8080:8080"],
+
 	// Set *default* container specific settings.json values on container create.
-	"settings": { 
+	"settings": {
 		"java.home": "/docker-java-home"
 	},
-	
+
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"vscjava.vscode-java-pack"

@@ -1,0 +1,12 @@
+- [x] Basic resources
+- [x] Hateos
+- [ ] Projection (CRS)
+- [-] Query
+  - [x] Limit
+  - [x] Offset
+  - [ ] Bbox
+  - [ ] Datetime
+  - [ ] Sortby
+  - [ ] Properties
+  - [ ] CQL
+- [ ] Publish resources
