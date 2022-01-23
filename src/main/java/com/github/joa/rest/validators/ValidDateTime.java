@@ -1,4 +1,4 @@
-package com.github.joa.resources.validators;
+package com.github.joa.rest.validators;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -7,16 +7,15 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-
-import com.github.joa.resources.params.BboxParam;
+import com.github.joa.rest.params.DateTimeParam;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { ValidBbox.Validator.class })
-public @interface ValidBbox {
+@Constraint(validatedBy = { ValidDateTime.Validator.class })
+public @interface ValidDateTime {
 
-  public class Validator implements ConstraintValidator<ValidBbox, BboxParam> {
+  public class Validator implements ConstraintValidator<ValidDateTime, DateTimeParam> {
     @Override
-    public boolean isValid(BboxParam param, ConstraintValidatorContext context) {
+    public boolean isValid(DateTimeParam param, ConstraintValidatorContext context) {
       if (param == null) {
         return true;
       }
@@ -25,7 +24,7 @@ public @interface ValidBbox {
     }
   }
 
-  String message() default "bbox is not valid";
+  String message() default "datetime is not valid";
 
   Class<?>[] groups() default {};
 

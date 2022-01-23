@@ -1,21 +1,25 @@
-package com.github.joa.resources.beans;
+package com.github.joa.rest.request;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 import com.github.joa.core.DateTime;
 import com.github.joa.core.FeatureQuery;
-import com.github.joa.resources.params.BboxParam;
-import com.github.joa.resources.params.DateTimeParam;
-import com.github.joa.resources.validators.ValidBbox;
-import com.github.joa.resources.validators.ValidDateTime;
-
+import com.github.joa.rest.params.BboxParam;
+import com.github.joa.rest.params.DateTimeParam;
+import com.github.joa.rest.validators.ValidBbox;
+import com.github.joa.rest.validators.ValidDateTime;
 import mil.nga.sf.GeometryEnvelope;
 
 
-public class FeatureQueryBean implements FeatureQuery {
+public class FeatureQueryRequest implements FeatureQuery {
+
+  @Context
+  UriInfo uriInfo;
 
   @QueryParam("limit")
   @DefaultValue("10")
@@ -54,5 +58,10 @@ public class FeatureQueryBean implements FeatureQuery {
   @Override
   public DateTime getDateTime() {
     return datetime.get();
+  }
+
+  @Override
+  public String getQueryString() {
+    return uriInfo.getRequestUri().getQuery();
   }
 }

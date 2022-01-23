@@ -2,41 +2,35 @@ package com.github.joa.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import javax.ws.rs.core.Link;
-import javax.ws.rs.core.MediaType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.glassfish.jersey.linking.InjectLink;
-import org.glassfish.jersey.linking.InjectLinks;
-
-public class Collections {
+@JsonPropertyOrder({"title", "description", "collections", "links"})
+public class Collections extends Linkable {
   private List<Collection> collections = new ArrayList<>();
-  @InjectLinks({
-    @InjectLink(value = "/{serviceId}/collections", rel = "self", type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
-  })
-  @XmlJavaTypeAdapter(LinkAdapter.class)
-  private List<Link> links = new ArrayList<>();
-  private String title = "";
+
+  private String serviceId;
   private String description = "";
 
-  public Collections(String title) {
-    this(new ArrayList<>(), title, "");
+  public Collections(String serviceId) {
+    this(new ArrayList<>(), serviceId, "");
   }
 
   public Collections(List<Collection> collections) {
     this(collections, "", "");
   }
 
-  public Collections(List<Collection> collections, String title) {
-    this(collections, title, "");
+  public Collections(List<Collection> collections, String serviceId) {
+    this(collections, serviceId, "");
   }
 
-  public Collections(List<Collection> collections, String title, String description) {
+  public Collections(List<Collection> collections, String serviceId, String description) {
     this.collections = collections;
-    this.title = title;
+    this.serviceId = serviceId;
     this.description = description;
   }
+
+
 
   public List<Collection> getCollections() {
     return collections;
@@ -50,20 +44,13 @@ public class Collections {
     this.collections.add(collection);
   }
 
-  public List<Link> getLinks() {
-    return links;
+  @JsonProperty("title")
+  public String getServiceId() {
+    return serviceId;
   }
 
-  public void setLinks(List<Link> links) {
-    this.links = links;
-  }
-
-  public String getTitle() {
-    return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
+  public void setServiceId(String serviceId) {
+    this.serviceId = serviceId;
   }
 
   public String getDescription() {

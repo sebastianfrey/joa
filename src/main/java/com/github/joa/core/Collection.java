@@ -1,45 +1,35 @@
 package com.github.joa.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Link;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.glassfish.jersey.linking.InjectLink;
-import org.glassfish.jersey.linking.InjectLinks;
-
-public class Collection {
-  @InjectLinks({
-      @InjectLink(value = "/{serviceId}/collections/${instance.id}/items", rel = "items", type = MediaTypeExt.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  })
-  @XmlJavaTypeAdapter(LinkAdapter.class)
-  private List<Link> links = new ArrayList<>();
-  private String id = "";
+public class Collection extends Linkable {
+  @JsonIgnore
+  private String serviceId = "";
+  @JsonProperty("id")
+  private String collectionId = "";
   private String title = "";
   private String description = "";
   private Extent extent = new Extent();
   private String itemType;
   private List<String> crs;
 
-  public List<Link> getLinks() {
-    return links;
+  public String getServiceId() {
+    return serviceId;
   }
 
-  public void setLinks(List<Link> links) {
-    this.links = links;
+  public void setServiceId(String serviceId) {
+    this.serviceId = serviceId;
   }
 
-  public void addLink(Link link) {
-    this.links.add(link);
+  public String getCollectionId() {
+    return collectionId;
   }
 
-  public String getId() {
-    return id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
+  public void setCollectionId(String collectionId) {
+    this.collectionId = collectionId;
   }
 
   public String getTitle() {

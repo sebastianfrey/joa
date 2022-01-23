@@ -23,6 +23,7 @@
         <jersey-version>2.0.29</jersey-version>
         <jaxb.version>2.3.1</jaxb.version>
         <geopackage.version>6.1.2</geopackage.version>
+        <bullwinkle.version>v1.4.6</bullwinkle.version>
         <mainClass>com.github.joa.JoaApplication</mainClass>
     </properties>
 
@@ -71,6 +72,14 @@
             <artifactId>geopackage</artifactId>
             <version>${geopackage.version}</version>
         </dependency>
+        <!-- Uncomment to get support for BFN parsing -->
+        <!--
+        <dependency>
+            <groupId>com.github.sylvainhalle</groupId>
+            <artifactId>Bullwinkle</artifactId>
+            <version>${bullwinkle.version}</version>
+        </dependency>
+        -->
     </dependencies>
 
     <build>
@@ -195,4 +204,13 @@
             </properties>
         </profile>
     </profiles>
+    <repositories>
+        <!-- Uncomment to use artifacts from GitHub releases -->
+        <!--
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        -->
+    </repositories>
 </project>

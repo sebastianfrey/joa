@@ -6,9 +6,9 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.github.joa.resources.CollectionResource;
+import com.github.joa.rest.resources.CollectionResource;
 import com.github.joa.services.CollectionService;
-import com.github.joa.services.geopackage.GeoPackageCollectionService;
+import com.github.joa.services.geopackage.GeoPackageService;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
@@ -70,7 +70,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
         final String dataDirectory = configuration.getDataDirectory();
 
         // set up services
-        final CollectionService collectionService = new GeoPackageCollectionService(
+        final CollectionService collectionService = new GeoPackageService(
                 dataDirectory);
 
         // set up resources

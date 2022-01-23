@@ -8,7 +8,7 @@ import mil.nga.geopackage.contents.Contents;
 import mil.nga.geopackage.features.user.FeatureDao;
 
 public class CollectionUtils {
-  public static Collection createCollection(FeatureDao featureDao) {
+  public static Collection createCollection(String serviceId, FeatureDao featureDao) {
     Contents contents = featureDao.getContents();
 
     Collection collection = new Collection();
@@ -18,7 +18,8 @@ public class CollectionUtils {
     String description = contents.getDescription();
     String crs = "http://www.opengis.net/def/crs/EPSG/0/" + contents.getSrsId();
 
-    collection.setId(id);
+    collection.setServiceId(serviceId);
+    collection.setCollectionId(id);
     collection.setDescription(description);
     collection.setTitle(identifier);
     collection.setCrs(List.of(crs));

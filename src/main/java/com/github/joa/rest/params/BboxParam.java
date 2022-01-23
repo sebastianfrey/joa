@@ -1,4 +1,4 @@
-package com.github.joa.resources.params;
+package com.github.joa.rest.params;
 
 import java.util.List;
 import java.util.stream.Stream;
