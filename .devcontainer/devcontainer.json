@@ -16,9 +16,6 @@
 		}
 	},
 
-
-	"appPort": ["8080:8080"],
-
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
 		"java.home": "/docker-java-home"
@@ -31,6 +28,8 @@
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
+	"appPort": ["8080:8080"],
+
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "java -version",

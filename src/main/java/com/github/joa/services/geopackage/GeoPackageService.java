@@ -75,7 +75,7 @@ public class GeoPackageService implements CollectionService {
   }
 
   public Conformance getConformance(String serviceId) {
-    Conformance conformance = new Conformance();
+    Conformance conformance = new Conformance(serviceId);
 
     conformance.addConformsTo(Conformance.FEATURES_CORE);
     conformance.addConformsTo(Conformance.FEATURES_OAS30);
