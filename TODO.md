@@ -1,4 +1,6 @@
 - [x] Basic resources
+- [ ] Publish resources
+- [ ] Open API
 - [x] Hateos
 - [ ] Projection (CRS)
 - [-] Query
@@ -9,4 +11,3 @@
   - [ ] Sortby
   - [ ] Properties
   - [ ] CQL
-- [ ] Publish resources
