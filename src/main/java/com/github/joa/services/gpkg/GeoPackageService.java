@@ -1,7 +1,10 @@
-package com.github.joa.services.geopackage;
+package com.github.joa.services.gpkg;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,9 +25,13 @@ import com.github.joa.core.FeatureQuery;
 import com.github.joa.core.Item;
 import com.github.joa.core.Services;
 import com.github.joa.services.CollectionService;
+import com.github.joa.services.UploadService;
 import com.github.joa.util.CollectionUtils;
 import com.github.joa.util.FeatureUtils;
-
+import com.google.common.io.MoreFiles;
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.ContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
 import mil.nga.geopackage.GeoPackageManager;
@@ -33,7 +40,7 @@ import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.sf.geojson.Feature;
 
-public class GeoPackageService implements CollectionService {
+public class GeoPackageService implements CollectionService, UploadService {
 
   private File root;
 
@@ -44,18 +51,17 @@ public class GeoPackageService implements CollectionService {
   public Services getServices() {
     List<Service> services = new ArrayList<>();
 
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath())) {
+
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath(), "*.gpkg")) {
       for (Path path : stream) {
         if (!Files.isDirectory(path)) {
           String fileName = path.getFileName().toString();
 
-          if (fileName.endsWith(".gpkg")) {
-            fileName = fileName.replaceAll(".gpkg", "");
+          fileName = fileName.replaceAll(".gpkg", "");
 
-            Service service = new Service(fileName);
+          Service service = new Service(fileName);
 
-            services.add(service);
-          }
+          services.add(service);
         }
       }
     } catch (IOException ex) {
@@ -156,7 +162,7 @@ public class GeoPackageService implements CollectionService {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
-      String orderBy =  featureDao.getIdColumnName();
+      String orderBy = featureDao.getIdColumnName();
       Integer limit = query.getLimit();
       Long offset = query.getOffset();
 
@@ -218,4 +224,56 @@ public class GeoPackageService implements CollectionService {
   public boolean exists(String file) {
     return Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile().exists();
   }
+
+  @Override
+  public void addService(FormDataBodyPart body) throws InterruptedException {
+    for (BodyPart part : body.getParent().getBodyParts()) {
+      InputStream fileInputStream = part.getEntityAs(InputStream.class);
+      ContentDisposition fileMetaData = part.getContentDisposition();
+
+      try {
+        int read = 0;
+        byte[] bytes = new byte[1024];
+
+        String fullFileName = fileMetaData.getFileName();
+
+        String fileName = MoreFiles.getNameWithoutExtension(Paths.get(fullFileName));
+
+        File target = Paths.get(root.toString(), fullFileName).toFile();
+
+        OutputStream out = new FileOutputStream(target);
+        while ((read = fileInputStream.read(bytes)) != -1) {
+          out.write(bytes, 0, read);
+        }
+        out.flush();
+        out.close();
+
+        String[] cmd =
+            {"ogr2ogr", "-f", "GPKG", fileName + ".gpkg", fullFileName, "-update", "-append"};
+
+        ProcessBuilder b = new ProcessBuilder(cmd);
+
+        b.directory(root);
+
+        Process p = b.start();
+
+        p.waitFor();
+
+      } catch (IOException e) {
+        throw new WebApplicationException("Error while uploading file. Please try again !!", e);
+      }
+    }
+  }
+
+  @Override
+  public void deleteService(String serviceId) {
+
+  }
+
+  @Override
+  public void updateService(String serviceId, FormDataBodyPart body) {
+
+  }
+
+
 }

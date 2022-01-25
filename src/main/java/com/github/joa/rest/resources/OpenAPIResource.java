@@ -20,6 +20,8 @@ public class OpenAPIResource {
   public Response getApi(@PathParam("serviceId") String serviceId,
       @BeanParam @Valid OpenAPIRequest query) throws JsonProcessingException {
 
+    // the openapi generate by swagger does include {serviceId} path parameters. In order to be
+    // OGC compliant we must get rid of them.
     return new OpenAPIProcessor(query).fetch().process((openAPI) -> {
       Paths paths = openAPI.getPaths();
       Paths newPaths = new Paths();

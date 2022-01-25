@@ -10,8 +10,8 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.github.joa.rest.exception.QueryParamExceptionHandler;
 import com.github.joa.rest.resources.CollectionResource;
 import com.github.joa.services.CollectionService;
-import com.github.joa.services.geopackage.GeoPackageService;
-
+import com.github.joa.services.UploadService;
+import com.github.joa.services.gpkg.GeoPackageService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
@@ -75,13 +75,14 @@ public class JoaApplication extends Application<JoaConfiguration> {
     final String dataDirectory = configuration.getDataDirectory();
 
     // set up services
-    final CollectionService collectionService = new GeoPackageService(dataDirectory);
+    final GeoPackageService gpkgService = new GeoPackageService(dataDirectory);
 
-
+    // setup dependency injection for CollectionService
     environment.jersey().register(new AbstractBinder() {
       @Override
       protected void configure() {
-        bind(collectionService).to(CollectionService.class);
+        bind(gpkgService).to(CollectionService.class);
+        bind(gpkgService).to(UploadService.class);
       }
     });
 

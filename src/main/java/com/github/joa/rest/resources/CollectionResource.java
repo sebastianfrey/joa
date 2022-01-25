@@ -1,10 +1,6 @@
 package com.github.joa.rest.resources;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -13,7 +9,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import com.github.joa.core.Service;
 import com.github.joa.core.Collection;
@@ -25,12 +20,10 @@ import com.github.joa.core.MediaType;
 import com.github.joa.core.Services;
 import com.github.joa.rest.request.FeatureQueryRequest;
 import com.github.joa.services.CollectionService;
-
+import com.github.joa.services.UploadService;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
-import org.glassfish.jersey.media.multipart.BodyPart;
-import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.model.Resource;
@@ -39,12 +32,11 @@ import org.glassfish.jersey.server.model.Resource;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
 public class CollectionResource {
 
+  @Inject
   private CollectionService collectionService;
 
   @Inject
-  public CollectionResource(CollectionService collectionService) {
-    this.collectionService = collectionService;
-  }
+  private UploadService uploadService;
 
   @GET
   @ProvideLink(value = Services.class, rel = "self", type = MediaType.APPLICATION_JSON,
@@ -63,28 +55,8 @@ public class CollectionResource {
   }
 
   @POST
-  @Path("{serviceId}/collections")
-  public Response getCollections(@FormDataParam("file") FormDataBodyPart body) {
-    String UPLOAD_PATH = "/workspaces/joa/data/";
-
-    for (BodyPart part : body.getParent().getBodyParts()) {
-      InputStream fileInputStream = part.getEntityAs(InputStream.class);
-      ContentDisposition fileMetaData = part.getContentDisposition();
-
-      try {
-        int read = 0;
-        byte[] bytes = new byte[1024];
-
-        OutputStream out = new FileOutputStream(new File(UPLOAD_PATH + fileMetaData.getFileName()));
-        while ((read = fileInputStream.read(bytes)) != -1) {
-          out.write(bytes, 0, read);
-        }
-        out.flush();
-        out.close();
-      } catch (IOException e) {
-        throw new WebApplicationException("Error while uploading file. Please try again !!");
-      }
-    }
+  public Response getCollections(@FormDataParam("file") FormDataBodyPart body) throws Exception {
+    uploadService.addService(body);
 
     return Response.ok("Data uploaded successfully !!").build();
   }
@@ -92,10 +64,6 @@ public class CollectionResource {
   @GET
   @Path("{serviceId}/conformance")
   @ProvideLink(value = Service.class, rel = "conformance", type = MediaType.APPLICATION_JSON,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Service.class, rel = "http://www.opengis.net/def/rel/ogc/1.0/conformance",
-      type = MediaType.APPLICATION_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
   @ProvideLink(value = Conformance.class, rel = "self", type = MediaType.APPLICATION_JSON,
@@ -130,53 +98,6 @@ public class CollectionResource {
   public Resource getApi() {
     return Resource.from(OpenAPIResource.class);
   }
-
-
-/*   public Response getApi(@PathParam("serviceId") String serviceId,
-      @BeanParam @Valid ApiRequest apiQuery) throws Exception {
-    URI uri = apiQuery.getUriInfo().getBaseUriBuilder().host("localhost")
-        .path("/openapi." + apiQuery.getFormat()).build();
-
-    String entity = ClientBuilder.newClient().target(uri).request().get(String.class);
-
-    OpenAPI openAPI;
-
-    if (apiQuery.getFormat().equals("json")) {
-      openAPI = Json.mapper().readValue(entity, OpenAPI.class);
-    } else {
-      openAPI = Yaml.mapper().readValue(entity, OpenAPI.class);
-    }
-
-    openAPI.getPaths().entrySet().stream().forEach((entry) -> {
-      PathItem item = entry.getValue();
-      if (item.getGet() != null) {
-        if (item.getGet().getParameters() != null) {
-          for (Parameter parameter : item.getGet().getParameters()) {
-            if (parameter.getName().equals("serviceId")) {
-              item.getGet().getParameters().remove(parameter);
-              break;
-            }
-          }
-        }
-      }
-    });
-
-    String response;
-
-    if (apiQuery.getFormat().equals("json")) {
-      response = Json.pretty(openAPI);
-    } else {
-      response = Yaml.pretty(openAPI);
-    }
-
-    response = response.replace("/{serviceId}/", "/");
-    response = response.replace("/{serviceId}", "/");
-
-    String type = apiQuery.getFormat().equals("json") ? MediaType.APPLICATION_JSON
-        : MediaType.APPLICATION_OPENAPI_YAML;
-
-    return Response.ok(response, type).build();
-  } */
 
   @GET
   @Path("{serviceId}/collections/{collectionId}")

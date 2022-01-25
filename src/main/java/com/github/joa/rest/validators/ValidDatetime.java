@@ -10,10 +10,10 @@ import javax.validation.Payload;
 import com.github.joa.rest.params.DatetimeParam;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = { ValidDateTime.Validator.class })
-public @interface ValidDateTime {
+@Constraint(validatedBy = { ValidDatetime.Validator.class })
+public @interface ValidDatetime {
 
-  public class Validator implements ConstraintValidator<ValidDateTime, DatetimeParam> {
+  public class Validator implements ConstraintValidator<ValidDatetime, DatetimeParam> {
     @Override
     public boolean isValid(DatetimeParam param, ConstraintValidatorContext context) {
       if (param == null) {

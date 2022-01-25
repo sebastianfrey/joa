@@ -12,7 +12,7 @@ import com.github.joa.core.FeatureQuery;
 import com.github.joa.rest.params.BboxParam;
 import com.github.joa.rest.params.DatetimeParam;
 import com.github.joa.rest.validators.ValidBbox;
-import com.github.joa.rest.validators.ValidDateTime;
+import com.github.joa.rest.validators.ValidDatetime;
 import mil.nga.sf.GeometryEnvelope;
 
 
@@ -36,7 +36,7 @@ public class FeatureQueryRequest implements FeatureQuery {
   private BboxParam bbox;
 
   @QueryParam("datetime")
-  @ValidDateTime
+  @ValidDatetime
   private DatetimeParam datetime;
 
   @Override

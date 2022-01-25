@@ -24,6 +24,7 @@
         <jaxb.version>2.3.1</jaxb.version>
         <geopackage.version>6.1.2</geopackage.version>
         <swagger.version>2.1.12</swagger.version>
+        <guava.version>31.0.1-jre</guava.version>
         <bullwinkle.version>v1.4.6</bullwinkle.version>
         <mainClass>com.github.joa.JoaApplication</mainClass>
     </properties>
@@ -87,6 +88,11 @@
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-integration</artifactId>
             <version>${swagger.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
         <!-- Uncomment to get support for BFN parsing -->
         <!--
