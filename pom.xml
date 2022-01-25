@@ -3,12 +3,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>io.dropwizard</groupId>
-        <artifactId>dropwizard-dependencies</artifactId>
-        <version>2.0.28</version>
-    </parent>
-
     <groupId>com.github.sebastianfrey.joa</groupId>
     <artifactId>joa</artifactId>
     <version>0.1.0-SNAPSHOT</version>
@@ -20,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>2.0.28</dropwizard.version>
-        <jersey-version>2.0.29</jersey-version>
+        <jersey.version>2.35</jersey.version>
         <jaxb.version>2.3.1</jaxb.version>
         <geopackage.version>6.1.2</geopackage.version>
         <swagger.version>2.1.12</swagger.version>
