@@ -10,8 +10,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
@@ -25,8 +26,6 @@ import com.github.sebastianfrey.joa.core.Service;
 import com.github.sebastianfrey.joa.core.Services;
 import com.github.sebastianfrey.joa.services.CollectionService;
 import com.github.sebastianfrey.joa.services.UploadService;
-import com.github.sebastianfrey.joa.util.CollectionUtils;
-import com.github.sebastianfrey.joa.util.FeatureUtils;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
@@ -34,10 +33,15 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
 import mil.nga.geopackage.GeoPackageManager;
+import mil.nga.geopackage.contents.Contents;
 import mil.nga.geopackage.features.user.FeatureDao;
 import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
+import mil.nga.geopackage.geom.GeoPackageGeometryData;
+import mil.nga.geopackage.user.ColumnValue;
+import mil.nga.sf.Geometry;
 import mil.nga.sf.geojson.Feature;
+import mil.nga.sf.geojson.FeatureConverter;
 
 public class GeoPackageService implements CollectionService, UploadService {
 
@@ -49,7 +53,6 @@ public class GeoPackageService implements CollectionService, UploadService {
 
   public Services getServices() {
     List<Service> services = new ArrayList<>();
-
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath(), "*.gpkg")) {
       for (Path path : stream) {
@@ -139,7 +142,7 @@ public class GeoPackageService implements CollectionService, UploadService {
    * @throws IOException
    */
   public Collection getCollection(GeoPackage gpkg, String serviceId, String collectionId) {
-    return CollectionUtils.createCollection(serviceId, gpkg.getFeatureDao(collectionId));
+    return createCollection(serviceId, gpkg.getFeatureDao(collectionId));
   }
 
   /**
@@ -174,7 +177,7 @@ public class GeoPackageService implements CollectionService, UploadService {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          Feature feature = FeatureUtils.createFeature(featureRow);
+          Feature feature = createFeature(featureRow);
 
           if (feature != null) {
             featureCollection.addFeature(feature);
@@ -198,7 +201,7 @@ public class GeoPackageService implements CollectionService, UploadService {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          Feature feature = FeatureUtils.createFeature(featureRow);
+          Feature feature = createFeature(featureRow);
 
           Item item = new Item(feature);
 
@@ -222,6 +225,52 @@ public class GeoPackageService implements CollectionService, UploadService {
 
   public boolean exists(String file) {
     return Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile().exists();
+  }
+
+  public Collection createCollection(String serviceId, FeatureDao featureDao) {
+    Contents contents = featureDao.getContents();
+
+    Collection collection = new Collection();
+
+    String id = contents.getTableName();
+    String identifier = contents.getIdentifier();
+    String description = contents.getDescription();
+    String crs = "http://www.opengis.net/def/crs/EPSG/0/" + contents.getSrsId();
+
+    collection.setServiceId(serviceId);
+    collection.setCollectionId(id);
+    collection.setDescription(description);
+    collection.setTitle(identifier);
+    collection.setCrs(List.of(crs));
+    collection.setItemType("feature");
+    collection.getExtent().getSpatial().addBbox(contents.getBoundingBox());
+
+    return collection;
+  }
+
+  public Feature createFeature(FeatureRow featureRow) {
+    Feature feature = null;
+
+    GeoPackageGeometryData geometryData = featureRow.getGeometry();
+    if (geometryData != null && !geometryData.isEmpty()) {
+      Geometry geometry = geometryData.getGeometry();
+
+      feature = FeatureConverter.toFeature(geometry);
+
+      feature.setProperties(new HashMap<>());
+
+      for (Map.Entry<String, ColumnValue> entry : featureRow.getAsMap()) {
+        ColumnValue value = entry.getValue();
+        String key = entry.getKey();
+        if (!key.equals(featureRow.getGeometryColumnName())) {
+          feature.getProperties().put(key, value.getValue());
+        }
+      }
+
+      feature.setId(String.valueOf(featureRow.getId()));
+    }
+
+    return feature;
   }
 
   @Override
