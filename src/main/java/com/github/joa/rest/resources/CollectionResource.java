@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -15,7 +14,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 import com.github.joa.core.Service;
 import com.github.joa.core.Collection;
@@ -25,23 +23,17 @@ import com.github.joa.core.Item;
 import com.github.joa.core.Items;
 import com.github.joa.core.MediaType;
 import com.github.joa.core.Services;
-import com.github.joa.rest.request.ApiRequest;
 import com.github.joa.rest.request.FeatureQueryRequest;
 import com.github.joa.services.CollectionService;
 
 import org.glassfish.jersey.linking.ProvideLink;
-import org.glassfish.jersey.linking.ProvideLinks;
 import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.PathItem;
-import io.swagger.v3.oas.models.parameters.Parameter;
+import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
@@ -99,15 +91,13 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/conformance")
-  @ProvideLinks({
-      @ProvideLink(value = Service.class, rel = "conformance", type = MediaType.APPLICATION_JSON,
-          bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-          style = InjectLink.Style.ABSOLUTE),
-      @ProvideLink(value = Service.class,
-          rel = "http://www.opengis.net/def/rel/ogc/1.0/conformance",
-          type = MediaType.APPLICATION_JSON,
-          bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-          style = InjectLink.Style.ABSOLUTE),})
+  @ProvideLink(value = Service.class, rel = "conformance", type = MediaType.APPLICATION_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Service.class, rel = "http://www.opengis.net/def/rel/ogc/1.0/conformance",
+      type = MediaType.APPLICATION_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+      style = InjectLink.Style.ABSOLUTE)
   @ProvideLink(value = Conformance.class, rel = "self", type = MediaType.APPLICATION_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
@@ -127,19 +117,22 @@ public class CollectionResource {
     return collectionService.getCollections(serviceId);
   }
 
-  @GET
   @Path("{serviceId}/api")
-  @ProvideLinks({
-      @ProvideLink(value = Service.class, rel = "service-desc",
-          type = MediaType.APPLICATION_OPENAPI_JSON,
-          bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-          style = InjectLink.Style.ABSOLUTE),
-      @ProvideLink(value = Service.class, rel = "service-desc",
-          type = MediaType.APPLICATION_OPENAPI_YAML,
-          bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-          style = InjectLink.Style.ABSOLUTE),})
+  @ProvideLink(value = Service.class, rel = "service-desc",
+      type = MediaType.APPLICATION_OPENAPI_JSON,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Service.class, rel = "service-desc",
+      type = MediaType.APPLICATION_OPENAPI_YAML,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
   @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
-  public Response getApi(@PathParam("serviceId") String serviceId,
+  public Resource getApi() {
+    return Resource.from(OpenAPIResource.class);
+  }
+
+
+/*   public Response getApi(@PathParam("serviceId") String serviceId,
       @BeanParam @Valid ApiRequest apiQuery) throws Exception {
     URI uri = apiQuery.getUriInfo().getBaseUriBuilder().host("localhost")
         .path("/openapi." + apiQuery.getFormat()).build();
@@ -183,7 +176,7 @@ public class CollectionResource {
         : MediaType.APPLICATION_OPENAPI_YAML;
 
     return Response.ok(response, type).build();
-  }
+  } */
 
   @GET
   @Path("{serviceId}/collections/{collectionId}")
