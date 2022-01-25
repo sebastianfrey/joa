@@ -1,7 +1,7 @@
 logging:
   level: INFO
   loggers:
-    com.github.joa: DEBUG
+    com.github.sebastianfrey.joa: DEBUG
 server:
   rootPath: /api
 dataDirectory: /workspaces/joa/data/

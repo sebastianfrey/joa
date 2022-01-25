@@ -9,7 +9,7 @@
         <version>2.0.28</version>
     </parent>
 
-    <groupId>com.github.joa</groupId>
+    <groupId>com.github.sebastianfrey.joa</groupId>
     <artifactId>joa</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -26,7 +26,7 @@
         <swagger.version>2.1.12</swagger.version>
         <guava.version>31.0.1-jre</guava.version>
         <bullwinkle.version>v1.4.6</bullwinkle.version>
-        <mainClass>com.github.joa.JoaApplication</mainClass>
+        <mainClass>com.github.sebastianfrey.joa.JoaApplication</mainClass>
     </properties>
 
     <dependencyManagement>

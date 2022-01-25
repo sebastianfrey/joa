@@ -1,6 +1,13 @@
-# joa
+# JOA - Java OGC API (WIP)
 
-How to start the joa application
+About
+---
+
+A simple (and not complete) Java based OGC API implementation. Currently only a small subset of
+[OGC API - Features - Part 1: Core](http://docs.opengeospatial.org/is/17-069r3/17-069r3.html)
+is implemented.
+
+Getting started
 ---
 
 1. Run `mvn clean install` to build your application
@@ -11,3 +18,4 @@ Health Check
 ---
 
 To see your applications health enter url `http://localhost:8081/healthcheck`
+

@@ -8,7 +8,7 @@
       "type": "java",
       "name": "Launch JoaApplication",
       "request": "launch",
-      "mainClass": "com.github.joa.JoaApplication",
+      "mainClass": "com.github.sebastianfrey.joa.JoaApplication",
       "projectName": "joa",
       "args": "server config.yml",
       "vmArgs": "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED"
@@ -17,7 +17,7 @@
       "type": "java",
       "name": "JDBC Test",
       "request": "launch",
-      "mainClass": "com.github.joa.core.Connect",
+      "mainClass": "com.github.sebastianfrey.joa.core.Connect",
       "projectName": "joa",
     }
   ]
