@@ -46,7 +46,7 @@ public class OpenAPIResource {
         newPaths.put(path, item);
       });
 
-      openAPI.setPaths(paths);
+      openAPI.setPaths(newPaths);
     }).send();
   }
 }
