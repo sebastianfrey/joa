@@ -7,10 +7,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 
-import com.github.joa.core.DateTime;
+import com.github.joa.core.Datetime;
 import com.github.joa.core.FeatureQuery;
 import com.github.joa.rest.params.BboxParam;
-import com.github.joa.rest.params.DateTimeParam;
+import com.github.joa.rest.params.DatetimeParam;
 import com.github.joa.rest.validators.ValidBbox;
 import com.github.joa.rest.validators.ValidDateTime;
 import mil.nga.sf.GeometryEnvelope;
@@ -37,7 +37,7 @@ public class FeatureQueryRequest implements FeatureQuery {
 
   @QueryParam("datetime")
   @ValidDateTime
-  private DateTimeParam datetime;
+  private DatetimeParam datetime;
 
   @Override
   public Integer getLimit() {
@@ -56,7 +56,7 @@ public class FeatureQueryRequest implements FeatureQuery {
   }
 
   @Override
-  public DateTime getDateTime() {
+  public Datetime getDatetime() {
     return datetime.get();
   }
 

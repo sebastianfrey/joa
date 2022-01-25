@@ -3,15 +3,15 @@ package com.github.joa.rest.params;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.github.joa.core.DateTime;
+import com.github.joa.core.Datetime;
 
-public class DateTimeParam {
+public class DatetimeParam {
 
   public final static String SEPARATOR = "/";
 
   List<String> values;
 
-  public DateTimeParam(String value) {
+  public DatetimeParam(String value) {
     values = parse(value);
   }
 
@@ -31,12 +31,12 @@ public class DateTimeParam {
     return get().validate();
   }
 
-  public DateTime get() {
+  public Datetime get() {
     int i = 0;
     String lower = values.size() > i ? values.get(i++) : null;
     String upper = values.size() > i ? values.get(i++) : lower;
 
-    return new DateTime(lower, upper);
+    return new Datetime(lower, upper);
 
   }
 }

@@ -3,18 +3,18 @@ package com.github.joa.core;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 
-public class DateTime {
+public class Datetime {
 
   public final static String OPEN_INTERVAL = "..";
 
   private String lower;
   private String upper;
 
-  public DateTime(String value) {
+  public Datetime(String value) {
     this(value, value);
   }
 
-  public DateTime(String lower, String upper) {
+  public Datetime(String lower, String upper) {
     this.lower = lower;
     this.upper = upper;
   }
