@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
@@ -38,7 +39,6 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -49,6 +49,7 @@ public class CollectionResource {
 
   private CollectionService collectionService;
 
+  @Inject
   public CollectionResource(CollectionService collectionService) {
     this.collectionService = collectionService;
   }

@@ -61,11 +61,11 @@ public class EnhancedUriBuilder {
     return uriBuilder.path(path);
   }
 
-  public UriBuilder path(Class resource) {
+  public UriBuilder path(Class<?> resource) {
     return uriBuilder.path(resource);
   }
 
-  public UriBuilder path(Class resource, String method) {
+  public UriBuilder path(Class<?> resource, String method) {
     return uriBuilder.path(resource, method);
   }
 

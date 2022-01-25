@@ -13,6 +13,7 @@ import com.github.joa.services.CollectionService;
 import com.github.joa.services.geopackage.GeoPackageService;
 
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.server.ServerProperties;
 import io.dropwizard.Application;
@@ -54,16 +55,19 @@ public class JoaApplication extends Application<JoaConfiguration> {
     environment.jersey().register(QueryParamExceptionHandler.class);
 
     // set up cors
-    filters(configuration, environment);
+    cors(configuration, environment);
 
     // set up features
-    features(configuration, environment);
+    linking(configuration, environment);
 
     // set up providers
-    providers(configuration, environment);
+    jaxbjson(configuration, environment);
 
     // set up resources
     resources(configuration, environment);
+
+    // set up openapi
+    openapi(configuration, environment);
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {
@@ -73,25 +77,19 @@ public class JoaApplication extends Application<JoaConfiguration> {
     // set up services
     final CollectionService collectionService = new GeoPackageService(dataDirectory);
 
+
+    environment.jersey().register(new AbstractBinder() {
+      @Override
+      protected void configure() {
+        bind(collectionService).to(CollectionService.class);
+      }
+    });
+
     // set up resources
-    final CollectionResource collectionResource = new CollectionResource(collectionService);
-
-    environment.jersey().register(collectionResource);
-
-    // openapi
-    OpenAPI oas = new OpenAPI();
-    Info info = new Info().title("JOA").description("Java based OGC-API-Features implementation.")
-        .license(new License().name("MIT")).version("1.0.0")
-        .termsOfService("http://example.com/terms")
-        .contact(new Contact().email("sebastian.frey@outlook.com"));
-
-    oas.info(info);
-    SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
-        .resourcePackages(Stream.of("com.github.joa.rest").collect(Collectors.toSet()));
-    environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
+    environment.jersey().register(CollectionResource.class);
   }
 
-  private void filters(final JoaConfiguration configuration, final Environment environment) {
+  private void cors(final JoaConfiguration configuration, final Environment environment) {
     final FilterRegistration.Dynamic cors =
         environment.servlets().addFilter("CORS", CrossOriginFilter.class);
 
@@ -107,11 +105,25 @@ public class JoaApplication extends Application<JoaConfiguration> {
     cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
   }
 
-  private void features(final JoaConfiguration configuration, final Environment environment) {
+  private void linking(final JoaConfiguration configuration, final Environment environment) {
     environment.jersey().register(DeclarativeLinkingFeature.class);
   }
 
-  private void providers(final JoaConfiguration configuration, final Environment environment) {
+  private void jaxbjson(final JoaConfiguration configuration, final Environment environment) {
     environment.jersey().register(JacksonJaxbJsonProvider.class);
+  }
+
+  private void openapi(final JoaConfiguration configuration, final Environment environment) {
+        // openapi
+        OpenAPI oas = new OpenAPI();
+        Info info = new Info().title("JOA").description("Java based OGC-API-Features implementation.")
+            .license(new License().name("MIT")).version("1.0.0")
+            .termsOfService("http://example.com/terms")
+            .contact(new Contact().email("sebastian.frey@outlook.com"));
+
+        oas.info(info);
+        SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
+            .resourcePackages(Stream.of("com.github.joa.rest").collect(Collectors.toSet()));
+        environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
   }
 }
