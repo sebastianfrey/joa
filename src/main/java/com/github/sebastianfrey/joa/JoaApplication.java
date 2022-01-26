@@ -7,9 +7,9 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.github.sebastianfrey.joa.rest.exception.QueryParamExceptionHandler;
-import com.github.sebastianfrey.joa.rest.resources.CollectionResource;
-import com.github.sebastianfrey.joa.services.CollectionService;
+import com.github.sebastianfrey.joa.resources.CollectionResource;
+import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
+import com.github.sebastianfrey.joa.services.FeatureService;
 import com.github.sebastianfrey.joa.services.UploadService;
 import com.github.sebastianfrey.joa.services.gpkg.GeoPackageService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -81,7 +81,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
     environment.jersey().register(new AbstractBinder() {
       @Override
       protected void configure() {
-        bind(gpkgService).to(CollectionService.class);
+        bind(gpkgService).to(FeatureService.class);
         bind(gpkgService).to(UploadService.class);
       }
     });

@@ -16,15 +16,15 @@ import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
-import com.github.sebastianfrey.joa.core.Collection;
-import com.github.sebastianfrey.joa.core.Collections;
-import com.github.sebastianfrey.joa.core.Conformance;
-import com.github.sebastianfrey.joa.core.FeatureQuery;
-import com.github.sebastianfrey.joa.core.Item;
-import com.github.sebastianfrey.joa.core.Items;
-import com.github.sebastianfrey.joa.core.Service;
-import com.github.sebastianfrey.joa.core.Services;
-import com.github.sebastianfrey.joa.services.CollectionService;
+import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.Collection;
+import com.github.sebastianfrey.joa.models.Collections;
+import com.github.sebastianfrey.joa.models.Conformance;
+import com.github.sebastianfrey.joa.models.Item;
+import com.github.sebastianfrey.joa.models.Items;
+import com.github.sebastianfrey.joa.models.Service;
+import com.github.sebastianfrey.joa.models.Services;
+import com.github.sebastianfrey.joa.services.FeatureService;
 import com.github.sebastianfrey.joa.services.UploadService;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
@@ -39,11 +39,11 @@ import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
-import mil.nga.sf.Geometry;
+import mil.nga.sf.geojson.Geometry;
 import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
-public class GeoPackageService implements CollectionService, UploadService {
+public class GeoPackageService implements FeatureService<Feature, Geometry>, UploadService {
 
   private File root;
 
@@ -152,8 +152,8 @@ public class GeoPackageService implements CollectionService, UploadService {
    * @param collectionId
    * @return
    */
-  public Items getItems(String serviceId, String collectionId, FeatureQuery query) {
-    Items featureCollection = new Items();
+  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query) {
+    GeoPackageItems featureCollection = new GeoPackageItems();
 
     featureCollection.setServiceId(serviceId);
     featureCollection.setCollectionId(collectionId);
@@ -191,7 +191,7 @@ public class GeoPackageService implements CollectionService, UploadService {
     return featureCollection;
   }
 
-  public Item getItem(String serviceId, String collectionId, Long featureId) {
+  public Item<Geometry> getItem(String serviceId, String collectionId, Long featureId) {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
@@ -203,7 +203,7 @@ public class GeoPackageService implements CollectionService, UploadService {
 
           Feature feature = createFeature(featureRow);
 
-          Item item = new Item(feature);
+          GeoPackageItem item = new GeoPackageItem(feature);
 
           item.setServiceId(serviceId);
           item.setCollectionId(collectionId);
@@ -253,10 +253,8 @@ public class GeoPackageService implements CollectionService, UploadService {
 
     GeoPackageGeometryData geometryData = featureRow.getGeometry();
     if (geometryData != null && !geometryData.isEmpty()) {
-      Geometry geometry = geometryData.getGeometry();
 
-      feature = FeatureConverter.toFeature(geometry);
-
+      feature = FeatureConverter.toFeature(geometryData.getGeometry());
       feature.setProperties(new HashMap<>());
 
       for (Map.Entry<String, ColumnValue> entry : featureRow.getAsMap()) {
