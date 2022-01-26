@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.models.Items;
-import com.github.sebastianfrey.joa.util.LinkUtils;
+import com.github.sebastianfrey.joa.utils.LinkUtils;
 import mil.nga.sf.geojson.Feature;
 
 @JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})

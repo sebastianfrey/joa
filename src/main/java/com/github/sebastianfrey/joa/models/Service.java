@@ -3,7 +3,7 @@ package com.github.sebastianfrey.joa.models;
 import java.util.List;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.sebastianfrey.joa.util.LinkUtils;
+import com.github.sebastianfrey.joa.utils.LinkUtils;
 
 @JsonPropertyOrder({"title", "description", "links"})
 public class Service extends Linkable {

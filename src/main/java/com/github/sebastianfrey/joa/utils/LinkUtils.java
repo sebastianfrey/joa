@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.util;
+package com.github.sebastianfrey.joa.utils;
 
 import java.net.URI;
 import java.util.function.Consumer;
