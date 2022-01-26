@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.util.ext;
+package com.github.sebastianfrey.joa.extensions;
 
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -6,10 +6,10 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-public class EnhancedUriBuilder {
+public class ExtendedUriBuilder {
   private UriBuilder uriBuilder;
 
-  public EnhancedUriBuilder(UriBuilder uriBuilder) {
+  public ExtendedUriBuilder(UriBuilder uriBuilder) {
     this.uriBuilder = uriBuilder;
   }
 

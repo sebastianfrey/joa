@@ -5,8 +5,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
-
-import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import javax.ws.rs.core.Link;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
 import com.github.sebastianfrey.joa.resources.CollectionResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
 import com.github.sebastianfrey.joa.services.FeatureService;
@@ -61,7 +62,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
     linking(configuration, environment);
 
     // set up providers
-    jaxbjson(configuration, environment);
+    jackson(configuration, environment);
 
     // set up resources
     resources(configuration, environment);
@@ -110,9 +111,11 @@ public class JoaApplication extends Application<JoaConfiguration> {
     environment.jersey().register(DeclarativeLinkingFeature.class);
   }
 
-  private void jaxbjson(final JoaConfiguration configuration, final Environment environment) {
-    environment.jersey().register(JacksonJaxbJsonProvider.class);
-  }
+  private void jackson(final JoaConfiguration configuration, final Environment environment) {
+    SimpleModule module = new SimpleModule();
+    module.addSerializer(Link.class, new LinkSerializer());
+    environment.getObjectMapper().registerModule(module);
+}
 
   private void openapi(final JoaConfiguration configuration, final Environment environment) {
         // openapi

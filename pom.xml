@@ -54,16 +54,6 @@
             <version>${jersey.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>${jaxb.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>${jaxb.version}</version>
-        </dependency>
-        <dependency>
             <groupId>mil.nga.geopackage</groupId>
             <artifactId>geopackage</artifactId>
             <version>${geopackage.version}</version>

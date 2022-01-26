@@ -3,13 +3,13 @@ package com.github.sebastianfrey.joa.util;
 import java.net.URI;
 import java.util.function.Consumer;
 import javax.ws.rs.core.Link;
-import com.github.sebastianfrey.joa.util.ext.EnhancedUriBuilder;
+import com.github.sebastianfrey.joa.extensions.ExtendedUriBuilder;
 
 public class LinkUtils {
 
-  public static Link replaceQuery(Link link, Consumer<EnhancedUriBuilder> updateQuery) {
+  public static Link replaceQuery(Link link, Consumer<ExtendedUriBuilder> updateQuery) {
     Link.Builder linkBuidler = Link.fromLink(link);
-    EnhancedUriBuilder uriBuilder = new EnhancedUriBuilder(link.getUriBuilder());
+    ExtendedUriBuilder uriBuilder = new ExtendedUriBuilder(link.getUriBuilder());
 
     if (updateQuery != null) {
       updateQuery.accept(uriBuilder);
