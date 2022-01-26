@@ -3,7 +3,7 @@ package com.github.sebastianfrey.joa.utils;
 import java.net.URI;
 import java.util.function.Consumer;
 import javax.ws.rs.core.Link;
-import com.github.sebastianfrey.joa.extensions.ExtendedUriBuilder;
+import com.github.sebastianfrey.joa.extensions.jaxrs.ExtendedUriBuilder;
 
 public class LinkUtils {
 
