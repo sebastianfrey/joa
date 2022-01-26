@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.extensions;
+package com.github.sebastianfrey.joa.extensions.jaxrs;
 
 import java.lang.reflect.Method;
 import java.net.URI;
