@@ -48,7 +48,7 @@ public class Service extends Linkable {
 
       Link newLink = LinkUtils.replaceQuery(link, (uriBuilder) -> {
         switch (link.getRel()) {
-          case "service-desc":
+          case LinkRel.SERVICE_DESC:
             switch (link.getType()) {
               case MediaType.APPLICATION_OPENAPI_JSON:
                 uriBuilder.replaceQueryParam("f", "json");

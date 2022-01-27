@@ -15,6 +15,7 @@ import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Item;
 import com.github.sebastianfrey.joa.models.Items;
+import com.github.sebastianfrey.joa.models.LinkRel;
 import com.github.sebastianfrey.joa.models.MediaType;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
@@ -39,7 +40,7 @@ public class CollectionResource {
   private UploadService uploadService;
 
   @GET
-  @ProvideLink(value = Services.class, rel = "self", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Services.class, rel = LinkRel.SELF, type = MediaType.APPLICATION_JSON,
       style = InjectLink.Style.ABSOLUTE)
   public Services getServices() throws IOException {
     return collectionService.getServices();
@@ -47,7 +48,7 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}")
-  @ProvideLink(value = Service.class, rel = "self", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Service.class, rel = LinkRel.SELF, type = MediaType.APPLICATION_JSON,
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Service getCapabilities(@PathParam("serviceId") String serviceId) {
@@ -63,10 +64,10 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/conformance")
-  @ProvideLink(value = Service.class, rel = "conformance", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Service.class, rel = LinkRel.CONFORMANCE, type = MediaType.APPLICATION_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Conformance.class, rel = "self", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Conformance.class, rel = LinkRel.SELF, type = MediaType.APPLICATION_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
   public Conformance getConformance(@PathParam("serviceId") String serviceId) {
@@ -75,10 +76,10 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/collections")
-  @ProvideLink(value = Service.class, rel = "data", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Service.class, rel = LinkRel.DATA, type = MediaType.APPLICATION_JSON,
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Collections.class, rel = "self", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Collections.class, rel = LinkRel.SELF, type = MediaType.APPLICATION_JSON,
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Collections getCollections(@PathParam("serviceId") String serviceId) {
@@ -86,11 +87,11 @@ public class CollectionResource {
   }
 
   @Path("{serviceId}/api")
-  @ProvideLink(value = Service.class, rel = "service-desc",
+  @ProvideLink(value = Service.class, rel = LinkRel.SERVICE_DESC,
       type = MediaType.APPLICATION_OPENAPI_JSON,
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Service.class, rel = "service-desc",
+  @ProvideLink(value = Service.class, rel = LinkRel.SERVICE_DESC,
       type = MediaType.APPLICATION_OPENAPI_YAML,
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
@@ -101,11 +102,11 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/collections/{collectionId}")
-  @ProvideLink(value = Collection.class, rel = "self", type = MediaType.APPLICATION_JSON,
+  @ProvideLink(value = Collection.class, rel = LinkRel.SELF, type = MediaType.APPLICATION_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Item.class, rel = "collection",
+  @ProvideLink(value = Item.class, rel = LinkRel.COLLECTION,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
@@ -116,30 +117,30 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/collections/{collectionId}/items")
-  @ProvideLink(value = Collection.class, rel = "items", type = MediaType.APPLICATION_GEO_JSON,
+  @ProvideLink(value = Collection.class, rel = LinkRel.ITEMS, type = MediaType.APPLICATION_GEO_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = "self",
+  @ProvideLink(value = Items.class, rel = LinkRel.SELF,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = "next",
+  @ProvideLink(value = Items.class, rel = LinkRel.NEXT,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.nextPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = "prev",
+  @ProvideLink(value = Items.class, rel = LinkRel.PREV,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.prevPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = "first",
+  @ProvideLink(value = Items.class, rel = LinkRel.FIRST,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.firstPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = "last",
+  @ProvideLink(value = Items.class, rel = LinkRel.LAST,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
@@ -152,7 +153,7 @@ public class CollectionResource {
 
   @GET
   @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
-  @ProvideLink(value = Item.class, rel = "self",
+  @ProvideLink(value = Item.class, rel = LinkRel.SELF,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),
           @Binding(name = "featureId", value = "${instance.id}"),},

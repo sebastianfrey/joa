@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.models.Items;
+import com.github.sebastianfrey.joa.models.LinkRel;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
 import mil.nga.sf.geojson.Feature;
 
@@ -108,22 +109,22 @@ public class GeoPackageItems extends Items<Feature> {
         uriBuilder.replaceQuery(queryString);
 
         switch (link.getRel()) {
-          case "next":
+          case LinkRel.NEXT:
             uriBuilder.replaceQueryParam("offset", offset + limit);
             break;
 
-          case "prev":
+          case LinkRel.PREV:
             uriBuilder.removeQueryParam("offset");
             if (offset - limit > 0) {
               uriBuilder.replaceQueryParam("offset", offset - limit);
             }
             break;
 
-          case "first":
+          case LinkRel.FIRST:
             uriBuilder.removeQueryParam("offset");
             break;
 
-          case "last":
+          case LinkRel.LAST:
             uriBuilder.replaceQueryParam("offset", limit * pages);
             break;
         }
