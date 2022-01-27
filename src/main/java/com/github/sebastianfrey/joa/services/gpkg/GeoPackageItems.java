@@ -6,10 +6,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.models.Items;
-import com.github.sebastianfrey.joa.models.LinkRel;
+import com.github.sebastianfrey.joa.models.Linkable;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
 import mil.nga.sf.geojson.Feature;
 
+/**
+ * GeoPackage specific implementation of the Items model.
+ *
+ * @author sfrey
+ */
 @JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId", "nextPageAvailable", "prevPageAvailable",
     "firstPageAvailable", "lastPageAvailable"})
@@ -22,12 +27,42 @@ public class GeoPackageItems extends Items<Feature> {
   private Integer limit;
   @JsonIgnore
   private Long pages;
+
   private boolean isNextPageAvailable;
   private boolean isPrevPageAvailable;
   private boolean isFirstPageAvailable;
   private boolean isLastPageAvailable;
 
-  private Long total;
+
+  @Override
+  public GeoPackageItems collectionId(String collectionId) {
+    super.collectionId(collectionId);
+    return this;
+  }
+
+  @Override
+  public GeoPackageItems serviceId(String serviceId) {
+    super.serviceId(serviceId);
+    return this;
+  }
+
+  @Override
+  public GeoPackageItems numberMatched(Long numberMatched) {
+    super.numberMatched(numberMatched);
+    return this;
+  }
+
+  @Override
+  public GeoPackageItems features(List<Feature> features) {
+    super.features(features);
+    return this;
+  }
+
+  @Override
+  public GeoPackageItems feature(Feature feature) {
+    super.feature(feature);
+    return this;
+  }
 
   public String getQueryString() {
     return queryString;
@@ -41,6 +76,11 @@ public class GeoPackageItems extends Items<Feature> {
     this.queryString = query;
   }
 
+  public GeoPackageItems queryString(String query) {
+    setQueryString(query);
+    return this;
+  }
+
   public Long getOffset() {
     return offset;
   }
@@ -48,11 +88,12 @@ public class GeoPackageItems extends Items<Feature> {
   public void setOffset(Long offset) {
     this.offset = offset;
 
-    if (total != null) {
-      updatePageCount();
-    }
-
     updatePageIndicators();
+  }
+
+  public GeoPackageItems offset(Long offset) {
+    setOffset(offset);
+    return this;
   }
 
   public Integer getLimit() {
@@ -62,7 +103,22 @@ public class GeoPackageItems extends Items<Feature> {
   public void setLimit(Integer limit) {
     this.limit = limit;
 
-    this.updatePageIndicators();
+    updatePageCount();
+    updatePageIndicators();
+  }
+
+  public GeoPackageItems limit(Integer limit) {
+    setLimit(limit);
+    return this;
+  }
+
+
+  @Override
+  public void setNumberMatched(Long total) {
+    super.setNumberMatched(total);
+
+    updatePageCount();
+    updatePageIndicators();
   }
 
   @Override
@@ -85,46 +141,32 @@ public class GeoPackageItems extends Items<Feature> {
     return isLastPageAvailable;
   }
 
-  public Long getNumberMatched() {
-    return total;
-  }
-
-  public void setNumberMatched(Long total) {
-    this.total = total;
-
-    if (offset != null) {
-      updatePageCount();
-    }
-
-    this.updatePageIndicators();
-  }
-
   @Override
   public List<Link> getLinks() {
     List<Link> links = super.getLinks();
 
     for (Link link : links) {
       int index = links.indexOf(link);
-      Link newLink = LinkUtils.replaceQuery(link, (uriBuilder) -> {
+      Link newLink = LinkUtils.transformUri(link, (uriBuilder) -> {
         uriBuilder.replaceQuery(queryString);
 
         switch (link.getRel()) {
-          case LinkRel.NEXT:
+          case Linkable.NEXT:
             uriBuilder.replaceQueryParam("offset", offset + limit);
             break;
 
-          case LinkRel.PREV:
+          case Linkable.PREV:
             uriBuilder.removeQueryParam("offset");
             if (offset - limit > 0) {
               uriBuilder.replaceQueryParam("offset", offset - limit);
             }
             break;
 
-          case LinkRel.FIRST:
+          case Linkable.FIRST:
             uriBuilder.removeQueryParam("offset");
             break;
 
-          case LinkRel.LAST:
+          case Linkable.LAST:
             uriBuilder.replaceQueryParam("offset", limit * pages);
             break;
         }
@@ -136,10 +178,18 @@ public class GeoPackageItems extends Items<Feature> {
   }
 
   private void updatePageCount() {
+    Long total = getNumberMatched();
+
+    if (total == null || limit == null) {
+      return;
+    }
+
     pages = Math.floorDiv(total, limit);
   }
 
   private void updatePageIndicators() {
+    Long total = getNumberMatched();
+
     if (total == null || offset == null || limit == null) {
       return;
     }

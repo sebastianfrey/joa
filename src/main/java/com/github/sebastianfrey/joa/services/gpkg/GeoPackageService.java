@@ -9,7 +9,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +16,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response.Status;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.Bbox;
 import com.github.sebastianfrey.joa.models.Collection;
 import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
@@ -40,11 +40,18 @@ import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
 import mil.nga.sf.geojson.Geometry;
+import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
+/**
+ * GeoPackage specific FeatureService and UploadService implementation powerd by
+ * <a href="https://github.com/ngageoint/geopackage-java">National Geospatial-Intelligence Agency's
+ * (NGA)</a> GeoPackage implementation.
+ *
+ * @author sfrey
+ */
 public class GeoPackageService implements FeatureService<Feature, Geometry>, UploadService {
-
   private File root;
 
   public GeoPackageService(String root) {
@@ -52,25 +59,24 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
   }
 
   public Services getServices() {
-    List<Service> services = new ArrayList<>();
+    Services services = new Services();
 
     try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath(), "*.gpkg")) {
       for (Path path : stream) {
         if (!Files.isDirectory(path)) {
           String fileName = path.getFileName().toString();
+          String serviceId = fileName.replaceAll(".gpkg", "");
 
-          fileName = fileName.replaceAll(".gpkg", "");
+          Service service = new Service().serviceId(serviceId).title(serviceId);
 
-          Service service = new Service(fileName);
-
-          services.add(service);
+          services.addService(service);
         }
       }
     } catch (IOException ex) {
       throw new WebApplicationException(ex, Status.NO_CONTENT);
     }
 
-    return new Services(services);
+    return services;
   }
 
   public Service getService(String serviceId) {
@@ -78,8 +84,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
       throw new NotFoundException();
     }
 
-    Service service = new Service(serviceId);
-    return service;
+    return new Service().serviceId(serviceId).title(serviceId);
   }
 
   public Conformance getConformance(String serviceId) {
@@ -100,7 +105,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
    * @return
    */
   public Collections getCollections(String serviceId) {
-    Collections collections = new Collections(serviceId);
+    Collections collections = new Collections().serviceId(serviceId).title(serviceId);
 
     try (GeoPackage gpkg = open(serviceId)) {
 
@@ -109,7 +114,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
       for (String collectionId : collectionIds) {
         Collection collection = getCollection(gpkg, serviceId, collectionId);
 
-        collections.addCollection(collection);
+        collections.collection(collection);
       }
     }
 
@@ -153,13 +158,13 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
    * @return
    */
   public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query) {
-    GeoPackageItems featureCollection = new GeoPackageItems();
+    GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
+        .collectionId(collectionId)
+        .queryString(query.getQueryString())
+        .offset(query.getOffset())
+        .limit(query.getLimit());
 
-    featureCollection.setServiceId(serviceId);
-    featureCollection.setCollectionId(collectionId);
-    featureCollection.setQueryString(query.getQueryString());
-    featureCollection.setOffset(query.getOffset());
-    featureCollection.setLimit(query.getLimit());
+
 
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
@@ -169,7 +174,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
       Long offset = query.getOffset();
 
       Integer numberMatched = featureDao.count();
-      featureCollection.setNumberMatched(numberMatched.longValue());
+      items.numberMatched(numberMatched.longValue());
 
       FeatureResultSet featureResultSet = featureDao.queryForChunk(orderBy, limit, offset);
 
@@ -180,7 +185,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
           Feature feature = createFeature(featureRow);
 
           if (feature != null) {
-            featureCollection.addFeature(feature);
+            items.feature(feature);
           }
         }
       } finally {
@@ -188,7 +193,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
       }
     }
 
-    return featureCollection;
+    return items;
   }
 
   public Item<Geometry> getItem(String serviceId, String collectionId, Long featureId) {
@@ -203,12 +208,9 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
 
           Feature feature = createFeature(featureRow);
 
-          GeoPackageItem item = new GeoPackageItem(feature);
-
-          item.setServiceId(serviceId);
-          item.setCollectionId(collectionId);
-
-          return item;
+          return new GeoPackageItem().serviceId(serviceId)
+              .collectionId(collectionId)
+              .feature(feature);
         }
       } finally {
         featureResultSet.close();
@@ -230,22 +232,26 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
   public Collection createCollection(String serviceId, FeatureDao featureDao) {
     Contents contents = featureDao.getContents();
 
-    Collection collection = new Collection();
-
-    String id = contents.getTableName();
-    String identifier = contents.getIdentifier();
+    String collectionId = contents.getTableName();
+    String title = contents.getIdentifier();
     String description = contents.getDescription();
     String crs = "http://www.opengis.net/def/crs/EPSG/0/" + contents.getSrsId();
+    GeometryEnvelope envelope = contents.getBoundingBox().buildEnvelope();
 
-    collection.setServiceId(serviceId);
-    collection.setCollectionId(id);
-    collection.setDescription(description);
-    collection.setTitle(identifier);
-    collection.setCrs(List.of(crs));
-    collection.setItemType("feature");
-    collection.getExtent().getSpatial().addBbox(contents.getBoundingBox());
+    Bbox bbox = new Bbox().minX(envelope.getMinX())
+        .minY(envelope.getMinY())
+        .minZ(envelope.getMinZ())
+        .maxX(envelope.getMaxX())
+        .maxY(envelope.getMaxY())
+        .maxZ(envelope.getMaxZ());
 
-    return collection;
+    return new Collection().serviceId(serviceId)
+        .collectionId(collectionId)
+        .title(title)
+        .description(description)
+        .crs(crs)
+        .itemType("feature")
+        .bbox(bbox);
   }
 
   public Feature createFeature(FeatureRow featureRow) {
@@ -320,6 +326,5 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
   public void updateService(String serviceId, FormDataBodyPart body) {
 
   }
-
 
 }

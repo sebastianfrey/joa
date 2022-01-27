@@ -12,6 +12,11 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 
+/**
+ * OpenAPI Processor to transform the root OpenAPI document to be OGC API compliant.
+ *
+ * @author sfrey
+ */
 public class OpenAPIProcessor {
   String format;
   UriInfo uriInfo;
@@ -35,7 +40,11 @@ public class OpenAPIProcessor {
     return this;
   }
 
-  public OpenAPIProcessor process(Consumer<OpenAPI> processor) {
+  public OpenAPIProcessor process(Consumer<OpenAPI> processor) throws JsonProcessingException {
+    if (openAPI == null) {
+      throw new IllegalStateException("OpenAPI document must be fetched before it can be processed.");
+    }
+
     processor.accept(openAPI);
 
     return this;
@@ -49,6 +58,10 @@ public class OpenAPIProcessor {
   }
 
   private String getResponse() {
+    if (openAPI == null) {
+      throw new IllegalStateException("OpenAPI document must be fetched before it can be send.");
+    }
+
     if (format.equals("yaml")) {
       return Yaml.pretty(openAPI);
     } else {

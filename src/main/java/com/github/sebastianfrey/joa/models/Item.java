@@ -7,15 +7,38 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({ "type", "bbox", "id", "geometry", "properties", "links"})
-@JsonIgnoreProperties({ "serviceId", "collectionId" })
+/**
+ * The Item model represents the OGC API Feature type.
+ *
+ * @param <G> The geometry type used by an implementer. Must be serializable to valid GeoJSON
+ *        geometry.
+ *
+ * @author sfrey
+ * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/featureGeoJSON.yaml"
+ */
+@JsonPropertyOrder({"type", "bbox", "id", "geometry", "properties", "links"})
+@JsonIgnoreProperties({"serviceId", "collectionId"})
 @JsonInclude(Include.NON_NULL)
-public abstract class Item<Geometry> extends Linkable {
+public abstract class Item<G> extends Linkable {
   @JsonIgnore
   private String serviceId = "";
   @JsonIgnore
   private String collectionId = "";
 
+  /**
+   * returns the type property from a Item instance
+   *
+   * @return String type
+   */
+  public String getType() {
+    return "Feature";
+  }
+
+  /**
+   * returns the serviceId property from a Item instance
+   *
+   * @return String serviceId
+   */
   public String getServiceId() {
     return serviceId;
   }
@@ -24,6 +47,16 @@ public abstract class Item<Geometry> extends Linkable {
     this.serviceId = serviceId;
   }
 
+  public Item<G> serviceId(String serviceId) {
+    setServiceId(serviceId);
+    return this;
+  }
+
+  /**
+   * returns the collectionId property from a Item instance
+   *
+   * @return String collectionId
+   */
   public String getCollectionId() {
     return collectionId;
   }
@@ -32,13 +65,36 @@ public abstract class Item<Geometry> extends Linkable {
     this.collectionId = collectionId;
   }
 
+  public Item<G> collectionId(String collectionId) {
+    setCollectionId(collectionId);
+    return this;
+  }
+
+  /**
+   * returns the id property from a Item instance
+   *
+   * @return String id
+   */
   public abstract String getId();
 
+  /**
+   * returns the bbox property from a Item instance
+   *
+   * @return Bbox Array.
+   */
   public abstract double[] getBbox();
 
+  /**
+   * returns the properties property from a Item instance
+   *
+   * @return Map of properties
+   */
   public abstract Map<String, Object> getProperties();
 
-  public abstract String getType();
-
-  public abstract Geometry getGeometry();
+  /**
+   * returns the geometry property from a Item instance
+   *
+   * @return Geometry instance
+   */
+  public abstract G getGeometry();
 }

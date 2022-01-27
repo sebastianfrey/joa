@@ -6,13 +6,27 @@ import com.github.sebastianfrey.joa.models.Item;
 import mil.nga.sf.geojson.Geometry;
 import mil.nga.sf.geojson.Feature;
 
+/**
+ * GeoPackage specific implementation of the Item model.
+ *
+ * @author sfrey
+ */
 public class GeoPackageItem extends Item<Geometry> {
   @JsonIgnore
   private Feature feature;
 
-  public GeoPackageItem(Feature feature) {
-    this.feature = feature;
+  @Override
+  public GeoPackageItem serviceId(String serviceId) {
+    super.setServiceId(serviceId);
+    return this;
   }
+
+  @Override
+  public GeoPackageItem collectionId(String collectionId) {
+    super.setCollectionId(collectionId);
+    return this;
+  }
+
 
   public Feature getFeature() {
     return feature;
@@ -20,6 +34,11 @@ public class GeoPackageItem extends Item<Geometry> {
 
   public void setFeature(Feature feature) {
     this.feature = feature;
+  }
+
+  public GeoPackageItem feature(Feature feature) {
+    setFeature(feature);
+    return this;
   }
 
   @Override
@@ -35,11 +54,6 @@ public class GeoPackageItem extends Item<Geometry> {
   @Override
   public Map<String, Object> getProperties() {
     return feature.getProperties();
-  }
-
-  @Override
-  public String getType() {
-    return feature.getType();
   }
 
   @Override

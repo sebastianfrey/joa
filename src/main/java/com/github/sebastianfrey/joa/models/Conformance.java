@@ -7,9 +7,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * The conformance class.
+ * The Conformance model represents the OGC API Conformance type.
  *
  * @author sfrey
+ * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/confClasses.yaml"
  */
 @JsonPropertyOrder({"conformsTo", "links"})
 @JsonIgnoreProperties({"serviceId"})

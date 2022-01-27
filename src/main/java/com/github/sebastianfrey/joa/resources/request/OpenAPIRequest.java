@@ -6,6 +6,11 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import io.dropwizard.validation.OneOf;
 
+/**
+ * Request bean used for openapi queries.
+ *
+ * @author sfrey
+ */
 public class OpenAPIRequest {
 
   @QueryParam("f")

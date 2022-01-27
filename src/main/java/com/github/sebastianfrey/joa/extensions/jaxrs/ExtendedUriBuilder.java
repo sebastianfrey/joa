@@ -6,6 +6,11 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
+/**
+ * Enhanced UriBuilder which has support for removing query params.
+ *
+ * @author sfrey
+ */
 public class ExtendedUriBuilder {
   private UriBuilder uriBuilder;
 

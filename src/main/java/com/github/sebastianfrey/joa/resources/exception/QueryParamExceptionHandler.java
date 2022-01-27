@@ -7,6 +7,14 @@ import org.slf4j.LoggerFactory;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 
+/**
+ * A Custom ExceptionMapper for QueryParamExceptions, which will return QueryParamExceptions as HTTP
+ * 400.
+ *
+ * @see "https://stackoverflow.com/questions/583973/jax-rs-jersey-how-to-customize-error-handling"
+ *
+ * @author sfrey
+ */
 public class QueryParamExceptionHandler extends LoggingExceptionMapper<QueryParamException> {
 
   public QueryParamExceptionHandler() {
@@ -18,7 +26,8 @@ public class QueryParamExceptionHandler extends LoggingExceptionMapper<QueryPara
     String message = "invalid value for parameter '" + exception.getParameterName() + "'";
 
     return Response.status(400)
-        .type(MediaType.APPLICATION_JSON_TYPE).entity(new ErrorMessage(400, message))
+        .type(MediaType.APPLICATION_JSON_TYPE)
+        .entity(new ErrorMessage(400, message))
         .build();
   }
 

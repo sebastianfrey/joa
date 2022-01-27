@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.resources.validators;
+package com.github.sebastianfrey.joa.resources.annotations;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,6 +9,11 @@ import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
 import com.github.sebastianfrey.joa.resources.params.DatetimeParam;
 
+/**
+ * Datetime validator annotation.
+ *
+ * @author sfrey
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = { ValidDatetime.Validator.class })
 public @interface ValidDatetime {

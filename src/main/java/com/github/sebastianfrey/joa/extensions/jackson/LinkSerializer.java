@@ -6,6 +6,11 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+/**
+ * Jackson serializer for JAX-RS Links.
+ *
+ * @author sfrey
+ */
 public class LinkSerializer extends StdSerializer<Link> {
 
   public LinkSerializer() {

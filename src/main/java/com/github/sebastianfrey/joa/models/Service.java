@@ -5,38 +5,70 @@ import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
 
+/**
+ * The Service model represents an OGC API landing page type.
+ *
+ * @author sfrey
+ * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/landingPage.yaml"
+ */
 @JsonPropertyOrder({"title", "description", "links"})
 public class Service extends Linkable {
   private String serviceId;
+  private String title;
   private String description;
 
-  public Service(String serviceId) {
-    this(serviceId, "");
-  }
-
-  public Service(String serviceId, String description) {
-    this.serviceId = serviceId;
-    this.description = description;
-  }
-
-  public String getTitle() {
-    return serviceId;
-  }
-
+  /**
+   * returns the serviceId property from a Service instance
+   *
+   * @return String serviceId
+   */
   public String getServiceId() {
     return serviceId;
   }
 
-  public void setServiceId(String title) {
-    this.serviceId = title;
+  public void setServiceId(String serviceId) {
+    this.serviceId = serviceId;
   }
 
+  public Service serviceId(String serviceId) {
+    setServiceId(serviceId);
+    return this;
+  }
+
+  /**
+   * returns the title property from a Service instance
+   *
+   * @return String title
+   */
+  public String getTitle() {
+    return title;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
+  public Service title(String title) {
+    setTitle(title);
+    return this;
+  }
+
+  /**
+   * returns the description property from a Service instance
+   *
+   * @return String description
+   */
   public String getDescription() {
     return description;
   }
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public Service description(String description) {
+    setDescription(description);
+    return this;
   }
 
   @Override
@@ -46,9 +78,9 @@ public class Service extends Linkable {
     for (Link link : links) {
       int index = links.indexOf(link);
 
-      Link newLink = LinkUtils.replaceQuery(link, (uriBuilder) -> {
+      Link newLink = LinkUtils.transformUri(link, (uriBuilder) -> {
         switch (link.getRel()) {
-          case LinkRel.SERVICE_DESC:
+          case Linkable.SERVICE_DESC:
             switch (link.getType()) {
               case MediaType.APPLICATION_OPENAPI_JSON:
                 uriBuilder.replaceQueryParam("f", "json");

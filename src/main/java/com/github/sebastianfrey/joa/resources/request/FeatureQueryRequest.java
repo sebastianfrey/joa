@@ -5,16 +5,22 @@ import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import com.github.sebastianfrey.joa.models.Bbox;
 import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.resources.annotations.ValidBbox;
+import com.github.sebastianfrey.joa.resources.annotations.ValidDatetime;
 import com.github.sebastianfrey.joa.resources.params.BboxParam;
 import com.github.sebastianfrey.joa.resources.params.DatetimeParam;
-import com.github.sebastianfrey.joa.resources.validators.ValidBbox;
-import com.github.sebastianfrey.joa.resources.validators.ValidDatetime;
 
 
+/**
+ * JAX-RS specific FeatureQuery implementation.
+ *
+ * @author sfrey
+ */
 public class FeatureQueryRequest extends FeatureQuery {
 
   @Context
@@ -48,7 +54,6 @@ public class FeatureQueryRequest extends FeatureQuery {
     return offset;
   }
 
-
   @Override
   public Bbox getBbox() {
     return bbox.get();
@@ -62,5 +67,10 @@ public class FeatureQueryRequest extends FeatureQuery {
   @Override
   public String getQueryString() {
     return uriInfo.getRequestUri().getQuery();
+  }
+
+  @Override
+  public MultivaluedMap<String, String> getQueryParameters() {
+    return uriInfo.getQueryParameters();
   }
 }

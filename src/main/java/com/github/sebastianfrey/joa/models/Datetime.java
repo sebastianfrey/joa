@@ -3,6 +3,12 @@ package com.github.sebastianfrey.joa.models;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 
+/**
+ * The Datetime model represents the OGC API datetime query parameter.
+ *
+ * @author sfrey
+ * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/datetime.yaml"
+ */
 public class Datetime {
 
   public final static String OPEN_INTERVAL = "..";
@@ -19,6 +25,12 @@ public class Datetime {
     this.upper = upper;
   }
 
+  /**
+   * returns the lower property from a Datetime instance. When Datetime is not an interval, the
+   * returned value is the same returned from {@link Datetime#getUpper()}
+   *
+   * @return The lower datetime interval.
+   */
   public String getLower() {
     return lower;
   }
@@ -27,6 +39,12 @@ public class Datetime {
     this.lower = lower;
   }
 
+    /**
+   * returns the upper property from a Datetime instance. When Datetime is not an interval, the
+   * returned value is the same returned from {@link Datetime#getLower()}
+   *
+   * @return The upper datetime interval.
+   */
   public String getUpper() {
     return upper;
   }

@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.stream.Stream;
 import com.github.sebastianfrey.joa.models.Datetime;
 
+/**
+ * Simple Datetime converter leveraging JAX-RS String constructor instantiation.
+ *
+ * @sfrey
+ */
 public class DatetimeParam {
 
   public final static String SEPARATOR = "/";

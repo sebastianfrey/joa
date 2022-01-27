@@ -6,6 +6,11 @@ import java.util.stream.Stream;
 import javax.ws.rs.WebApplicationException;
 import com.github.sebastianfrey.joa.models.Bbox;
 
+/**
+ * Simple Bbox converter leveraging JAX-RS String constructor instantiation.
+ *
+ * @sfrey
+ */
 public class BboxParam {
 
   public static final String SEPARATOR = ",";
