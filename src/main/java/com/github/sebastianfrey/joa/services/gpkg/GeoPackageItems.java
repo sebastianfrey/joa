@@ -3,8 +3,6 @@ package com.github.sebastianfrey.joa.services.gpkg;
 import java.util.List;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Linkable;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
@@ -15,9 +13,6 @@ import mil.nga.sf.geojson.Feature;
  *
  * @author sfrey
  */
-@JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})
-@JsonIgnoreProperties({"serviceId", "collectionId", "nextPageAvailable", "prevPageAvailable",
-    "firstPageAvailable", "lastPageAvailable"})
 public class GeoPackageItems extends Items<Feature> {
   @JsonIgnore
   private String queryString = "";
