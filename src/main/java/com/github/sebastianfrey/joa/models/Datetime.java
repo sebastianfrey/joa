@@ -2,6 +2,8 @@ package com.github.sebastianfrey.joa.models;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * The Datetime model represents the OGC API datetime query parameter.
@@ -10,6 +12,8 @@ import java.time.format.DateTimeParseException;
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/parameters/datetime.yaml"
  */
 public class Datetime {
+  public final static String SEPARATOR = "/";
+  public final static String OPEN_INTERVAL = "..";
 
   public static enum DatetimeType {
     DATETIME,
@@ -18,7 +22,6 @@ public class Datetime {
     INTERVAL_OPEN_END;
   }
 
-  public final static String OPEN_INTERVAL = "..";
 
   private Boolean isValid = null;
 
@@ -26,14 +29,16 @@ public class Datetime {
   private String upper;
 
   public Datetime(String value) {
-    this(value, value);
+    parse(value);
+    validate();
   }
 
-  public Datetime(String lower, String upper) {
-    this.lower = lower;
-    this.upper = upper;
+  private void parse(String value) {
+    List<String> values = Stream.of(value.trim().split(SEPARATOR)).toList();
 
-    validate();
+    int i = 0;
+    lower = values.size() > i ? values.get(i++) : null;
+    upper = values.size() > i ? values.get(i++) : lower;
   }
 
   /**

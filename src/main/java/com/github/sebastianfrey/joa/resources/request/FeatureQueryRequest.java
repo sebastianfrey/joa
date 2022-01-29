@@ -13,7 +13,6 @@ import com.github.sebastianfrey.joa.models.FeatureQuery;
 import com.github.sebastianfrey.joa.resources.annotations.ValidBbox;
 import com.github.sebastianfrey.joa.resources.annotations.ValidDatetime;
 import com.github.sebastianfrey.joa.resources.params.BboxParam;
-import com.github.sebastianfrey.joa.resources.params.DatetimeParam;
 
 
 /**
@@ -42,7 +41,7 @@ public class FeatureQueryRequest extends FeatureQuery {
 
   @QueryParam("datetime")
   @ValidDatetime
-  private DatetimeParam datetime;
+  private Datetime datetime;
 
   @Override
   public Integer getLimit() {
@@ -61,7 +60,7 @@ public class FeatureQueryRequest extends FeatureQuery {
 
   @Override
   public Datetime getDatetime() {
-    return datetime.get();
+    return datetime;
   }
 
   @Override

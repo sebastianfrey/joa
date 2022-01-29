@@ -7,7 +7,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import com.github.sebastianfrey.joa.resources.params.DatetimeParam;
+import com.github.sebastianfrey.joa.models.Datetime;
 
 /**
  * Datetime validator annotation.
@@ -18,14 +18,14 @@ import com.github.sebastianfrey.joa.resources.params.DatetimeParam;
 @Constraint(validatedBy = { ValidDatetime.Validator.class })
 public @interface ValidDatetime {
 
-  public class Validator implements ConstraintValidator<ValidDatetime, DatetimeParam> {
+  public class Validator implements ConstraintValidator<ValidDatetime, Datetime> {
     @Override
-    public boolean isValid(DatetimeParam param, ConstraintValidatorContext context) {
-      if (param == null) {
+    public boolean isValid(Datetime datetime, ConstraintValidatorContext context) {
+      if (datetime == null) {
         return true;
       }
 
-      return param.validate();
+      return datetime.validate();
     }
   }
 
