@@ -2,6 +2,7 @@ package com.github.sebastianfrey.joa.services.gpkg;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.ws.rs.core.MultivaluedMap;
 import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
 import mil.nga.geopackage.db.GeoPackageDataType;
@@ -51,6 +52,7 @@ public class GeoPackageQuery {
 
   public String where(StringBuilder whereBuilder, List<String> whereArgs) {
     buildDatetimeWhere(whereBuilder, whereArgs);
+    buildQueryWhere(whereBuilder, whereArgs);
 
     return null;
   }
@@ -73,32 +75,52 @@ public class GeoPackageQuery {
       switch (datetime.getType()) {
         case DATETIME:
           whereBuilder.append(" =  ?");
-          whereArgs.add(stringify(datetime.getLower()));
+          whereArgs.add(datetime.getLower());
           break;
 
         case INTERVAL_CLOSED:
           whereBuilder.append(" BETWEEN ? AND ?");
-          whereArgs.add(stringify(datetime.getLower()));
-          whereArgs.add(stringify(datetime.getUpper()));
+          whereArgs.add(datetime.getLower());
+          whereArgs.add(datetime.getUpper());
           break;
 
         case INTERVAL_OPEN_START:
           whereBuilder.append(" <= ?");
-          whereArgs.add(stringify(datetime.getUpper()));
+          whereArgs.add(datetime.getUpper());
           break;
 
         case INTERVAL_OPEN_END:
           whereBuilder.append(" >= ?");
-          whereArgs.add(stringify(datetime.getLower()));
+          whereArgs.add(datetime.getLower());
           break;
       }
 
       whereBuilder.append(")");
     }
-
   }
 
-  public String stringify(String value) {
-    return /* "'" +  */value/*  + "'" */;
+
+  public void buildQueryWhere(StringBuilder whereBuilder, List<String> whereArgs) {
+    MultivaluedMap<String, String> parameters = query.getQueryParameters();
+
+    List<String> columnNames = List.of(featureDao.getColumnNames());
+
+    parameters.forEach((columnName, values) -> {
+      whereBuilder.append(" AND (");
+      if (!columnNames.contains(columnName)) {
+        return;
+      }
+
+      for (int i = 0; i < values.size(); i++) {
+        if (i > 0) {
+          whereBuilder.append(" OR ");
+        }
+
+        whereBuilder.append(columnName).append(" = ?");
+        whereArgs.add(values.get(i));
+      }
+
+      whereBuilder.append(")");
+    });
   }
 }
