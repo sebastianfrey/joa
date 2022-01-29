@@ -164,20 +164,14 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
         .offset(query.getOffset())
         .limit(query.getLimit());
 
-
-
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
-      String orderBy = featureDao.getIdColumnName();
-      Integer limit = query.getLimit();
-      Long offset = query.getOffset();
+      GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
-      Integer numberMatched = featureDao.count();
-      items.numberMatched(numberMatched.longValue());
+      items.numberMatched(result.getCount());
 
-      FeatureResultSet featureResultSet = featureDao.queryForChunk(orderBy, limit, offset);
-
+      FeatureResultSet featureResultSet = result.getFeatureResultSet();
       try {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
