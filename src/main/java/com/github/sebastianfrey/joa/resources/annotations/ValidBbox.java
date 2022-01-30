@@ -7,7 +7,7 @@ import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import javax.validation.Payload;
-import com.github.sebastianfrey.joa.resources.params.BboxParam;
+import com.github.sebastianfrey.joa.models.Bbox;
 
 /**
  * Bbox validator annotation.
@@ -18,14 +18,14 @@ import com.github.sebastianfrey.joa.resources.params.BboxParam;
 @Constraint(validatedBy = { ValidBbox.Validator.class })
 public @interface ValidBbox {
 
-  public class Validator implements ConstraintValidator<ValidBbox, BboxParam> {
+  public class Validator implements ConstraintValidator<ValidBbox, Bbox> {
     @Override
-    public boolean isValid(BboxParam param, ConstraintValidatorContext context) {
-      if (param == null) {
+    public boolean isValid(Bbox bbox, ConstraintValidatorContext context) {
+      if (bbox == null) {
         return true;
       }
 
-      return param.validate();
+      return bbox.validate();
     }
   }
 

@@ -8,6 +8,7 @@ import com.github.sebastianfrey.joa.models.Item;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 /**
  * Defines the base interface for JOA FeatureService implementations.
@@ -17,9 +18,10 @@ import com.github.sebastianfrey.joa.models.Services;
  *
  * @author sfrey
  */
-public interface FeatureService<F, G>  {
+public interface FeatureService<F, G> {
   /**
    * returns a list all available OGC API services.
+   *
    * @return List of available services
    */
   public Services getServices();
@@ -32,6 +34,34 @@ public interface FeatureService<F, G>  {
    * @return The service instance
    */
   public Service getService(String serviceId);
+
+  /**
+   * Add a new OGC API Service by using the provided files.
+   *
+   * @param body Geo files for populating the service.
+   *
+   * @throws Exception
+   */
+  public void addService(FormDataBodyPart body) throws Exception;
+
+  /**
+   * Update a given OGC API Service by using the provided files.
+   *
+   * @param serviceId The ID of the service.
+   * @param body Geo files for populating the service.
+   *
+   * @throws Exception
+   */
+  public void updateService(String serviceId, FormDataBodyPart body) throws Exception;
+
+  /**
+   * Delete a given OGC API Service by its id.
+   *
+   * @param serviceId The ID of the service.
+   *
+   * @throws Exception
+   */
+  public void deleteService(String serviceId) throws Exception;
 
   /**
    * returns the supported conformance classes for a specific service.
@@ -62,7 +92,8 @@ public interface FeatureService<F, G>  {
   public Collection getCollection(String serviceId, String collectionId);
 
   /**
-   * returns the items (FeatureCollection) from an OGC API collection from a service using the given query.
+   * returns the items (FeatureCollection) from an OGC API collection from a service using the given
+   * query.
    *
    * @param serviceId The ID of the service.
    * @param collectionId The ID of the collection.
@@ -70,7 +101,7 @@ public interface FeatureService<F, G>  {
    *
    * @return The queried items
    */
-  public Items<F> getItems(String serviceId, String collectionId, FeatureQuery query);
+  public Items<F> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception;
 
   /**
    * returns a specific item (Feature) from an OGC API collection from a service by its id.

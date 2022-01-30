@@ -4,4 +4,7 @@ logging:
     com.github.sebastianfrey.joa: DEBUG
 server:
   rootPath: /api
-dataDirectory: /workspaces/joa/data/
+joa:
+  gpkg:
+    worksapce: /workspaces/joa/data/
+    runtime: mod_spatialite

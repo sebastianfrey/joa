@@ -75,12 +75,8 @@ public class Datetime {
 
   public Boolean validate() {
     if (isValid == null) {
-      if (lower == null) {
-        return (isValid = false);
-      }
-
-      if (upper == null) {
-        return (isValid = false);
+      if (lower == null ||  upper == null || lower.isEmpty() || upper.isEmpty()) {
+        return (isValid = true);
       }
 
       if (!isOpenInterval(lower)) {

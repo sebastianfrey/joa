@@ -21,7 +21,6 @@ import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
 import com.github.sebastianfrey.joa.services.FeatureService;
-import com.github.sebastianfrey.joa.services.UploadService;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
@@ -34,16 +33,13 @@ import org.glassfish.jersey.server.model.Resource;
 public class CollectionResource {
 
   @Inject
-  private FeatureService<?, ?> collectionService;
-
-  @Inject
-  private UploadService uploadService;
+  private FeatureService<Object, Object> featureService;
 
   @GET
   @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
       style = InjectLink.Style.ABSOLUTE)
   public Services getServices() throws IOException {
-    return collectionService.getServices();
+    return featureService.getServices();
   }
 
   @GET
@@ -52,12 +48,12 @@ public class CollectionResource {
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Service getCapabilities(@PathParam("serviceId") String serviceId) {
-    return collectionService.getService(serviceId);
+    return featureService.getService(serviceId);
   }
 
   @POST
   public Response getCollections(@FormDataParam("file") FormDataBodyPart body) throws Exception {
-    uploadService.addService(body);
+    featureService.addService(body);
 
     return Response.ok("Data uploaded successfully !!").build();
   }
@@ -71,7 +67,7 @@ public class CollectionResource {
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
   public Conformance getConformance(@PathParam("serviceId") String serviceId) {
-    return collectionService.getConformance(serviceId);
+    return featureService.getConformance(serviceId);
   }
 
   @GET
@@ -83,9 +79,10 @@ public class CollectionResource {
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Collections getCollections(@PathParam("serviceId") String serviceId) {
-    return collectionService.getCollections(serviceId);
+    return featureService.getCollections(serviceId);
   }
 
+  @GET
   @Path("{serviceId}/api")
   @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
       type = MediaType.APPLICATION_OPENAPI_JSON,
@@ -112,7 +109,7 @@ public class CollectionResource {
       type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
   public Collection getCollection(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
-    return collectionService.getCollection(serviceId, collectionId);
+    return featureService.getCollection(serviceId, collectionId);
   }
 
   @GET
@@ -145,10 +142,10 @@ public class CollectionResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  public Items<?> getItems(@PathParam("serviceId") String serviceId,
+  public Items<Object> getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
-      @BeanParam @Valid FeatureQueryRequest featureQuery) {
-    return collectionService.getItems(serviceId, collectionId, featureQuery);
+      @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
+    return featureService.getItems(serviceId, collectionId, featureQuery);
   }
 
   @GET
@@ -158,8 +155,8 @@ public class CollectionResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),
           @Binding(name = "featureId", value = "${instance.id}"),},
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Item<?> getItem(@PathParam("serviceId") String serviceId,
+  public Item<Object> getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
-    return collectionService.getItem(serviceId, collectionId, featureId);
+    return featureService.getItem(serviceId, collectionId, featureId);
   }
 }

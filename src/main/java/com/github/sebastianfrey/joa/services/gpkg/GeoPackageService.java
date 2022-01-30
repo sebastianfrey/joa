@@ -9,6 +9,10 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +29,12 @@ import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.services.FeatureService;
-import com.github.sebastianfrey.joa.services.UploadService;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.sqlite.SQLiteConnection;
+import org.sqlite.core.DB;
 import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
 import mil.nga.geopackage.GeoPackageManager;
@@ -51,17 +56,19 @@ import mil.nga.sf.geojson.FeatureConverter;
  *
  * @author sfrey
  */
-public class GeoPackageService implements FeatureService<Feature, Geometry>, UploadService {
-  private File root;
+public class GeoPackageService implements FeatureService<Feature, Geometry> {
+  private File workspace;
+  private String runtime;
 
-  public GeoPackageService(String root) {
-    this.root = new File(root);
+  public GeoPackageService(String workspace, String runtime) {
+    this.workspace = new File(workspace);
+    this.runtime = runtime;
   }
 
   public Services getServices() {
     Services services = new Services();
 
-    try (DirectoryStream<Path> stream = Files.newDirectoryStream(root.toPath(), "*.gpkg")) {
+    try (DirectoryStream<Path> stream = Files.newDirectoryStream(workspace.toPath(), "*.gpkg")) {
       for (Path path : stream) {
         if (!Files.isDirectory(path)) {
           String fileName = path.getFileName().toString();
@@ -157,7 +164,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
    * @param collectionId
    * @return
    */
-  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query) {
+  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -214,13 +221,47 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
     throw new NotFoundException("Feature with ID '" + featureId + "' does not exist.");
   }
 
-  public GeoPackage open(String file) {
-    File path = Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile();
-    return GeoPackageManager.open(path);
+  public GeoPackage open(String file) throws WebApplicationException {
+    File path = Paths.get(workspace.getAbsolutePath(), file + ".gpkg").toFile();
+    GeoPackage gpkg = null;
+    try {
+      gpkg = GeoPackageManager.open(path);
+
+      // enable spatialite
+      loadSpatialiteRuntime(gpkg);
+
+    } catch (SQLException ex) {
+      if (gpkg != null) {
+        gpkg.close();
+      }
+      throw new WebApplicationException(ex);
+    }
+
+    return gpkg;
+  }
+
+  private void loadSpatialiteRuntime(GeoPackage gpkg) throws SQLException {
+    final Connection con = gpkg.getConnection().getConnection();
+    final DB db = ((SQLiteConnection) con).getDatabase();
+
+    try {
+      db.enable_load_extension(true);
+
+      try (PreparedStatement pstmt = con.prepareStatement("SELECT load_extension(?)")) {
+        pstmt.setString(1, runtime);
+        pstmt.executeQuery();
+      }
+
+      try (Statement stmt = con.createStatement()) {
+        stmt.execute("SELECT EnableGpkgMode()");
+      }
+    } finally {
+      db.enable_load_extension(false);
+    }
   }
 
   public boolean exists(String file) {
-    return Paths.get(root.getAbsolutePath(), file + ".gpkg").toFile().exists();
+    return Paths.get(workspace.getAbsolutePath(), file + ".gpkg").toFile().exists();
   }
 
   public Collection createCollection(String serviceId, FeatureDao featureDao) {
@@ -285,7 +326,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
 
         String fileName = MoreFiles.getNameWithoutExtension(Paths.get(fullFileName));
 
-        File target = Paths.get(root.toString(), fullFileName).toFile();
+        File target = Paths.get(workspace.toString(), fullFileName).toFile();
 
         OutputStream out = new FileOutputStream(target);
         while ((read = fileInputStream.read(bytes)) != -1) {
@@ -299,7 +340,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry>, Upl
 
         ProcessBuilder b = new ProcessBuilder(cmd);
 
-        b.directory(root);
+        b.directory(workspace);
 
         Process p = b.start();
 

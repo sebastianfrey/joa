@@ -3,19 +3,27 @@ package com.github.sebastianfrey.joa;
 import io.dropwizard.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import javax.validation.constraints.NotEmpty;
+import com.github.sebastianfrey.joa.configuration.FeatureServiceFactory;
+import com.github.sebastianfrey.joa.services.FeatureService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 public class JoaConfiguration extends Configuration {
-    @NotEmpty
-    private String dataDirectory;
+    @Valid
+    @NotNull
+    private FeatureServiceFactory joaServiceFactory = new FeatureServiceFactory();
 
-    @JsonProperty
-    public String getDataDirectory() {
-        return dataDirectory;
+    @JsonProperty("joa")
+    public FeatureServiceFactory getJoaServiceFactory() {
+        return joaServiceFactory;
     }
 
-    @JsonProperty
-    public void setDataDirectory(String dataDirectory) {
-        this.dataDirectory = dataDirectory;
+    @JsonProperty("joa")
+    public void setJoaServiceFactory(FeatureServiceFactory joaServiceFactory) {
+        this.joaServiceFactory = joaServiceFactory;
+    }
+
+    public FeatureService<?, ?> getFeatureService() {
+        return joaServiceFactory.getFeatureService();
     }
 }

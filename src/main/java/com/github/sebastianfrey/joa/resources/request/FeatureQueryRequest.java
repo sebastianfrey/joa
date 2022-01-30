@@ -12,8 +12,6 @@ import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
 import com.github.sebastianfrey.joa.resources.annotations.ValidBbox;
 import com.github.sebastianfrey.joa.resources.annotations.ValidDatetime;
-import com.github.sebastianfrey.joa.resources.params.BboxParam;
-
 
 /**
  * JAX-RS specific FeatureQuery implementation.
@@ -37,7 +35,7 @@ public class FeatureQueryRequest extends FeatureQuery {
 
   @QueryParam("bbox")
   @ValidBbox
-  private BboxParam bbox;
+  private Bbox bbox;
 
   @QueryParam("datetime")
   @ValidDatetime
@@ -55,11 +53,35 @@ public class FeatureQueryRequest extends FeatureQuery {
 
   @Override
   public Bbox getBbox() {
-    return bbox.get();
+    try {
+      bbox.validate();
+    } catch (Exception ex) {
+      return null;
+    }
+
+    // return null, when oneof minx, miny, maxx oder maxx is null
+    if (bbox.getMinX() == null || bbox.getMinY() == null || bbox.getMaxX() == null
+        || bbox.getMaxY() == null) {
+      return null;
+    }
+
+    return bbox;
   }
 
   @Override
   public Datetime getDatetime() {
+    try {
+      datetime.validate();
+    } catch (Exception ex) {
+      return null;
+    }
+
+    // return null when lower or upper is null or empty
+    if (datetime.getLower() == null || datetime.getUpper() == null || datetime.getLower().isEmpty()
+        || datetime.getUpper().isEmpty()) {
+      return null;
+    }
+
     return datetime;
   }
 

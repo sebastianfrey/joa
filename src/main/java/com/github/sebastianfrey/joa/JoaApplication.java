@@ -11,8 +11,6 @@ import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
 import com.github.sebastianfrey.joa.resources.CollectionResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
 import com.github.sebastianfrey.joa.services.FeatureService;
-import com.github.sebastianfrey.joa.services.UploadService;
-import com.github.sebastianfrey.joa.services.gpkg.GeoPackageService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
@@ -72,18 +70,14 @@ public class JoaApplication extends Application<JoaConfiguration> {
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {
-    // fetch the data directory
-    final String dataDirectory = configuration.getDataDirectory();
-
-    // set up services
-    final GeoPackageService gpkgService = new GeoPackageService(dataDirectory);
+    // fetch the service
+    final FeatureService<?, ?> featureService = configuration.getFeatureService();
 
     // setup dependency injection for CollectionService
     environment.jersey().register(new AbstractBinder() {
       @Override
       protected void configure() {
-        bind(gpkgService).to(FeatureService.class);
-        bind(gpkgService).to(UploadService.class);
+        bind(featureService).to(FeatureService.class);
       }
     });
 
