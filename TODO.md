@@ -1,13 +1,13 @@
 - [x] Basic resources
 - [ ] Publish resources
-- [ ] Open API
+- [x] Open API
 - [x] Hateos
 - [ ] Projection (CRS)
 - [-] Query
   - [x] Limit
   - [x] Offset
-  - [ ] Bbox
-  - [ ] Datetime
+  - [x] Bbox
+  - [x] Datetime
   - [ ] Sortby
   - [ ] Properties
   - [ ] CQL
