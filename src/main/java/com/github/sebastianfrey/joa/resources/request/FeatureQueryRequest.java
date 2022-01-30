@@ -12,6 +12,12 @@ import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
 import com.github.sebastianfrey.joa.resources.annotations.ValidBbox;
 import com.github.sebastianfrey.joa.resources.annotations.ValidDatetime;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.enums.ParameterStyle;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * JAX-RS specific FeatureQuery implementation.
@@ -27,16 +33,22 @@ public class FeatureQueryRequest extends FeatureQuery {
   @DefaultValue("10")
   @Min(1)
   @Max(10000)
+  @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
+      in = ParameterIn.QUERY, style = ParameterStyle.FORM)
   private Integer limit;
 
   @QueryParam("offset")
   @DefaultValue("0")
   private Long offset;
 
+  @Parameter(required = false, explode = Explode.FALSE, style = ParameterStyle.FORM,
+      in = ParameterIn.QUERY, array = @ArraySchema(minItems = 4, maxItems = 6))
   @QueryParam("bbox")
   @ValidBbox
   private Bbox bbox;
 
+  @Parameter(schema = @Schema(type = "string"), style = ParameterStyle.FORM, required = false,
+      explode = Explode.FALSE, in = ParameterIn.QUERY)
   @QueryParam("datetime")
   @ValidDatetime
   private Datetime datetime;

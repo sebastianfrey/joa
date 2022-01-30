@@ -82,7 +82,6 @@ public class CollectionResource {
     return featureService.getCollections(serviceId);
   }
 
-  @GET
   @Path("{serviceId}/api")
   @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
       type = MediaType.APPLICATION_OPENAPI_JSON,

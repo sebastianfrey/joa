@@ -1,11 +1,19 @@
 package com.github.sebastianfrey.joa.models;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * The FeatureQuery model represents the OGC API parameters list for an items query.
  */
 public abstract class FeatureQuery {
+
+  public static List<String> RESERVED_QUERY_PARAMS = List.of("f", "datetime", "bbox", "limit", "offset");
+
   /**
    * returns the raw query string from an items query.
    *
@@ -53,4 +61,18 @@ public abstract class FeatureQuery {
    * @return Map of query parameters
    */
   public abstract MultivaluedMap<String, String> getQueryParameters();
+
+
+  public void hasUnknownQueryParameters(List<String> columns) {
+    final Set<String> allowedQueryParams =
+        Stream.concat(RESERVED_QUERY_PARAMS.stream(), columns.stream()).collect(Collectors.toSet());
+
+    String unknownQueryParameters = getQueryParameters().keySet().stream().filter((queryParameter) -> {
+      return !allowedQueryParams.contains(queryParameter);
+    }).collect(Collectors.joining(", "));
+
+    if (unknownQueryParameters != null && unknownQueryParameters.length() > 0) {
+      throw new BadRequestException("Unknown query parameters detected: " + unknownQueryParameters);
+    }
+  }
 }

@@ -13,6 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +175,9 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
+      // validate unkown query parameters
+      query.hasUnknownQueryParameters(List.of(featureDao.getColumnNames()));
+
       GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
       items.numberMatched(result.getCount());
@@ -280,13 +284,20 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
         .maxY(envelope.getMaxY())
         .maxZ(envelope.getMaxZ());
 
-    return new Collection().serviceId(serviceId)
+    List<String> temporal = new ArrayList<String>();
+    temporal.add(null);
+    temporal.add(null);
+
+    Collection collection = new Collection().serviceId(serviceId)
         .collectionId(collectionId)
         .title(title)
         .description(description)
         .crs(crs)
         .itemType("feature")
-        .bbox(bbox);
+        .bbox(bbox)
+        .temporal(temporal);
+
+    return collection;
   }
 
   public Feature createFeature(FeatureRow featureRow) {

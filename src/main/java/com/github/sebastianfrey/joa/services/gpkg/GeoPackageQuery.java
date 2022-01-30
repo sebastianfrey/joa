@@ -120,7 +120,7 @@ public class GeoPackageQuery {
 
     parameters.forEach((columnName, values) -> {
       if (!columnNames.contains(columnName)
-          || List.of("datetime", "bbox", "limit", "offset").contains(columnName)) {
+          || FeatureQuery.RESERVED_QUERY_PARAMS.contains(columnName)) {
         return;
       }
 

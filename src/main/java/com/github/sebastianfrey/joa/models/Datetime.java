@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Stream;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * The Datetime model represents the OGC API datetime query parameter.
@@ -25,10 +26,13 @@ public class Datetime {
 
   private Boolean isValid = null;
 
+  @JsonValue
+  private String value;
   private String lower;
   private String upper;
 
   public Datetime(String value) {
+    this.value = value;
     parse(value);
     validate();
   }

@@ -121,7 +121,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
         oas.info(info);
         SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
-            .resourcePackages(Stream.of("com.github.sebastianfrey.joa.rest").collect(Collectors.toSet()));
+            .resourcePackages(Stream.of("com.github.sebastianfrey.joa.resources").collect(Collectors.toSet()));
         environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
   }
 }

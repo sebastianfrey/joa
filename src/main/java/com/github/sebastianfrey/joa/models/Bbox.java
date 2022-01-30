@@ -2,6 +2,7 @@ package com.github.sebastianfrey.joa.models;
 
 import java.util.List;
 import java.util.stream.Stream;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
  * The Bbox model represents the OGC API bbox query parameter.
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
 public class Bbox {
   public static final String SEPARATOR = ",";
 
+  @JsonValue
   private List<Double> values;
 
   private Double minX;
