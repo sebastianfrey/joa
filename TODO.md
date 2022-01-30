@@ -11,3 +11,4 @@
   - [ ] Sortby
   - [ ] Properties
   - [ ] CQL
+- [ ] Tests
