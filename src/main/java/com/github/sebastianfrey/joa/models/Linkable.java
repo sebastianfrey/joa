@@ -63,6 +63,11 @@ public class Linkable {
    */
   public final static String SERVICE_DESC = "service-desc";
 
+    /**
+   * The OpenAPI queryables relationship.
+   */
+  public final static String QUERYABLES = "http://www.opengis.net/def/rel/ogc/1.0/queryables";
+
   @InjectLinks
   private List<Link> links = new ArrayList<>();
 

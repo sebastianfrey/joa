@@ -6,6 +6,7 @@ import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Item;
 import com.github.sebastianfrey.joa.models.Items;
+import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -113,4 +114,14 @@ public interface FeatureService<F, G> {
    * @return The specific item
    */
   public Item<G> getItem(String serviceId, String collectionId, Long featureId);
+
+  /**
+   * returns the queryables from an OGC API collection from a service by its id.
+   *
+   * @param serviceId The ID of the service.
+   * @param collectionId The ID of the collection.
+   *
+   * @return The querables
+   */
+  public Queryables getQueryables(String serviceId, String collectionId);
 }

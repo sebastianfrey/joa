@@ -27,8 +27,12 @@ import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Item;
 import com.github.sebastianfrey.joa.models.Items;
+import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
+import com.github.sebastianfrey.joa.schemas.JSONSchema;
+import com.github.sebastianfrey.joa.schemas.JSONSchemaBuilder;
+import com.github.sebastianfrey.joa.schemas.type.ObjectType;
 import com.github.sebastianfrey.joa.services.FeatureService;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
@@ -66,6 +70,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     this.runtime = runtime;
   }
 
+  @Override
   public Services getServices() {
     Services services = new Services();
 
@@ -95,6 +100,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     return new Service().serviceId(serviceId).title(serviceId);
   }
 
+  @Override
   public Conformance getConformance(String serviceId) {
     Conformance conformance = new Conformance(serviceId);
 
@@ -112,6 +118,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
    *
    * @return
    */
+  @Override
   public Collections getCollections(String serviceId) {
     Collections collections = new Collections().serviceId(serviceId).title(serviceId);
 
@@ -137,6 +144,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
    * @return
    * @throws IOException
    */
+  @Override
   public Collection getCollection(String serviceId, String collectionId) {
     try (GeoPackage gpkg = open(serviceId)) {
       return getCollection(gpkg, serviceId, collectionId);
@@ -154,7 +162,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
    * @return
    * @throws IOException
    */
-  public Collection getCollection(GeoPackage gpkg, String serviceId, String collectionId) {
+  private Collection getCollection(GeoPackage gpkg, String serviceId, String collectionId) {
     return createCollection(serviceId, gpkg.getFeatureDao(collectionId));
   }
 
@@ -165,7 +173,9 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
    * @param collectionId
    * @return
    */
-  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception {
+  @Override
+  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query)
+      throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -201,6 +211,14 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     return items;
   }
 
+  /**
+   * Return a specific item by its id from a given service.
+   *
+   * @param serviceId
+   * @param collectionId
+   * @return
+   */
+  @Override
   public Item<Geometry> getItem(String serviceId, String collectionId, Long featureId) {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
@@ -223,6 +241,56 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     }
 
     throw new NotFoundException("Feature with ID '" + featureId + "' does not exist.");
+  }
+
+  @Override
+  public Queryables getQueryables(String serviceId, String collectionId) {
+    try (GeoPackage gpkg = open(serviceId)) {
+      ObjectType schema = JSONSchemaBuilder.objectType()
+          .title(collectionId)
+          .schema("https://json-schema.org/draft/2019-09/schema");
+
+      FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
+
+      featureDao.getColumns().stream().forEach((column) -> {
+        JSONSchema type = null;
+        switch (column.getDataType()) {
+          case BOOLEAN:
+            type = JSONSchemaBuilder.booleanType();
+            break;
+          case BLOB:
+          case DATE:
+          case DATETIME:
+          case TINYINT:
+          case TEXT:
+            type = JSONSchemaBuilder.stringType();
+            break;
+          case DOUBLE:
+          case FLOAT:
+          case REAL:
+            type = JSONSchemaBuilder.numberType();
+            break;
+          case INT:
+          case INTEGER:
+          case MEDIUMINT:
+          case SMALLINT:
+            type = JSONSchemaBuilder.integerType();
+            break;
+          default:
+            break;
+        }
+
+        if (type == null) {
+          return;
+        }
+
+        schema.property(column.getName(), type).title(column.getName());
+      });
+
+      return new Queryables().serviceId(serviceId).collectionId(collectionId).schema(schema);
+    } catch (GeoPackageException ex) {
+      throw new NotFoundException("Collection with ID '" + collectionId + "' does not exist.", ex);
+    }
   }
 
   public GeoPackage open(String file) throws WebApplicationException {
