@@ -62,8 +62,16 @@ public abstract class FeatureQuery {
    */
   public abstract MultivaluedMap<String, String> getQueryParameters();
 
-
-  public void hasUnknownQueryParameters(List<String> columns) {
+  /**
+   * verifies that the request does not conatin unknown query parameters.
+   *
+   * @see "https://docs.opengeospatial.org/is/17-069r3/17-069r3.html#query_parameters"
+   *
+   * @param columns The list of columns to validate against.
+   *
+   * @throws BadRequestException when the request contains unknown query parameters.
+   */
+  public void validateQueryParameters(List<String> columns) {
     final Set<String> allowedQueryParams =
         Stream.concat(RESERVED_QUERY_PARAMS.stream(), columns.stream()).collect(Collectors.toSet());
 
