@@ -29,7 +29,7 @@ public class FeatureServiceFactory {
 
       return new GeoPackageService(workspace, runtime);
     } else {
-      throw new IllegalStateException("No JOA backend configured.");
+      throw new IllegalStateException("No JOA service configured. Supported backends are: GeoPackage");
     }
   }
 }
