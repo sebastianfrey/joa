@@ -28,8 +28,10 @@ import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Item;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Queryables;
+import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
+import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.GenericType;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
@@ -51,6 +53,7 @@ import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
 import mil.nga.sf.geojson.Geometry;
 import mil.nga.sf.GeometryEnvelope;
+import mil.nga.sf.GeometryType;
 import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
@@ -245,11 +248,18 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     try (GeoPackage gpkg = open(serviceId)) {
       ObjectType schema = JSONSchemaBuilder.objectType()
           .title(collectionId)
-          .schema("https://json-schema.org/draft/2019-09/schema");
+          .schema(Schemas.DRAFT_2019_09);
 
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
+      String geometryColumn = featureDao.getGeometryColumnName();
+      GeometryType geometryType = featureDao.getGeometryType();
+
       featureDao.getColumns().stream().forEach((column) -> {
+        if (column.getName().equals(geometryColumn)) {
+          return;
+        }
+
         GenericType<?> type = null;
         switch (column.getDataType()) {
           case BOOLEAN:
@@ -288,6 +298,38 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
 
         schema.property(column.getName(), type.title(column.getName()));
       });
+
+      JSONSchema geometrySchema = null;
+
+      switch (geometryType) {
+        case GEOMETRY:
+          geometrySchema = Schemas.GeoJSON.geometry();
+          break;
+        case POINT:
+          geometrySchema = Schemas.GeoJSON.point();
+          break;
+        case LINESTRING:
+          geometrySchema = Schemas.GeoJSON.lineString();
+          break;
+        case POLYGON:
+          geometrySchema = Schemas.GeoJSON.polygon();
+          break;
+        case MULTIPOINT:
+          geometrySchema = Schemas.GeoJSON.multiPoint();
+          break;
+        case MULTILINESTRING:
+          geometrySchema = Schemas.GeoJSON.multiLineString();
+          break;
+        case MULTIPOLYGON:
+          geometrySchema = Schemas.GeoJSON.multiPolygon();
+          break;
+        default:
+          break;
+      }
+
+      if (geometrySchema != null) {
+        schema.property(geometryColumn, geometrySchema);
+      }
 
       return new Queryables().serviceId(serviceId).collectionId(collectionId).schema(schema);
     } catch (GeoPackageException ex) {

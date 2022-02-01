@@ -6,7 +6,6 @@ import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 
 public class Queryables extends Linkable {
   ObjectType schema;
-
   String serviceId;
   String collectionId;
 
