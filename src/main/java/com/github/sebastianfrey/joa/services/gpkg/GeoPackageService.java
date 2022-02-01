@@ -30,8 +30,8 @@ import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
-import com.github.sebastianfrey.joa.schemas.JSONSchema;
 import com.github.sebastianfrey.joa.schemas.JSONSchemaBuilder;
+import com.github.sebastianfrey.joa.schemas.type.GenericType;
 import com.github.sebastianfrey.joa.schemas.type.ObjectType;
 import com.github.sebastianfrey.joa.services.FeatureService;
 import com.google.common.io.MoreFiles;
@@ -253,17 +253,22 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
       featureDao.getColumns().stream().forEach((column) -> {
-        JSONSchema type = null;
+        GenericType<?> type = null;
         switch (column.getDataType()) {
           case BOOLEAN:
             type = JSONSchemaBuilder.booleanType();
             break;
           case BLOB:
-          case DATE:
-          case DATETIME:
           case TINYINT:
           case TEXT:
             type = JSONSchemaBuilder.stringType();
+            break;
+          case DATE:
+            type = JSONSchemaBuilder.stringType().format("date");
+
+            break;
+          case DATETIME:
+            type = JSONSchemaBuilder.stringType().format("date-time");
             break;
           case DOUBLE:
           case FLOAT:
@@ -284,7 +289,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
           return;
         }
 
-        schema.property(column.getName(), type).title(column.getName());
+        schema.property(column.getName(), type.title(column.getName()));
       });
 
       return new Queryables().serviceId(serviceId).collectionId(collectionId).schema(schema);
