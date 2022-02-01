@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "title": "title",
+  "properties": {
+    "number": {
+      "type": "number",
+      "title": "number"
+    },
+    "string": {
+      "type": "string",
+      "title": "string"
+    }
+  },
+  "patternProperties": {
+    "^_S": {
+      "type": "string"
+    }
+  },
+  "required": ["string"],
+  "additionalProperties": true,
+  "unevaluatedProperties": true,
+  "minProperties": 1,
+  "maxProperties": 2,
+  "propertyNames": {
+    "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+  }
+}

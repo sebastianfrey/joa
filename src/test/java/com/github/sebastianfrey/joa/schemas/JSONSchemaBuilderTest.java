@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static com.github.sebastianfrey.joa.schemas.JSONSchemaBuilder.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sebastianfrey.joa.schemas.composition.AllOfComposition;
 import com.github.sebastianfrey.joa.schemas.composition.AnyOfComposition;
@@ -15,6 +16,7 @@ import com.github.sebastianfrey.joa.schemas.type.BooleanType;
 import com.github.sebastianfrey.joa.schemas.type.ConstType;
 import com.github.sebastianfrey.joa.schemas.type.Defs;
 import com.github.sebastianfrey.joa.schemas.type.EnumType;
+import com.github.sebastianfrey.joa.schemas.type.GenericType;
 import com.github.sebastianfrey.joa.schemas.type.IntegerType;
 import com.github.sebastianfrey.joa.schemas.type.NullType;
 import com.github.sebastianfrey.joa.schemas.type.NumberType;
@@ -76,6 +78,25 @@ public class JSONSchemaBuilderTest {
   }
 
   @Test
+  public void should_serialize_generic_type() throws Exception {
+    GenericType<?> genericType = genericType().title("title")
+        .description("description")
+        .defaultValue("default")
+        .examples(List.of("test", 3, true))
+        .readOnly()
+        .writeOnly()
+        .deprecated()
+        .id("http://localhost/api/examples/point1/queryables?f=json")
+        .schema("https://json-schema.org/draft/2019-09/schema");
+
+    final String expected = MAPPER.writeValueAsString(
+        MAPPER.readValue(fixture("fixtures/schemas/type/generic.json"), GenericType.class));
+
+    assertThat(MAPPER.writeValueAsString(genericType)).isEqualTo(expected);
+  }
+
+
+  @Test
   public void should_serialize_integer_type() throws Exception {
     IntegerType integerType = integerType();
 
@@ -111,6 +132,25 @@ public class JSONSchemaBuilderTest {
 
     final String expected = MAPPER.writeValueAsString(
         MAPPER.readValue(fixture("fixtures/schemas/type/object.json"), ObjectType.class));
+
+    assertThat(MAPPER.writeValueAsString(objectType)).isEqualTo(expected);
+  }
+
+  @Test
+  public void should_serialize_full_object_type() throws Exception {
+    ObjectType objectType = objectType().title("title")
+        .property("string", stringType().title("string"))
+        .property("number", numberType().title("number"))
+        .patternProperty("^_S", stringType())
+        .required(List.of("string"))
+        .additionalProperties()
+        .unevaluatedProperties()
+        .minProperties(1)
+        .maxProperties(2)
+        .propertyNames("^[A-Za-z_][A-Za-z0-9_]*$");
+
+    final String expected = MAPPER.writeValueAsString(
+        MAPPER.readValue(fixture("fixtures/schemas/type/objectFull.json"), ObjectType.class));
 
     assertThat(MAPPER.writeValueAsString(objectType)).isEqualTo(expected);
   }

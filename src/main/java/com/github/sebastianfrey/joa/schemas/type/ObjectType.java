@@ -3,6 +3,7 @@ package com.github.sebastianfrey.joa.schemas.type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.sebastianfrey.joa.schemas.JSONSchema;
 
@@ -106,16 +107,23 @@ public class ObjectType extends GenericType<ObjectType> {
     return this;
   }
 
+  @JsonProperty("propertyNames")
   public PatternType getPropertyNames() {
     return propertyNames;
   }
 
+  @JsonProperty("propertyNames")
   public void setPropertyNames(PatternType propertyNames) {
     this.propertyNames = propertyNames;
   }
 
-  public void setPropertyNames(String propertyName) {
-    this.propertyNames = new PatternType(propertyName);
+  public void setPropertyNames(String pattern) {
+    this.propertyNames = new PatternType(pattern);
+  }
+
+  public ObjectType propertyNames(String pattern) {
+    this.propertyNames = new PatternType(pattern);
+    return this;
   }
 
   public Integer getMinProperties() {
@@ -131,11 +139,11 @@ public class ObjectType extends GenericType<ObjectType> {
     return this;
   }
 
-  public Integer getMaxPropreties() {
+  public Integer getMaxProperties() {
     return maxProperties;
   }
 
-  public void setMaxPropreties(Integer maxProperties) {
+  public void setMaxProperties(Integer maxProperties) {
     this.maxProperties = maxProperties;
   }
 

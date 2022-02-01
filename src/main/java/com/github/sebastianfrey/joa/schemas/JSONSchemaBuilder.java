@@ -20,7 +20,7 @@ import com.github.sebastianfrey.joa.schemas.type.StringType;
 
 public class JSONSchemaBuilder {
 
-  private static <T extends GenericType<T>> GenericType<T> genericType() {
+  static <T extends GenericType<T>> GenericType<T> genericType() {
     return new GenericType<>();
   }
 
