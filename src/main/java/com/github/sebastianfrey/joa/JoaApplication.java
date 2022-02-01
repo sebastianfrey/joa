@@ -8,7 +8,7 @@ import javax.servlet.FilterRegistration;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
-import com.github.sebastianfrey.joa.resources.CollectionResource;
+import com.github.sebastianfrey.joa.resources.FeatureServiceResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
 import com.github.sebastianfrey.joa.services.FeatureService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -82,7 +82,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
     });
 
     // set up resources
-    environment.jersey().register(CollectionResource.class);
+    environment.jersey().register(FeatureServiceResource.class);
   }
 
   private void cors(final JoaConfiguration configuration, final Environment environment) {

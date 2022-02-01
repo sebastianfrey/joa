@@ -31,7 +31,7 @@ import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
-public class CollectionResource {
+public class FeatureServiceResource {
 
     @Inject
     private FeatureService<Object, Object> featureService;
