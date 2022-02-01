@@ -1,5 +1,6 @@
 package com.github.sebastianfrey.joa.models;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -71,7 +72,7 @@ public abstract class FeatureQuery {
    *
    * @throws BadRequestException when the request contains unknown query parameters.
    */
-  public void validateQueryParameters(List<String> columns) {
+  public void validateQueryParameters(Collection<String> columns) {
     final Set<String> allowedQueryParams =
         Stream.concat(RESERVED_QUERY_PARAMS.stream(), columns.stream()).collect(Collectors.toSet());
 

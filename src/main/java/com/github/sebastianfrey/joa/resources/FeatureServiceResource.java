@@ -1,6 +1,7 @@
 package com.github.sebastianfrey.joa.resources;
 
 import java.io.IOException;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.ws.rs.BeanParam;
@@ -33,148 +34,152 @@ import org.glassfish.jersey.server.model.Resource;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
 public class FeatureServiceResource {
 
-    @Inject
-    private FeatureService<Object, Object> featureService;
+  @Inject
+  private FeatureService<Object, Object> featureService;
 
-    @GET
-    @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-            style = InjectLink.Style.ABSOLUTE)
-    public Services getServices() throws IOException {
-        return featureService.getServices();
-    }
+  @GET
+  @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+      style = InjectLink.Style.ABSOLUTE)
+  public Services getServices() throws IOException {
+    return featureService.getServices();
+  }
 
-    @GET
-    @Path("{serviceId}")
-    @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-            style = InjectLink.Style.ABSOLUTE)
-    public Service getCapabilities(@PathParam("serviceId") String serviceId) {
-        return featureService.getService(serviceId);
-    }
+  @GET
+  @Path("{serviceId}")
+  @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  public Service getCapabilities(@PathParam("serviceId") String serviceId) {
+    return featureService.getService(serviceId);
+  }
 
-    @POST
-    public Response getCollections(@FormDataParam("file") FormDataBodyPart body) throws Exception {
-        featureService.addService(body);
+  @POST
+  public Response getCollections(@FormDataParam("file") FormDataBodyPart body) throws Exception {
+    featureService.addService(body);
 
-        return Response.ok("Data uploaded successfully !!").build();
-    }
+    return Response.ok("Data uploaded successfully !!").build();
+  }
 
-    @GET
-    @Path("{serviceId}/conformance")
-    @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE,
-            type = MediaType.APPLICATION_JSON,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-            style = InjectLink.Style.ABSOLUTE)
-    public Conformance getConformance(@PathParam("serviceId") String serviceId) {
-        return featureService.getConformance(serviceId);
-    }
+  @GET
+  @Path("{serviceId}/conformance")
+  @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE, type = MediaType.APPLICATION_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+      style = InjectLink.Style.ABSOLUTE)
+  public Conformance getConformance(@PathParam("serviceId") String serviceId) {
+    return featureService.getConformance(serviceId);
+  }
 
-    @GET
-    @Path("{serviceId}/collections")
-    @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.APPLICATION_JSON,
-            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-            style = InjectLink.Style.ABSOLUTE)
-    public Collections getCollections(@PathParam("serviceId") String serviceId) {
-        return featureService.getCollections(serviceId);
-    }
+  @GET
+  @Path("{serviceId}/collections")
+  @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.APPLICATION_JSON,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  public Collections getCollections(@PathParam("serviceId") String serviceId) {
+    return featureService.getCollections(serviceId);
+  }
 
-    @Path("{serviceId}/api")
-    @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
-            type = MediaType.APPLICATION_OPENAPI_JSON,
-            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
-            type = MediaType.APPLICATION_OPENAPI_YAML,
-            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-            style = InjectLink.Style.ABSOLUTE)
-    @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
-    public Resource getApi() {
-        return Resource.from(OpenAPIResource.class);
-    }
+  @Path("{serviceId}/api")
+  @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
+      type = MediaType.APPLICATION_OPENAPI_JSON,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
+      type = MediaType.APPLICATION_OPENAPI_YAML,
+      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+      style = InjectLink.Style.ABSOLUTE)
+  @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
+  public Resource getApi() {
+    return Resource.from(OpenAPIResource.class);
+  }
 
-    @GET
-    @Path("{serviceId}/collections/{collectionId}")
-    @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Item.class, rel = Linkable.COLLECTION,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
-    public Collection getCollection(@PathParam("serviceId") String serviceId,
-            @PathParam("collectionId") String collectionId) {
-        return featureService.getCollection(serviceId, collectionId);
-    }
+  @GET
+  @Path("{serviceId}/collections/{collectionId}")
+  @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Item.class, rel = Linkable.COLLECTION,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
+  public Collection getCollection(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId) {
+    return featureService.getCollection(serviceId, collectionId);
+  }
 
-    @GET
-    @Path("{serviceId}/collections/{collectionId}/items")
-    @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
-            type = MediaType.APPLICATION_GEO_JSON,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Items.class, rel = Linkable.SELF,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Items.class, rel = Linkable.NEXT,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            condition = "${instance.nextPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Items.class, rel = Linkable.PREV,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            condition = "${instance.prevPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Items.class, rel = Linkable.FIRST,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            condition = "${instance.firstPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-            style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Items.class, rel = Linkable.LAST,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-            style = InjectLink.Style.ABSOLUTE)
-    public Items<Object> getItems(@PathParam("serviceId") String serviceId,
-            @PathParam("collectionId") String collectionId,
-            @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
-        return featureService.getItems(serviceId, collectionId, featureQuery);
-    }
+  @GET
+  @Path("{serviceId}/collections/{collectionId}/items")
+  @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
+      type = MediaType.APPLICATION_GEO_JSON,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Items.class, rel = Linkable.SELF,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Items.class, rel = Linkable.NEXT,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      condition = "${instance.nextPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Items.class, rel = Linkable.PREV,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      condition = "${instance.prevPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Items.class, rel = Linkable.FIRST,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      condition = "${instance.firstPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+      style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Items.class, rel = Linkable.LAST,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+      style = InjectLink.Style.ABSOLUTE)
+  public Items<Object> getItems(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId,
+      @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
+    final Set<String> queryables =
+        getQueryables(serviceId, collectionId).getSchema().getProperties().keySet();
 
-    @GET
-    @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
-    @ProvideLink(value = Item.class, rel = Linkable.SELF,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),
-                    @Binding(name = "featureId", value = "${instance.id}"),},
-            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-    public Item<Object> getItem(@PathParam("serviceId") String serviceId,
-            @PathParam("collectionId") String collectionId,
-            @PathParam("featureId") Long featureId) {
-        return featureService.getItem(serviceId, collectionId, featureId);
-    }
+    // validate query parameters
+    featureQuery.validateQueryParameters(queryables);
 
-    @GET
-    @Path("{serviceId}/collections/{collectionId}/queryables")
-    @ProvideLink(value = Queryables.class, rel = Linkable.SELF,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-    @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
-            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-    public Queryables getQueryables(@PathParam("serviceId") String serviceId,
-            @PathParam("collectionId") String collectionId) {
-        return featureService.getQueryables(serviceId, collectionId);
-    }
+    return featureService.getItems(serviceId, collectionId, featureQuery);
+  }
+
+  @GET
+  @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
+  @ProvideLink(value = Item.class, rel = Linkable.SELF,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),
+          @Binding(name = "featureId", value = "${instance.id}"),},
+      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+  public Item<Object> getItem(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
+    return featureService.getItem(serviceId, collectionId, featureId);
+  }
+
+  @GET
+  @Path("{serviceId}/collections/{collectionId}/queryables")
+  @ProvideLink(value = Queryables.class, rel = Linkable.SELF,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+  @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+  public Queryables getQueryables(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId) {
+    return featureService.getQueryables(serviceId, collectionId);
+  }
 }

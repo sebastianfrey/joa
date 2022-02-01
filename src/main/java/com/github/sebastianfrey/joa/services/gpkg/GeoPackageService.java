@@ -185,9 +185,6 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
-      // validate query parameters
-      query.validateQueryParameters(List.of(featureDao.getColumnNames()));
-
       GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
       items.numberMatched(result.getCount());
