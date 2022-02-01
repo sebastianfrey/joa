@@ -10,6 +10,8 @@ public class ArrayType extends GenericType<ArrayType> {
   private List<JSONSchema> prefixItems;
   private Boolean uniqueItems;
   private JSONSchema contains;
+  private Integer minItems;
+  private Integer maxItems;
 
   @Override
   public String getType() {
@@ -73,4 +75,31 @@ public class ArrayType extends GenericType<ArrayType> {
     this.contains = contains;
     return this;
   }
+
+  public Integer getMinItems() {
+    return minItems;
+  }
+
+  public void setMinItems(Integer minItems) {
+    this.minItems = minItems;
+  }
+
+  public ArrayType minItems(Integer minItems) {
+    this.minItems = minItems;
+    return this;
+  }
+
+  public Integer getMaxItems() {
+    return maxItems;
+  }
+
+  public void setMaxItems(Integer maxItems) {
+    this.maxItems = maxItems;
+  }
+
+  public ArrayType maxItems(Integer maxItems) {
+    this.maxItems = maxItems;
+    return this;
+  }
+
 }
