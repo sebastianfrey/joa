@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 public class PatternType {
   private String pattern;

@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.schemas;
+package com.github.sebastianfrey.joa.models.schema;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

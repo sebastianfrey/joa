@@ -2,7 +2,7 @@ package com.github.sebastianfrey.joa.models;
 
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.github.sebastianfrey.joa.schemas.type.ObjectType;
+import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 
 public class Queryables extends Linkable {
   ObjectType schema;

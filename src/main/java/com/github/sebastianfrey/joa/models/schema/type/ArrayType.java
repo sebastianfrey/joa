@@ -1,8 +1,8 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.github.sebastianfrey.joa.schemas.JSONSchema;
+import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 
 @JsonDeserialize(as = ArrayType.class)
 public class ArrayType extends GenericType<ArrayType> {

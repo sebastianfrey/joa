@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 

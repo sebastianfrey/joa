@@ -1,22 +1,22 @@
-package com.github.sebastianfrey.joa.schemas;
+package com.github.sebastianfrey.joa.models.schema;
 
 import java.util.List;
-import com.github.sebastianfrey.joa.schemas.composition.AllOfComposition;
-import com.github.sebastianfrey.joa.schemas.composition.AnyOfComposition;
-import com.github.sebastianfrey.joa.schemas.composition.NotComposition;
-import com.github.sebastianfrey.joa.schemas.composition.OneOfComposition;
-import com.github.sebastianfrey.joa.schemas.type.ArrayType;
-import com.github.sebastianfrey.joa.schemas.type.BooleanType;
-import com.github.sebastianfrey.joa.schemas.type.ConstType;
-import com.github.sebastianfrey.joa.schemas.type.Defs;
-import com.github.sebastianfrey.joa.schemas.type.EnumType;
-import com.github.sebastianfrey.joa.schemas.type.GenericType;
-import com.github.sebastianfrey.joa.schemas.type.IntegerType;
-import com.github.sebastianfrey.joa.schemas.type.NullType;
-import com.github.sebastianfrey.joa.schemas.type.NumberType;
-import com.github.sebastianfrey.joa.schemas.type.ObjectType;
-import com.github.sebastianfrey.joa.schemas.type.Ref;
-import com.github.sebastianfrey.joa.schemas.type.StringType;
+import com.github.sebastianfrey.joa.models.schema.composition.AllOfComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.AnyOfComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.NotComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.OneOfComposition;
+import com.github.sebastianfrey.joa.models.schema.type.ArrayType;
+import com.github.sebastianfrey.joa.models.schema.type.BooleanType;
+import com.github.sebastianfrey.joa.models.schema.type.ConstType;
+import com.github.sebastianfrey.joa.models.schema.type.Defs;
+import com.github.sebastianfrey.joa.models.schema.type.EnumType;
+import com.github.sebastianfrey.joa.models.schema.type.GenericType;
+import com.github.sebastianfrey.joa.models.schema.type.IntegerType;
+import com.github.sebastianfrey.joa.models.schema.type.NullType;
+import com.github.sebastianfrey.joa.models.schema.type.NumberType;
+import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
+import com.github.sebastianfrey.joa.models.schema.type.Ref;
+import com.github.sebastianfrey.joa.models.schema.type.StringType;
 
 public class JSONSchemaBuilder {
 

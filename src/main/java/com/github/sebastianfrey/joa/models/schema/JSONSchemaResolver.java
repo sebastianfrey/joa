@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.schemas;
+package com.github.sebastianfrey.joa.models.schema;
 
 import java.util.Collection;
 import com.fasterxml.jackson.databind.DeserializationConfig;

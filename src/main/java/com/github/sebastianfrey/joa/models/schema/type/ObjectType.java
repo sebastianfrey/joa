@@ -1,11 +1,11 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.github.sebastianfrey.joa.schemas.JSONSchema;
+import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 
 @JsonDeserialize(as = ObjectType.class)
 public class ObjectType extends GenericType<ObjectType> {

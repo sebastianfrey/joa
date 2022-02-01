@@ -1,15 +1,15 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.sebastianfrey.joa.schemas.composition.AllOfComposition;
-import com.github.sebastianfrey.joa.schemas.composition.AnyOfComposition;
-import com.github.sebastianfrey.joa.schemas.composition.NotComposition;
-import com.github.sebastianfrey.joa.schemas.composition.OneOfComposition;
-import com.github.sebastianfrey.joa.schemas.JSONSchema;
+import com.github.sebastianfrey.joa.models.schema.JSONSchema;
+import com.github.sebastianfrey.joa.models.schema.composition.AllOfComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.AnyOfComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.NotComposition;
+import com.github.sebastianfrey.joa.models.schema.composition.OneOfComposition;
 
 @JsonPropertyOrder({"type", "title", "description"})
 public class GenericType<T extends GenericType<T>> implements EnumType, ConstType,

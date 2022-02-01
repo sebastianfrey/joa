@@ -1,4 +1,4 @@
-package com.github.sebastianfrey.joa.schemas.type;
+package com.github.sebastianfrey.joa.models.schema.type;
 
 public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     extends GenericType<GenericNumberType<T, K>> {
