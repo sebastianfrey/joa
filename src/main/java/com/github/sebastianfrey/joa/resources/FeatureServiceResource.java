@@ -37,6 +37,12 @@ public class FeatureServiceResource {
   @Inject
   private FeatureService<Object, Object> featureService;
 
+  public FeatureServiceResource() {}
+
+  public FeatureServiceResource(FeatureService<Object, Object> featureService) {
+    this.featureService = (FeatureService<Object, Object>) featureService;
+  }
+
   @GET
   @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
       style = InjectLink.Style.ABSOLUTE)
@@ -54,7 +60,7 @@ public class FeatureServiceResource {
   }
 
   @POST
-  public Response getCollections(@FormDataParam("file") FormDataBodyPart body) throws Exception {
+  public Response addService(@FormDataParam("file") FormDataBodyPart body) throws Exception {
     featureService.addService(body);
 
     return Response.ok("Data uploaded successfully !!").build();

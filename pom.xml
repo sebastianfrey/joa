@@ -14,26 +14,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>2.0.28</dropwizard.version>
-        <jersey.version>2.35</jersey.version>
-        <jaxb.version>2.3.1</jaxb.version>
         <geopackage.version>6.1.2</geopackage.version>
         <swagger.version>2.1.12</swagger.version>
-        <guava.version>31.0.1-jre</guava.version>
         <bullwinkle.version>v1.4.6</bullwinkle.version>
         <assertj.version>3.22.0</assertj.version>
         <junit.version>5.8.2</junit.version>
+        <mockito.version>4.3.1</mockito.version>
         <mainClass>com.github.sebastianfrey.joa.JoaApplication</mainClass>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <version>2.12.2</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-dependencies</artifactId>
@@ -64,7 +55,6 @@
         <dependency>
             <groupId>org.glassfish.jersey.ext</groupId>
             <artifactId>jersey-declarative-linking</artifactId>
-            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>mil.nga.geopackage</groupId>
@@ -86,11 +76,6 @@
             <artifactId>swagger-integration</artifactId>
             <version>${swagger.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
         <!-- Uncomment to get support for BFN parsing -->
         <!--
         <dependency>
@@ -110,6 +95,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

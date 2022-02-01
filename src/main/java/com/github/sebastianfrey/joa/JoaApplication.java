@@ -7,6 +7,7 @@ import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.github.sebastianfrey.joa.extensions.jackson.LinkDeserializer;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
 import com.github.sebastianfrey.joa.resources.FeatureServiceResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
@@ -108,20 +109,25 @@ public class JoaApplication extends Application<JoaConfiguration> {
   private void jackson(final JoaConfiguration configuration, final Environment environment) {
     SimpleModule module = new SimpleModule();
     module.addSerializer(Link.class, new LinkSerializer());
+    module.addDeserializer(Link.class, new LinkDeserializer());
     environment.getObjectMapper().registerModule(module);
-}
+  }
 
   private void openapi(final JoaConfiguration configuration, final Environment environment) {
-        // openapi
-        OpenAPI oas = new OpenAPI();
-        Info info = new Info().title("JOA").description("Java based OGC-API-Features implementation.")
-            .license(new License().name("MIT")).version("1.0.0")
-            .termsOfService("http://example.com/terms")
-            .contact(new Contact().email("sebastian.frey@outlook.com"));
+    // openapi
+    OpenAPI oas = new OpenAPI();
+    Info info = new Info().title("JOA")
+        .description("Java based OGC-API-Features implementation.")
+        .license(new License().name("MIT"))
+        .version("1.0.0")
+        .termsOfService("http://example.com/terms")
+        .contact(new Contact().email("sebastian.frey@outlook.com"));
 
-        oas.info(info);
-        SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true)
-            .resourcePackages(Stream.of("com.github.sebastianfrey.joa.resources").collect(Collectors.toSet()));
-        environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
+    oas.info(info);
+    SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas)
+        .prettyPrint(true)
+        .resourcePackages(
+            Stream.of("com.github.sebastianfrey.joa.resources").collect(Collectors.toSet()));
+    environment.jersey().register(new OpenApiResource().openApiConfiguration(oasConfig));
   }
 }
