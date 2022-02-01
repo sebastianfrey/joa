@@ -1,0 +1,11 @@
+{
+  "title": "title",
+  "description": "description",
+  "default": "default",
+  "examples": ["test", 3, true],
+  "readOnly": true,
+  "writeOnly": true,
+  "deprecated": true,
+  "$id": "http://localhost/api/examples/point1/queryables?f=json",
+  "$schema": "https://json-schema.org/draft/2019-09/schema"
+}

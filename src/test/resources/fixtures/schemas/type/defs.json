@@ -1,1 +1,7 @@
-{"$defs":{"name":{"type":"string"}}}
+{
+  "$defs": {
+    "name": {
+      "type": "string"
+    }
+  }
+}
