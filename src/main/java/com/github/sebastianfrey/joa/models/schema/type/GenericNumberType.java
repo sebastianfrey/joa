@@ -18,7 +18,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
 
   @SuppressWarnings("unchecked")
   public T multipleOf(Integer multipleOf) {
-    this.multipleOf = multipleOf;
+    setMultipleOf(multipleOf);;
     return (T) this;
   }
 
@@ -28,7 +28,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
 
   @SuppressWarnings("unchecked")
   public T minimum(K minimum) {
-    this.minimum = minimum;
+    setMinimum(minimum);;
     return (T) this;
   }
 
@@ -46,7 +46,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
 
   @SuppressWarnings("unchecked")
   public T exclusiveMinimum(K exclusiveMinimum) {
-    this.exclusiveMinimum = exclusiveMinimum;
+    setExclusiveMaximum(exclusiveMaximum);
     return (T) this;
   }
 

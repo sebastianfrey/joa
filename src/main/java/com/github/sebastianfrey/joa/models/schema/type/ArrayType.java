@@ -27,7 +27,7 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType items(JSONSchema items) {
-    this.items = items;
+    setItems(items);
     return this;
   }
 
@@ -40,7 +40,7 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType prefixItems(List<JSONSchema> prefixItems) {
-    this.prefixItems = prefixItems;
+    setPrefixItems(prefixItems);
     return this;
   }
 
@@ -53,12 +53,12 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType uniqueItems() {
-    this.uniqueItems = Boolean.TRUE;
+    setUniqueItems(Boolean.TRUE);
     return this;
   }
 
   public ArrayType noUniqueItems() {
-    this.uniqueItems = Boolean.FALSE;
+    setUniqueItems(Boolean.FALSE);
     return this;
   }
 
@@ -72,7 +72,7 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType contains(JSONSchema contains) {
-    this.contains = contains;
+    setContains(contains);
     return this;
   }
 
@@ -85,7 +85,7 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType minItems(Integer minItems) {
-    this.minItems = minItems;
+    setMinItems(minItems);
     return this;
   }
 
@@ -98,7 +98,7 @@ public class ArrayType extends GenericType<ArrayType> {
   }
 
   public ArrayType maxItems(Integer maxItems) {
-    this.maxItems = maxItems;
+    setMaxItems(maxItems);
     return this;
   }
 

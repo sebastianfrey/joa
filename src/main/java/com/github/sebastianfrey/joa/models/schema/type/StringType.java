@@ -23,7 +23,7 @@ public class StringType extends GenericType<StringType> {
   }
 
   public StringType minLength(Integer minLength) {
-    this.minLength = minLength;
+    setMinLength(minLength);
     return this;
   }
 
@@ -32,7 +32,7 @@ public class StringType extends GenericType<StringType> {
   }
 
   public void setMaxLength(Integer maxLength) {
-    this.maxLength = maxLength;
+    setMaxLength(maxLength);
   }
 
   public StringType maxLength(Integer maxLength) {
@@ -49,7 +49,7 @@ public class StringType extends GenericType<StringType> {
   }
 
   public StringType pattern(String pattern) {
-    this.pattern = pattern;
+    setPattern(pattern);
     return this;
   }
 
@@ -62,7 +62,7 @@ public class StringType extends GenericType<StringType> {
   }
 
   public StringType format(String format) {
-    this.format = format;
+    setFormat(format);
     return this;
   }
 }

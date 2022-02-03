@@ -153,7 +153,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T deprecated() {
-    this.deprecated = Boolean.TRUE;
+    setDeprecated(Boolean.TRUE);
     return (T) this;
   }
 
@@ -167,7 +167,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T readOnly() {
-    this.readOnly = Boolean.TRUE;
+    setReadOnly(Boolean.TRUE);
     return (T) this;
   }
 
@@ -181,7 +181,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T writeOnly() {
-    this.writeOnly = Boolean.TRUE;
+    setWriteOnly(Boolean.TRUE);
     return (T) this;
   }
 
@@ -197,7 +197,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T schema(String schema) {
-    this.schema = schema;
+    setSchema(schema);
     return (T) this;
   }
 
@@ -213,7 +213,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T id(String id) {
-    this.id = id;
+    setId(id);
     return (T) this;
   }
 
@@ -229,7 +229,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T not(JSONSchema not) {
-    this.not = not;
+    setNot(not);
     return (T) this;
   }
 
@@ -245,7 +245,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T allOf(List<JSONSchema> allOf) {
-    this.allOf = allOf;
+    setAllOf(allOf);
     return (T) this;
   }
 
@@ -261,7 +261,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T anyOf(List<JSONSchema> anyOf) {
-    this.anyOf = anyOf;
+    setAnyOf(anyOf);
     return (T) this;
   }
 
@@ -277,7 +277,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T oneOf(List<JSONSchema> oneOf) {
-    this.oneOf = oneOf;
+    setOneOf(oneOf);
     return (T) this;
   }
 
@@ -295,7 +295,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T ref(String ref) {
-    this.ref = ref;
+    setRef(ref);
     return (T) this;
   }
 
@@ -313,7 +313,7 @@ public class GenericType<T extends GenericType<T>> implements EnumType, ConstTyp
 
   @SuppressWarnings("unchecked")
   public T defs(Map<String, JSONSchema> defs) {
-    this.defs = defs;
+    setDefs(defs);
     return (T) this;
   }
 

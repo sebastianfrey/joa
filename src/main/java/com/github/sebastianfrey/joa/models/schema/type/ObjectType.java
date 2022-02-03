@@ -80,12 +80,12 @@ public class ObjectType extends GenericType<ObjectType> {
   }
 
   public ObjectType additionalProperties() {
-    this.additionalProperties = Boolean.TRUE;
+    setAdditionalProperties(Boolean.TRUE);
     return this;
   }
 
   public ObjectType noAdditionalProperties() {
-    this.additionalProperties = Boolean.FALSE;
+    setAdditionalProperties(Boolean.FALSE);
     return this;
   }
 
@@ -98,12 +98,12 @@ public class ObjectType extends GenericType<ObjectType> {
   }
 
   public ObjectType unevaluatedProperties() {
-    this.unevaluatedProperties = Boolean.TRUE;
+    setUnevaluatedProperties(Boolean.TRUE);
     return this;
   }
 
   public ObjectType noUnevaluatedProperties() {
-    this.unevaluatedProperties = Boolean.FALSE;
+    setUnevaluatedProperties(Boolean.FALSE);
     return this;
   }
 
@@ -122,7 +122,7 @@ public class ObjectType extends GenericType<ObjectType> {
   }
 
   public ObjectType propertyNames(String pattern) {
-    this.propertyNames = new PatternType(pattern);
+    setPropertyNames(new PatternType(pattern));
     return this;
   }
 
@@ -135,7 +135,7 @@ public class ObjectType extends GenericType<ObjectType> {
   }
 
   public ObjectType minProperties(Integer minProperties) {
-    this.minProperties = minProperties;
+    setMinProperties(minProperties);
     return this;
   }
 
@@ -148,7 +148,7 @@ public class ObjectType extends GenericType<ObjectType> {
   }
 
   public ObjectType maxProperties(Integer maxProperties) {
-    this.maxProperties = maxProperties;
+    setMaxProperties(maxProperties);
     return this;
   }
 
