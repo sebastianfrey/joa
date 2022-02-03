@@ -65,7 +65,7 @@ public class JSONSchemaBuilder {
   }
 
   public static AllOfComposition allOf(JSONSchema ...allOf) {
-    return genericType().allOf(List.of(allOf));
+    return allOf(List.of(allOf));
   }
 
   public static AllOfComposition allOf(List<JSONSchema> allOf) {
@@ -73,7 +73,7 @@ public class JSONSchemaBuilder {
   }
 
   public static OneOfComposition oneOf(JSONSchema ...oneOf) {
-    return genericType().oneOf(List.of(oneOf));
+    return oneOf(List.of(oneOf));
   }
 
   public static OneOfComposition oneOf(List<JSONSchema> oneOf) {
@@ -81,7 +81,7 @@ public class JSONSchemaBuilder {
   }
 
   public static AnyOfComposition anyOf(JSONSchema ...anyOf) {
-    return genericType().anyOf(List.of(anyOf));
+    return anyOf(List.of(anyOf));
   }
 
   public static AnyOfComposition anyOf(List<JSONSchema> anyOf) {

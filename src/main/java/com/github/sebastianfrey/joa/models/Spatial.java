@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class Spatial {
   private List<List<Double>> bbox = new ArrayList<>();
+  private String crs;
 
   /**
    * returns the bbox property from a Spatial instance.
@@ -35,6 +36,19 @@ public class Spatial {
 
   public Spatial bbox(Bbox bbox) {
     addBbox(bbox);
+    return this;
+  }
+
+  public String getCrs() {
+    return crs;
+  }
+
+  public void setCrs(String crs) {
+    this.crs = crs;
+  }
+
+  public Spatial crs(String crs) {
+    setCrs(crs);
     return this;
   }
 }

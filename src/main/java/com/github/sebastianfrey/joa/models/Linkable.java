@@ -3,6 +3,7 @@ package com.github.sebastianfrey.joa.models;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Link;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.glassfish.jersey.linking.InjectLinks;
 
 /**
@@ -11,6 +12,7 @@ import org.glassfish.jersey.linking.InjectLinks;
  * @author sfrey
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/link.yaml"
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Linkable {
 
   /**

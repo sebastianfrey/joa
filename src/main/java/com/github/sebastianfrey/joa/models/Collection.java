@@ -32,6 +32,10 @@ public class Collection extends Linkable {
     return getCollectionId();
   }
 
+  public void setId(String id) {
+    setCollectionId(id);
+  }
+
   /**
    * returns the serviceId property from a Collection instance
    *
@@ -167,12 +171,22 @@ public class Collection extends Linkable {
     return this;
   }
 
+  public Collection spatial(Spatial spatial) {
+    getExtent().setSpatial(spatial);
+    return this;
+  }
+
   public Collection bbox(Bbox bbox) {
     getExtent().getSpatial().addBbox(bbox);
     return this;
   }
 
-  public Collection temporal(List<String> interval) {
+  public Collection temporal(Temporal temporal) {
+    getExtent().setTemporal(temporal);
+    return this;
+  }
+
+  public Collection interval(List<String> interval) {
     getExtent().getTemporal().addInterval(interval);
     return this;
   }

@@ -31,11 +31,13 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
+import com.github.sebastianfrey.joa.models.Spatial;
 import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.GenericType;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.utils.CrsUtils;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
@@ -246,9 +248,8 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
   @Override
   public Queryables getQueryables(String serviceId, String collectionId) {
     try (GeoPackage gpkg = open(serviceId)) {
-      ObjectType schema = JSONSchemaBuilder.objectType()
-          .title(collectionId)
-          .schema(Schemas.DRAFT_2019_09);
+      ObjectType schema =
+          JSONSchemaBuilder.objectType().title(collectionId).schema(Schemas.DRAFT_2019_09);
 
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 
@@ -386,7 +387,7 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
     String collectionId = contents.getTableName();
     String title = contents.getIdentifier();
     String description = contents.getDescription();
-    String crs = "http://www.opengis.net/def/crs/EPSG/0/" + contents.getSrsId();
+    String crs = CrsUtils.epsg(contents.getSrsId());
     GeometryEnvelope envelope = contents.getBoundingBox().buildEnvelope();
 
     Bbox bbox = new Bbox().minX(envelope.getMinX())
@@ -406,8 +407,8 @@ public class GeoPackageService implements FeatureService<Feature, Geometry> {
         .description(description)
         .crs(crs)
         .itemType("feature")
-        .bbox(bbox)
-        .temporal(temporal);
+        .spatial(new Spatial().bbox(bbox).crs(crs))
+        .interval(temporal);
 
     return collection;
   }

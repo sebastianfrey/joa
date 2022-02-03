@@ -2,6 +2,7 @@ package com.github.sebastianfrey.joa.models;
 
 import java.util.List;
 import javax.ws.rs.core.Link;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
 
@@ -12,6 +13,7 @@ import com.github.sebastianfrey.joa.utils.LinkUtils;
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/landingPage.yaml"
  */
 @JsonPropertyOrder({"title", "description", "links"})
+@JsonIgnoreProperties({ "serviceId" })
 public class Service extends Linkable {
   private String serviceId;
   private String title;
