@@ -11,7 +11,7 @@ import com.github.sebastianfrey.joa.models.MediaType;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.models.Spatial;
-import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.services.OGCApiService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -26,15 +26,15 @@ import static org.mockito.Mockito.*;
 import javax.ws.rs.core.Link;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class FeatureServiceResourceTest {
+public class OGCApiServiceResourceTest {
 
   @SuppressWarnings("unchecked")
-  private static final FeatureService<Object, Object> DAO = mock(FeatureService.class);
+  private static final OGCApiService<Object, Object> DAO = mock(OGCApiService.class);
 
   private static final ResourceExtension EXT = ResourceExtension.builder()
       .addProvider(MultiPartFeature.class)
       .addProvider(DeclarativeLinkingFeature.class)
-      .addResource(new FeatureServiceResource(DAO))
+      .addResource(new OGCApiServiceResource(DAO))
       .build();
 
   static {
@@ -113,7 +113,7 @@ public class FeatureServiceResourceTest {
     // assert global links
     assertThat(found.getLinks()).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
 
-    // verify that featureService.getServices() was called
+    // verify that ogcApisService.getServices() was called
     verify(DAO).getServices();
   }
 
@@ -138,7 +138,7 @@ public class FeatureServiceResourceTest {
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.DATA));
     });
 
-    // verify that featureService.getService() was called
+    // verify that ogcApisService.getService() was called
     verify(DAO).getService("service1");
   }
 
@@ -181,7 +181,7 @@ public class FeatureServiceResourceTest {
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
     });
 
-    // verify that featureService.getCollections() was called
+    // verify that ogcApisService.getCollections() was called
     verify(DAO).getCollections("service1");
   }
 }

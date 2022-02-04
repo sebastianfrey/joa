@@ -3,27 +3,27 @@ package com.github.sebastianfrey.joa;
 import io.dropwizard.Configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.github.sebastianfrey.joa.configuration.FeatureServiceFactory;
-import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.configuration.OGCApiServiceFactory;
+import com.github.sebastianfrey.joa.services.OGCApiService;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 public class JoaConfiguration extends Configuration {
     @Valid
     @NotNull
-    private FeatureServiceFactory joaServiceFactory = new FeatureServiceFactory();
+    private OGCApiServiceFactory joaServiceFactory = new OGCApiServiceFactory();
 
     @JsonProperty("joa")
-    public FeatureServiceFactory getJoaServiceFactory() {
+    public OGCApiServiceFactory getJoaServiceFactory() {
         return joaServiceFactory;
     }
 
     @JsonProperty("joa")
-    public void setJoaServiceFactory(FeatureServiceFactory joaServiceFactory) {
+    public void setJoaServiceFactory(OGCApiServiceFactory joaServiceFactory) {
         this.joaServiceFactory = joaServiceFactory;
     }
 
-    public FeatureService<?, ?> getFeatureService() {
-        return joaServiceFactory.getFeatureService();
+    public OGCApiService<?, ?> getOGCApiService() {
+        return joaServiceFactory.getOGCApiService();
     }
 }

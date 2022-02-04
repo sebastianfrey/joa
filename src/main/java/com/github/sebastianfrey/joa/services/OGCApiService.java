@@ -12,14 +12,14 @@ import com.github.sebastianfrey.joa.models.Services;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 
 /**
- * Defines the base interface for JOA FeatureService implementations.
+ * Defines the base interface for OGC API service implementations.
  *
  * @param <F> The feature type for {@link Items}
  * @param <G> The Geometry type for {@link Item}
  *
  * @author sfrey
  */
-public interface FeatureService<F, G> {
+public interface OGCApiService<F, G> {
   /**
    * returns a list all available OGC API services.
    *

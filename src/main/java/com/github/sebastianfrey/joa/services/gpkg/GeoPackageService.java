@@ -36,7 +36,7 @@ import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.GenericType;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
-import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.services.OGCApiService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
@@ -60,13 +60,13 @@ import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
 /**
- * GeoPackage specific FeatureService and UploadService implementation powerd by
+ * GeoPackage specific OGCApiService implementation powerd by
  * <a href="https://github.com/ngageoint/geopackage-java">National Geospatial-Intelligence Agency's
  * (NGA)</a> GeoPackage implementation.
  *
  * @author sfrey
  */
-public class GeoPackageService implements FeatureService<Feature, Geometry> {
+public class GeoPackageService implements OGCApiService<Feature, Geometry> {
   private File workspace;
   private String runtime;
 

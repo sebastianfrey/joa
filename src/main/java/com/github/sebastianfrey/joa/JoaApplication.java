@@ -9,9 +9,9 @@ import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkDeserializer;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
-import com.github.sebastianfrey.joa.resources.FeatureServiceResource;
+import com.github.sebastianfrey.joa.resources.OGCApiServiceResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
-import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
@@ -72,18 +72,18 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {
     // fetch the service
-    final FeatureService<?, ?> featureService = configuration.getFeatureService();
+    final OGCApiService<?, ?> ogcApiService = configuration.getOGCApiService();
 
     // setup dependency injection for CollectionService
     environment.jersey().register(new AbstractBinder() {
       @Override
       protected void configure() {
-        bind(featureService).to(FeatureService.class);
+        bind(ogcApiService).to(OGCApiService.class);
       }
     });
 
     // set up resources
-    environment.jersey().register(FeatureServiceResource.class);
+    environment.jersey().register(OGCApiServiceResource.class);
   }
 
   private void cors(final JoaConfiguration configuration, final Environment environment) {

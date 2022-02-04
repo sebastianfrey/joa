@@ -22,7 +22,7 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
-import com.github.sebastianfrey.joa.services.FeatureService;
+import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
 import org.glassfish.jersey.linking.InjectLink;
@@ -32,22 +32,22 @@ import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
-public class FeatureServiceResource {
+public class OGCApiServiceResource {
 
   @Inject
-  private FeatureService<Object, Object> featureService;
+  private OGCApiService<Object, Object> ogcApiService;
 
-  public FeatureServiceResource() {}
+  public OGCApiServiceResource() {}
 
-  public FeatureServiceResource(FeatureService<Object, Object> featureService) {
-    this.featureService = (FeatureService<Object, Object>) featureService;
+  public OGCApiServiceResource(OGCApiService<Object, Object> ogcApiService) {
+    this.ogcApiService = ogcApiService;
   }
 
   @GET
   @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
       style = InjectLink.Style.ABSOLUTE)
   public Services getServices() throws IOException {
-    return featureService.getServices();
+    return ogcApiService.getServices();
   }
 
   @GET
@@ -56,12 +56,12 @@ public class FeatureServiceResource {
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Service getCapabilities(@PathParam("serviceId") String serviceId) {
-    return featureService.getService(serviceId);
+    return ogcApiService.getService(serviceId);
   }
 
   @POST
   public Response addService(@FormDataParam("file") FormDataBodyPart body) throws Exception {
-    featureService.addService(body);
+    ogcApiService.addService(body);
 
     return Response.ok("Data uploaded successfully !!").build();
   }
@@ -75,7 +75,7 @@ public class FeatureServiceResource {
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
       style = InjectLink.Style.ABSOLUTE)
   public Conformance getConformance(@PathParam("serviceId") String serviceId) {
-    return featureService.getConformance(serviceId);
+    return ogcApiService.getConformance(serviceId);
   }
 
   @GET
@@ -87,7 +87,7 @@ public class FeatureServiceResource {
       bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
       style = InjectLink.Style.ABSOLUTE)
   public Collections getCollections(@PathParam("serviceId") String serviceId) {
-    return featureService.getCollections(serviceId);
+    return ogcApiService.getCollections(serviceId);
   }
 
   @Path("{serviceId}/api")
@@ -116,7 +116,7 @@ public class FeatureServiceResource {
       type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
   public Collection getCollection(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
-    return featureService.getCollection(serviceId, collectionId);
+    return ogcApiService.getCollection(serviceId, collectionId);
   }
 
   @GET
@@ -159,7 +159,7 @@ public class FeatureServiceResource {
     // validate query parameters
     featureQuery.validateQueryParameters(queryables);
 
-    return featureService.getItems(serviceId, collectionId, featureQuery);
+    return ogcApiService.getItems(serviceId, collectionId, featureQuery);
   }
 
   @GET
@@ -171,7 +171,7 @@ public class FeatureServiceResource {
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
   public Item<Object> getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
-    return featureService.getItem(serviceId, collectionId, featureId);
+    return ogcApiService.getItem(serviceId, collectionId, featureId);
   }
 
   @GET
@@ -186,6 +186,6 @@ public class FeatureServiceResource {
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
   public Queryables getQueryables(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
-    return featureService.getQueryables(serviceId, collectionId);
+    return ogcApiService.getQueryables(serviceId, collectionId);
   }
 }
