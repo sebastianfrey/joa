@@ -102,6 +102,7 @@ public class OGCApiServiceResourceTest {
 
         // assert service links
         assertThat($service.getLinks()).satisfies((links) -> {
+          assertThat(links).isNotEmpty();
           assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
           assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.CONFORMANCE));
           assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SERVICE_DESC));
@@ -111,9 +112,12 @@ public class OGCApiServiceResourceTest {
     });
 
     // assert global links
-    assertThat(found.getLinks()).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
+    assertThat(found.getLinks()).satisfies((links) -> {
+      assertThat(links).isNotEmpty();
+      assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
+    });
 
-    // verify that ogcApisService.getServices() was called
+    // verify that ogcApisService.getServices(...) was called
     verify(DAO).getServices();
   }
 
@@ -129,6 +133,7 @@ public class OGCApiServiceResourceTest {
     assertThat(found.getDescription()).isEqualTo(service.getDescription());
 
     assertThat(found.getLinks()).satisfies((links) -> {
+      assertThat(links).isNotEmpty();
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SERVICE_DESC)
           && link.getType().equals(MediaType.APPLICATION_OPENAPI_JSON));
@@ -138,7 +143,7 @@ public class OGCApiServiceResourceTest {
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.DATA));
     });
 
-    // verify that ogcApisService.getService() was called
+    // verify that ogcApisService.getService(...) was called
     verify(DAO).getService("service1");
   }
 
@@ -178,10 +183,41 @@ public class OGCApiServiceResourceTest {
     });
 
     assertThat(found.getLinks()).satisfies((links) -> {
+      assertThat(links).isNotEmpty();
       assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
     });
 
-    // verify that ogcApisService.getCollections() was called
+    // verify that ogcApisService.getCollections(...) was called
     verify(DAO).getCollections("service1");
+  }
+
+  @Test
+  public void should_return_the_available_collection() throws Exception {
+    when(DAO.getCollection("service1", "collection1")).thenReturn(collection);
+
+    Collection found =
+        EXT.target("/service1/collections/collection1").request().get(Collection.class);
+
+    assertThat(found.getId()).isEqualTo(collection.getId());
+    assertThat(found.getItemType()).isEqualTo(collection.getItemType());
+    assertThat(found.getTitle()).isEqualTo(collection.getTitle());
+    assertThat(found.getDescription()).isEqualTo(collection.getDescription());
+    assertThat(found.getCrs()).containsExactlyElementsOf(collection.getCrs());
+    assertThat(found.getExtent()).satisfies(($extent) -> {
+      assertThat($extent.getSpatial()).satisfies(($spatial) -> {
+        assertThat($spatial.getBbox()).isNotEmpty();
+        assertThat($spatial.getBbox().get(0)).containsExactlyElementsOf(spatial.getBbox().get(0));
+      });
+    });
+
+    assertThat(found.getLinks()).satisfies((links) -> {
+      assertThat(links).isNotEmpty();
+      assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.SELF));
+      assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.ITEMS));
+      assertThat(links).anyMatch((link) -> link.getRel().equals(Linkable.QUERYABLES));
+    });
+
+    // verify that ogcApisService.getCollection(...) was called
+    verify(DAO).getCollection("service1", "collection1");
   }
 }
