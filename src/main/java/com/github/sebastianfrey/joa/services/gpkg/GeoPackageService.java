@@ -25,8 +25,6 @@ import com.github.sebastianfrey.joa.models.Bbox;
 import com.github.sebastianfrey.joa.models.Collection;
 import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
-import com.github.sebastianfrey.joa.models.Item;
-import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
@@ -178,7 +176,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public Items<Feature, GeoPackageItems> getItems(String serviceId, String collectionId,
+  public GeoPackageItems getItems(String serviceId, String collectionId,
       FeatureQuery query) throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)

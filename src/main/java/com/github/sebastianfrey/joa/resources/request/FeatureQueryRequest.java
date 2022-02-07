@@ -5,6 +5,7 @@ import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import com.github.sebastianfrey.joa.models.Bbox;
@@ -135,11 +136,19 @@ public class FeatureQueryRequest extends FeatureQuery {
 
   @Override
   public String getQueryString() {
+    if (uriInfo == null) {
+      return "";
+    }
+
     return uriInfo.getRequestUri().getQuery();
   }
 
   @Override
   public MultivaluedMap<String, String> getQueryParameters() {
+    if (uriInfo == null) {
+      return new MultivaluedHashMap<>();
+    }
+
     return uriInfo.getQueryParameters();
   }
 }
