@@ -12,6 +12,7 @@ import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.Queryables;
+import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
@@ -22,13 +23,12 @@ import static org.assertj.core.api.Assertions.*;
 
 public class GeoPackageServiceTest {
   public static final String TEST_SERVICE = "example";
-
   public static final String TEST_COLLECTION_POINT = "point1";
-  public static final String TEST_COLLECTION_POLYLINE = "polyline1";
+  public static final String TEST_COLLECTION_LINE = "line1";
   public static final String TEST_COLLECTION_POLYGON = "polygon1";
 
-  private static File getTestDirectory() throws Exception {
-    URL resourceUrl = GeoPackageServiceTest.class.getResource("/");
+  private static File getTestDirectory(String path) throws Exception {
+    URL resourceUrl = GeoPackageServiceTest.class.getResource(path);
     Path resourcePath = Paths.get(resourceUrl.toURI());
     File file = resourcePath.toFile();
     return file;
@@ -40,7 +40,7 @@ public class GeoPackageServiceTest {
   @BeforeEach
   void setup() throws Exception {
     geoPackageService =
-        new GeoPackageService(getTestDirectory().getAbsolutePath(), "mod_spatialite");
+        new GeoPackageService(getTestDirectory("/").getAbsolutePath(), "mod_spatialite");
   }
 
   @Test
@@ -49,6 +49,14 @@ public class GeoPackageServiceTest {
 
     assertThat(services).isNotNull();
     assertThat(services.getServices()).isNotEmpty();
+  }
+
+  @Test
+  public void should_throw_when_services_directory_is_not_available() throws Exception {
+    GeoPackageService invalidService =
+        new GeoPackageService(new File("/not_a_directory/").getAbsolutePath(), "mod_spatialite");
+
+    assertThatThrownBy(() -> invalidService.getServices()).isInstanceOf(NotFoundException.class);
   }
 
   @Test
@@ -62,7 +70,7 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_throw_when_service_is_not_found() {
-    assertThatThrownBy(() -> geoPackageService.getService("notafile"))
+    assertThatThrownBy(() -> geoPackageService.getService("notaservice"))
         .isInstanceOf(NotFoundException.class);
   }
 
@@ -87,6 +95,8 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_throw_when_collection_is_not_found() {
+    assertThatThrownBy(() -> geoPackageService.getCollection("notaservice", "notacollection"))
+        .isInstanceOf(NotFoundException.class);
     assertThatThrownBy(() -> geoPackageService.getCollection("example", "notacollection"))
         .isInstanceOf(NotFoundException.class);
   }
@@ -107,17 +117,51 @@ public class GeoPackageServiceTest {
   }
 
   @Test
-  public void should_return_queryables_from_collection() {
+  public void should_return_queryables_from_collection_of_points() {
     Queryables queryables = geoPackageService.getQueryables(TEST_SERVICE, TEST_COLLECTION_POINT);
 
     assertThat(queryables).isNotNull();
     assertThat(queryables.getServiceId()).isEqualTo("example");
     assertThat(queryables.getCollectionId()).isEqualTo("point1");
-    assertThat(queryables.getSchema().getProperties()).isNotEmpty();
+    assertThat(queryables.getSchema()).satisfies((schema) -> {
+      assertThat(schema.getProperties()).isNotEmpty();
+      assertThat(schema.getProperties()).containsKey("geometry");
+      assertThat(schema.getProperties()).containsValue(Schemas.GeoJSON.point());
+    });
+  }
+
+  @Test
+  public void should_return_queryables_from_collection_of_lines() {
+    Queryables queryables = geoPackageService.getQueryables(TEST_SERVICE, TEST_COLLECTION_LINE);
+
+    assertThat(queryables).isNotNull();
+    assertThat(queryables.getServiceId()).isEqualTo("example");
+    assertThat(queryables.getCollectionId()).isEqualTo("line1");
+    assertThat(queryables.getSchema()).satisfies((schema) -> {
+      assertThat(schema.getProperties()).isNotEmpty();
+      assertThat(schema.getProperties()).containsKey("geometry");
+      assertThat(schema.getProperties()).containsValue(Schemas.GeoJSON.lineString());
+    });
+  }
+
+  @Test
+  public void should_return_queryables_from_collection_of_polygons() {
+    Queryables queryables = geoPackageService.getQueryables(TEST_SERVICE, TEST_COLLECTION_POLYGON);
+
+    assertThat(queryables).isNotNull();
+    assertThat(queryables.getServiceId()).isEqualTo("example");
+    assertThat(queryables.getCollectionId()).isEqualTo("polygon1");
+    assertThat(queryables.getSchema()).satisfies((schema) -> {
+      assertThat(schema.getProperties()).isNotEmpty();
+      assertThat(schema.getProperties()).containsKey("geometry");
+      assertThat(schema.getProperties()).containsValue(Schemas.GeoJSON.polygon());
+    });
   }
 
   @Test
   public void should_throw_when_collection_is_not_found_for_queryables() {
+    assertThatThrownBy(() -> geoPackageService.getQueryables("notaservice", "notacollection"))
+        .isInstanceOf(NotFoundException.class);
     assertThatThrownBy(() -> geoPackageService.getQueryables("example", "notacollection"))
         .isInstanceOf(NotFoundException.class);
   }
@@ -142,7 +186,8 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_return_item_from_collection() throws Exception {
-    GeoPackageItem item = geoPackageService.getItem(TEST_SERVICE, TEST_COLLECTION_POINT, Long.valueOf(1));
+    GeoPackageItem item =
+        geoPackageService.getItem(TEST_SERVICE, TEST_COLLECTION_POINT, Long.valueOf(1));
 
     assertThat(item).isNotNull();
     assertThat(item.getServiceId()).isEqualTo("example");
@@ -155,6 +200,12 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_throw_when_item_is_not_found() {
+    assertThatThrownBy(
+        () -> geoPackageService.getItem("notaservice", "notacollection", Long.valueOf(10000)))
+            .isInstanceOf(NotFoundException.class);
+    assertThatThrownBy(
+        () -> geoPackageService.getItem("example", "notacollection", Long.valueOf(10000)))
+            .isInstanceOf(NotFoundException.class);
     assertThatThrownBy(() -> geoPackageService.getItem("example", "point1", Long.valueOf(10000)))
         .isInstanceOf(NotFoundException.class);
   }
