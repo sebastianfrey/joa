@@ -18,21 +18,7 @@ Which conforms to the following standards:
 
 This section demonstrates, how JOA can be deployed using the GeoPackage backend using docker.
 
-First create a directory. This is the directory where your GeoPackage files will be located:
+TODO
 
-```
-mkdir -p joa/data/
-```
-
-Now place one or more GeoPackage files in the previously created directory.
-
-After that run the following command:
-
-```
-docker run -d -v $(pwd)/joa/data:/workspace/joa/data -p 8080:8080 joa/joa:latest
-```
-
-Then open your browser and go to http://localhost:8080/api/.
-
-Now enjoy your **Zero Config** OGC API and buy me a coffe. ;-)
+Then open your browser, go to http://localhost:8080/api/ and enjoy your **Zero Config** OGC API. =)
 
