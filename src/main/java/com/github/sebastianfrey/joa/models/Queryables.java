@@ -1,11 +1,13 @@
 package com.github.sebastianfrey.joa.models;
 
+import java.util.Set;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 
 public class Queryables extends Linkable {
-  ObjectType schema;
+  ObjectType schema = JSONSchemaBuilder.objectType();
   String serviceId;
   String collectionId;
 
@@ -46,6 +48,10 @@ public class Queryables extends Linkable {
   public Queryables collectionId(String collectionId) {
     setCollectionId(collectionId);
     return this;
+  }
+
+  public Set<String> getColumns() {
+    return schema.getProperties().keySet();
   }
 
   @JsonValue

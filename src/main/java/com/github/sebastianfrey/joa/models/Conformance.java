@@ -25,9 +25,7 @@ public class Conformance extends Linkable {
 
   private List<String> conformsTo = new ArrayList<>();
 
-  public Conformance(String serviceId) {
-    this.serviceId = serviceId;
-  }
+  public Conformance() {}
 
   public String getServiceId() {
     return serviceId;
@@ -35,6 +33,11 @@ public class Conformance extends Linkable {
 
   public void setServiceId(String serviceId) {
     this.serviceId = serviceId;
+  }
+
+  public Conformance serviceId(String serviceId) {
+    setServiceId(serviceId);
+    return this;
   }
 
   public List<String> getConformsTo() {
@@ -45,7 +48,17 @@ public class Conformance extends Linkable {
     this.conformsTo = conformsTo;
   }
 
+  public Conformance conformsTo(List<String> conformsTo) {
+    this.conformsTo.addAll(conformsTo);
+    return this;
+  }
+
   public void addConformsTo(String link) {
     conformsTo.add(link);
+  }
+
+  public Conformance conformsTo(String link) {
+    this.conformsTo.add(link);
+    return this;
   }
 }

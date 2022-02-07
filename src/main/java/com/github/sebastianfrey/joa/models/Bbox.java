@@ -2,6 +2,7 @@ package com.github.sebastianfrey.joa.models;
 
 import java.util.List;
 import java.util.stream.Stream;
+import javax.ws.rs.BadRequestException;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
@@ -37,7 +38,7 @@ public class Bbox {
     try {
        values = Stream.of(input.trim().split(SEPARATOR)).map((part) -> Double.valueOf(part)).toList();
     } catch (NumberFormatException e) {
-      return;
+      throw new BadRequestException("invalid value for parameter 'bbox'");
     }
 
     Boolean hasZ = values.size() > 4;

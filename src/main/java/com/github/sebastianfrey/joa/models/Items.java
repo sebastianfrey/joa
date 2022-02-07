@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId", "nextPageAvailable", "prevPageAvailable",
     "firstPageAvailable", "lastPageAvailable"})
-public abstract class Items<F> extends Linkable implements Iterable<F> {
+public abstract class Items<F, G extends Items<F, G>> extends Linkable implements Iterable<F> {
   @JsonIgnore
   private String serviceId = "";
   @JsonIgnore
@@ -52,9 +52,10 @@ public abstract class Items<F> extends Linkable implements Iterable<F> {
     this.serviceId = serviceId;
   }
 
-  public Items<F> serviceId(String serviceId) {
+  @SuppressWarnings("unchecked")
+  public G serviceId(String serviceId) {
     setServiceId(serviceId);
-    return this;
+    return (G) this;
   }
 
   /**
@@ -70,9 +71,10 @@ public abstract class Items<F> extends Linkable implements Iterable<F> {
     this.collectionId = collectionId;
   }
 
-  public Items<F> collectionId(String collectionId) {
+  @SuppressWarnings("unchecked")
+  public G collectionId(String collectionId) {
     setCollectionId(collectionId);
-    return this;
+    return (G) this;
   }
 
   /**
@@ -88,18 +90,20 @@ public abstract class Items<F> extends Linkable implements Iterable<F> {
     this.features = features;
   }
 
-  public Items<F> features(List<F> features) {
+  @SuppressWarnings("unchecked")
+  public G features(List<F> features) {
     setFeatures(features);
-    return this;
+    return (G) this;
   }
 
   public void addFeature(F feature) {
     this.features.add(feature);
   }
 
-  public Items<F> feature(F feature) {
+  @SuppressWarnings("unchecked")
+  public G feature(F feature) {
     this.addFeature(feature);
-    return this;
+    return (G) this;
   }
 
   /**
@@ -136,9 +140,10 @@ public abstract class Items<F> extends Linkable implements Iterable<F> {
     this.numberMatched = numberMatched;
   }
 
-  public Items<F> numberMatched(Long numberMatched) {
+  @SuppressWarnings("unchecked")
+  public G numberMatched(Long numberMatched) {
     setNumberMatched(numberMatched);
-    return this;
+    return (G) this;
   }
 
 

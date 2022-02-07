@@ -17,10 +17,7 @@ public class Datetime {
   public final static String OPEN_INTERVAL = "..";
 
   public static enum DatetimeType {
-    DATETIME,
-    INTERVAL_CLOSED,
-    INTERVAL_OPEN_START,
-    INTERVAL_OPEN_END;
+    DATETIME, INTERVAL_CLOSED, INTERVAL_OPEN_START, INTERVAL_OPEN_END;
   }
 
 
@@ -61,7 +58,7 @@ public class Datetime {
     validate();
   }
 
-    /**
+  /**
    * returns the upper property from a Datetime instance. When Datetime is not an interval, the
    * returned value is the same returned from {@link Datetime#getLower()}
    *
@@ -77,9 +74,18 @@ public class Datetime {
     validate();
   }
 
+  /**
+   * returns the raw value from a Datetime instance.
+   *
+   * @return The raw datetime interval.
+   */
+  public String getRawValue() {
+    return value;
+  }
+
   public Boolean validate() {
     if (isValid == null) {
-      if (lower == null ||  upper == null || lower.isEmpty() || upper.isEmpty()) {
+      if (lower == null || upper == null || lower.isEmpty() || upper.isEmpty()) {
         return (isValid = true);
       }
 

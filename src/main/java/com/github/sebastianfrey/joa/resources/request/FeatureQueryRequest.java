@@ -58,9 +58,27 @@ public class FeatureQueryRequest extends FeatureQuery {
     return limit;
   }
 
+  public void setLimit(Integer limit) {
+    this.limit = limit;
+  }
+
+  public FeatureQueryRequest limit(Integer limit) {
+    setLimit(limit);
+    return this;
+  }
+
   @Override
   public Long getOffset() {
     return offset;
+  }
+
+  public void setOffset(Long offset) {
+    this.offset = offset;
+  }
+
+  public FeatureQueryRequest offset(Long offset) {
+    setOffset(offset);
+    return this;
   }
 
   @Override
@@ -80,6 +98,15 @@ public class FeatureQueryRequest extends FeatureQuery {
     return bbox;
   }
 
+  public void setBbox(Bbox bbox) {
+    this.bbox = bbox;
+  }
+
+  public FeatureQueryRequest bbox(Bbox bbox) {
+    this.bbox = bbox;
+    return this;
+  }
+
   @Override
   public Datetime getDatetime() {
     try {
@@ -95,6 +122,15 @@ public class FeatureQueryRequest extends FeatureQuery {
     }
 
     return datetime;
+  }
+
+  public void setDatetime(Datetime datetime) {
+    this.datetime = datetime;
+  }
+
+  public FeatureQueryRequest datetime(Datetime datetime) {
+    this.datetime = datetime;
+    return this;
   }
 
   @Override

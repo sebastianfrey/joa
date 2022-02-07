@@ -107,11 +107,10 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
 
   @Override
   public Conformance getConformance(String serviceId) {
-    Conformance conformance = new Conformance(serviceId);
-
-    conformance.addConformsTo(Conformance.FEATURES_CORE);
-    conformance.addConformsTo(Conformance.FEATURES_OAS30);
-    conformance.addConformsTo(Conformance.FEATURES_GEOJSON);
+    Conformance conformance = new Conformance().serviceId(serviceId)
+        .conformsTo(Conformance.FEATURES_CORE)
+        .conformsTo(Conformance.FEATURES_OAS30)
+        .conformsTo(Conformance.FEATURES_GEOJSON);
 
     return conformance;
   }
@@ -179,8 +178,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public Items<Feature> getItems(String serviceId, String collectionId, FeatureQuery query)
-      throws Exception {
+  public Items<Feature, GeoPackageItems> getItems(String serviceId, String collectionId,
+      FeatureQuery query) throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -221,7 +220,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public Item<Geometry> getItem(String serviceId, String collectionId, Long featureId) {
+  public GeoPackageItem getItem(String serviceId, String collectionId, Long featureId) {
     try (GeoPackage gpkg = open(serviceId)) {
       FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
 

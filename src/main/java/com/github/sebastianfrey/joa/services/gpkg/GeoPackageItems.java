@@ -13,7 +13,7 @@ import mil.nga.sf.geojson.Feature;
  *
  * @author sfrey
  */
-public class GeoPackageItems extends Items<Feature> {
+public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
   @JsonIgnore
   private String queryString = "";
   @JsonIgnore
@@ -38,24 +38,6 @@ public class GeoPackageItems extends Items<Feature> {
   @Override
   public GeoPackageItems serviceId(String serviceId) {
     super.serviceId(serviceId);
-    return this;
-  }
-
-  @Override
-  public GeoPackageItems numberMatched(Long numberMatched) {
-    super.numberMatched(numberMatched);
-    return this;
-  }
-
-  @Override
-  public GeoPackageItems features(List<Feature> features) {
-    super.features(features);
-    return this;
-  }
-
-  @Override
-  public GeoPackageItems feature(Feature feature) {
-    super.feature(feature);
     return this;
   }
 

@@ -150,11 +150,10 @@ public class OGCApiServiceResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  public Items<Object> getItems(@PathParam("serviceId") String serviceId,
+  public Items<Object, ?> getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
-    final Set<String> queryables =
-        getQueryables(serviceId, collectionId).getSchema().getProperties().keySet();
+    final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
 
     // validate query parameters
     featureQuery.validateQueryParameters(queryables);
@@ -169,7 +168,7 @@ public class OGCApiServiceResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),
           @Binding(name = "featureId", value = "${instance.id}"),},
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Item<Object> getItem(@PathParam("serviceId") String serviceId,
+  public Item<Object, ?> getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
     return ogcApiService.getItem(serviceId, collectionId, featureId);
   }

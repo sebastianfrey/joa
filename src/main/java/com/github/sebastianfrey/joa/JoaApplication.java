@@ -50,9 +50,8 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
   @Override
   public void run(final JoaConfiguration configuration, final Environment environment) {
-
-    environment.jersey().property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, true);
-    environment.jersey().register(QueryParamExceptionHandler.class);
+    // set up jersey
+    jersey(configuration, environment);
 
     // set up cors
     cors(configuration, environment);
@@ -68,6 +67,14 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
     // set up openapi
     openapi(configuration, environment);
+  }
+
+  private void jersey(final JoaConfiguration configuration, final Environment environment) {
+    // include body for 4xx and 5xx
+    environment.jersey().property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, true);
+
+    // return 400 for QueryParamExceptions
+    environment.jersey().register(QueryParamExceptionHandler.class);
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {
@@ -115,7 +122,6 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
   private void openapi(final JoaConfiguration configuration, final Environment environment) {
     // openapi
-    OpenAPI oas = new OpenAPI();
     Info info = new Info().title("JOA")
         .description("Java based OGC-API-Features implementation.")
         .license(new License().name("MIT"))
@@ -123,7 +129,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
         .termsOfService("http://example.com/terms")
         .contact(new Contact().email("sebastian.frey@outlook.com"));
 
-    oas.info(info);
+    OpenAPI oas = new OpenAPI().info(info);
     SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas)
         .prettyPrint(true)
         .resourcePackages(

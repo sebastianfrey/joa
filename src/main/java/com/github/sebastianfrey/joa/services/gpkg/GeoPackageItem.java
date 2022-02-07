@@ -11,22 +11,9 @@ import mil.nga.sf.geojson.Feature;
  *
  * @author sfrey
  */
-public class GeoPackageItem extends Item<Geometry> {
+public class GeoPackageItem extends Item<Geometry, GeoPackageItem> {
   @JsonIgnore
   private Feature feature;
-
-  @Override
-  public GeoPackageItem serviceId(String serviceId) {
-    super.setServiceId(serviceId);
-    return this;
-  }
-
-  @Override
-  public GeoPackageItem collectionId(String collectionId) {
-    super.setCollectionId(collectionId);
-    return this;
-  }
-
 
   public Feature getFeature() {
     return feature;

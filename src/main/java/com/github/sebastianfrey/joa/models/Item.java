@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({"type", "bbox", "id", "geometry", "properties", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId"})
 @JsonInclude(Include.NON_NULL)
-public abstract class Item<G> extends Linkable {
+public abstract class Item<G, T extends Item<G, T>> extends Linkable {
   @JsonIgnore
   private String serviceId = "";
   @JsonIgnore
@@ -47,9 +47,10 @@ public abstract class Item<G> extends Linkable {
     this.serviceId = serviceId;
   }
 
-  public Item<G> serviceId(String serviceId) {
+  @SuppressWarnings("unchecked")
+  public T serviceId(String serviceId) {
     setServiceId(serviceId);
-    return this;
+    return (T) this;
   }
 
   /**
@@ -65,9 +66,10 @@ public abstract class Item<G> extends Linkable {
     this.collectionId = collectionId;
   }
 
-  public Item<G> collectionId(String collectionId) {
+  @SuppressWarnings("unchecked")
+  public T collectionId(String collectionId) {
     setCollectionId(collectionId);
-    return this;
+    return (T) this;
   }
 
   /**
