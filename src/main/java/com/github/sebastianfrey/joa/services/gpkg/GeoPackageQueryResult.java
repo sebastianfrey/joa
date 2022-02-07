@@ -1,21 +1,21 @@
 package com.github.sebastianfrey.joa.services.gpkg;
 
-import mil.nga.geopackage.features.user.FeaturePaginatedResults;
+import mil.nga.geopackage.features.user.FeatureResultSet;
 
 public class GeoPackageQueryResult {
   private Long count;
-  private FeaturePaginatedResults paginatedResults;
+  private FeatureResultSet featureResultSet;
 
-  public GeoPackageQueryResult(Long count, FeaturePaginatedResults paginatedResults) {
+  public GeoPackageQueryResult(Long count, FeatureResultSet featureResultSet) {
     this.count = count;
-    this.paginatedResults = paginatedResults;
+    this.featureResultSet = featureResultSet;
   }
 
   public Long getCount() {
     return count;
   }
 
-  public FeaturePaginatedResults getPaginatedResults() {
-    return paginatedResults;
+  public FeatureResultSet getFeatureResultSet() {
+    return featureResultSet;
   }
 }

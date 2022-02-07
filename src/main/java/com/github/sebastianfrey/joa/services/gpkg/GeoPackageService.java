@@ -45,10 +45,7 @@ import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
 import mil.nga.geopackage.GeoPackageManager;
 import mil.nga.geopackage.contents.Contents;
-import mil.nga.geopackage.features.index.FeatureIndexManager;
-import mil.nga.geopackage.features.index.FeatureIndexType;
 import mil.nga.geopackage.features.user.FeatureDao;
-import mil.nga.geopackage.features.user.FeaturePaginatedResults;
 import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
@@ -177,8 +174,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public GeoPackageItems getItems(String serviceId, String collectionId, FeatureQuery query)
-      throws Exception {
+  public GeoPackageItems getItems(String serviceId, String collectionId,
+      FeatureQuery query) throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -188,19 +185,15 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
     try (GeoPackage gpkg = loadService(serviceId)) {
       FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
-      FeatureIndexManager indexer = new FeatureIndexManager(gpkg, featureDao);
-      indexer.setIndexLocation(FeatureIndexType.RTREE);
-      if (!indexer.isIndexed()) {
-        indexer.index();
-      }
-
-      GeoPackageQueryResult result = new GeoPackageQuery(indexer, query).execute();
+      GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
       items.numberMatched(result.getCount());
 
-      FeaturePaginatedResults paginatedResults = result.getPaginatedResults();
+      FeatureResultSet featureResultSet = result.getFeatureResultSet();
       try {
-        for (FeatureRow featureRow : paginatedResults) {
+        while (featureResultSet.moveToNext()) {
+          FeatureRow featureRow = featureResultSet.getRow();
+
           Feature feature = createFeature(featureRow);
 
           if (feature != null) {
@@ -208,7 +201,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           }
         }
       } finally {
-        paginatedResults.close();
+        featureResultSet.close();
       }
     }
 
@@ -248,12 +241,13 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
   @Override
   public Queryables getQueryables(String serviceId, String collectionId) {
     try (GeoPackage gpkg = loadService(serviceId)) {
+      ObjectType schema =
+          JSONSchemaBuilder.objectType().title(collectionId).schema(Schemas.DRAFT_2019_09);
+
       FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
       String geometryColumn = featureDao.getGeometryColumnName();
       GeometryType geometryType = featureDao.getGeometryType();
-      ObjectType schema =
-          JSONSchemaBuilder.objectType().title(collectionId).schema(Schemas.DRAFT_2019_09);
 
       featureDao.getColumns().stream().forEach((column) -> {
         if (column.getName().equals(geometryColumn)) {
@@ -300,6 +294,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       });
 
       JSONSchema geometrySchema = null;
+
       switch (geometryType) {
         case GEOMETRY:
           geometrySchema = Schemas.GeoJSON.geometry();

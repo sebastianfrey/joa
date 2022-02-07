@@ -3,28 +3,24 @@ package com.github.sebastianfrey.joa.services.gpkg;
 import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
-/* import com.fasterxml.jackson.databind.ObjectMapper; */
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sebastianfrey.joa.models.Bbox;
 import com.github.sebastianfrey.joa.models.Datetime;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
 import mil.nga.geopackage.db.GeoPackageDataType;
-import mil.nga.geopackage.features.index.FeatureIndexManager;
-import mil.nga.geopackage.features.index.FeatureIndexResults;
 import mil.nga.geopackage.features.user.FeatureColumn;
-import mil.nga.geopackage.features.user.FeaturePaginatedResults;
-import mil.nga.sf.GeometryEnvelope;
-/*
+import mil.nga.geopackage.features.user.FeatureDao;
+import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.sf.geojson.Polygon;
 import mil.nga.sf.geojson.Position;
-*/
 
 public class GeoPackageQuery {
-/* private final static ObjectMapper objectMapper = new ObjectMapper(); */
-  FeatureIndexManager indexer;
+  private final static ObjectMapper objectMapper = new ObjectMapper();
+  FeatureDao featureDao;
   FeatureQuery query;
 
-  public GeoPackageQuery(FeatureIndexManager indexer, FeatureQuery query) {
-    this.indexer = indexer;
+  public GeoPackageQuery(FeatureDao featureDao, FeatureQuery query) {
+    this.featureDao = featureDao;
     this.query = query;
   }
 
@@ -41,18 +37,10 @@ public class GeoPackageQuery {
     String where = whereBuilder.toString();
     String[] args = whereArgs.toArray(new String[] {});
 
-    Bbox bbox = query.getBbox();
-    GeometryEnvelope envelope = null;
-    if (query.getBbox() != null) {
-      envelope = new GeometryEnvelope(bbox.getMinX(), bbox.getMinY(), bbox.getMinZ(),
-          bbox.getMaxX(), bbox.getMaxY(), bbox.getMaxZ());
-    }
+    FeatureResultSet results = featureDao.queryForChunk(where, args, orderBy, limit, offset);
+    Integer count = featureDao.count(where, args);
 
-    FeatureIndexResults indexResults = indexer.queryForChunk(envelope, where, args, orderBy, limit, offset);
-    FeaturePaginatedResults paginatedResults = indexer.paginate(indexResults);
-    Long count = indexer.count(where, args);
-
-    return new GeoPackageQueryResult(count, paginatedResults);
+    return new GeoPackageQueryResult(count.longValue(), results);
   }
 
   private Long offset() {
@@ -64,13 +52,13 @@ public class GeoPackageQuery {
   }
 
   public String orderBy() {
-    return indexer.getFeatureDao().getIdColumnName();
+    return featureDao.getIdColumnName();
   }
 
   public String where(StringBuilder whereBuilder, List<String> whereArgs) throws Exception {
     buildDatetimeWhere(whereBuilder, whereArgs);
     buildQueryWhere(whereBuilder, whereArgs);
-    /* buildBboxWhere(whereBuilder, whereArgs); */
+    buildBboxWhere(whereBuilder, whereArgs);
 
     return null;
   }
@@ -83,7 +71,7 @@ public class GeoPackageQuery {
     }
 
     // get all datetime columns
-    List<FeatureColumn> columns = indexer.getFeatureDao().getColumns().stream().filter((column) -> {
+    List<FeatureColumn> columns = featureDao.getColumns().stream().filter((column) -> {
       return column.getDataType().equals(GeoPackageDataType.DATETIME);
     }).toList();
 
@@ -128,7 +116,7 @@ public class GeoPackageQuery {
       return;
     }
 
-    List<String> columnNames = List.of(indexer.getFeatureDao().getColumnNames());
+    List<String> columnNames = List.of(featureDao.getColumnNames());
 
     parameters.forEach((columnName, values) -> {
       if (!columnNames.contains(columnName)
@@ -151,14 +139,14 @@ public class GeoPackageQuery {
     });
   }
 
-/*   public void buildBboxWhere(StringBuilder whereBuilder, List<String> whereArgs) throws Exception {
+  public void buildBboxWhere(StringBuilder whereBuilder, List<String> whereArgs) throws Exception {
     // verify bbox
     Bbox bbox = query.getBbox();
     if (bbox == null) {
       return;
     }
 
-    String geometryColumn = indexer.getFeatureDao().getGeometryColumnName();
+    String geometryColumn = featureDao.getGeometryColumnName();
     String polygon = objectMapper.writeValueAsString(toPolygon(bbox));
 
     whereBuilder.append(" AND (ST_Intersects(")
@@ -188,5 +176,5 @@ public class GeoPackageQuery {
     polygon.setCoordinates(coordinates);
 
     return polygon;
-  } */
+  }
 }
