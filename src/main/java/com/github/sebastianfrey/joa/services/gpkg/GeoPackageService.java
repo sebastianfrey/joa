@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response.Status;
 import com.github.sebastianfrey.joa.models.FeatureQuery;
 import com.github.sebastianfrey.joa.models.Bbox;
 import com.github.sebastianfrey.joa.models.Collection;
@@ -46,7 +45,10 @@ import mil.nga.geopackage.GeoPackage;
 import mil.nga.geopackage.GeoPackageException;
 import mil.nga.geopackage.GeoPackageManager;
 import mil.nga.geopackage.contents.Contents;
+import mil.nga.geopackage.features.index.FeatureIndexManager;
+import mil.nga.geopackage.features.index.FeatureIndexType;
 import mil.nga.geopackage.features.user.FeatureDao;
+import mil.nga.geopackage.features.user.FeaturePaginatedResults;
 import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
@@ -89,7 +91,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
         }
       }
     } catch (IOException ex) {
-      throw new WebApplicationException(ex, Status.NO_CONTENT);
+      throw new NotFoundException("Failed to fetch services.", ex);
     }
 
     return services;
@@ -97,7 +99,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
 
   public Service getService(String serviceId) {
     if (!exists(serviceId)) {
-      throw new NotFoundException();
+      throw new NotFoundException("Service with ID '" + serviceId + "' does not exist.");
     }
 
     return new Service().serviceId(serviceId).title(serviceId);
@@ -124,7 +126,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
   public Collections getCollections(String serviceId) {
     Collections collections = new Collections().serviceId(serviceId).title(serviceId);
 
-    try (GeoPackage gpkg = open(serviceId)) {
+    try (GeoPackage gpkg = loadService(serviceId)) {
 
       List<String> collectionIds = gpkg.getFeatureTables();
 
@@ -148,10 +150,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    */
   @Override
   public Collection getCollection(String serviceId, String collectionId) {
-    try (GeoPackage gpkg = open(serviceId)) {
+    try (GeoPackage gpkg = loadService(serviceId)) {
       return getCollection(gpkg, serviceId, collectionId);
-    } catch (GeoPackageException ex) {
-      throw new NotFoundException("Collection with ID '" + collectionId + "' does not exist.", ex);
     }
   }
 
@@ -165,7 +165,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @throws IOException
    */
   private Collection getCollection(GeoPackage gpkg, String serviceId, String collectionId) {
-    return createCollection(serviceId, gpkg.getFeatureDao(collectionId));
+    FeatureDao featureDao = loadCollection(gpkg, collectionId);
+    return createCollection(serviceId, featureDao);
   }
 
   /**
@@ -176,26 +177,30 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public GeoPackageItems getItems(String serviceId, String collectionId,
-      FeatureQuery query) throws Exception {
+  public GeoPackageItems getItems(String serviceId, String collectionId, FeatureQuery query)
+      throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
         .offset(query.getOffset())
         .limit(query.getLimit());
 
-    try (GeoPackage gpkg = open(serviceId)) {
-      FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
+    try (GeoPackage gpkg = loadService(serviceId)) {
+      FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
-      GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
+      FeatureIndexManager indexer = new FeatureIndexManager(gpkg, featureDao);
+      indexer.setIndexLocation(FeatureIndexType.RTREE);
+      if (!indexer.isIndexed()) {
+        indexer.index();
+      }
+
+      GeoPackageQueryResult result = new GeoPackageQuery(indexer, query).execute();
 
       items.numberMatched(result.getCount());
 
-      FeatureResultSet featureResultSet = result.getFeatureResultSet();
+      FeaturePaginatedResults paginatedResults = result.getPaginatedResults();
       try {
-        while (featureResultSet.moveToNext()) {
-          FeatureRow featureRow = featureResultSet.getRow();
-
+        for (FeatureRow featureRow : paginatedResults) {
           Feature feature = createFeature(featureRow);
 
           if (feature != null) {
@@ -203,7 +208,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           }
         }
       } finally {
-        featureResultSet.close();
+        paginatedResults.close();
       }
     }
 
@@ -219,11 +224,9 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    */
   @Override
   public GeoPackageItem getItem(String serviceId, String collectionId, Long featureId) {
-    try (GeoPackage gpkg = open(serviceId)) {
-      FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
-
+    try (GeoPackage gpkg = loadService(serviceId)) {
+      FeatureDao featureDao = loadCollection(gpkg, collectionId);
       FeatureResultSet featureResultSet = featureDao.queryForId(featureId);
-
       try {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
@@ -244,14 +247,13 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
 
   @Override
   public Queryables getQueryables(String serviceId, String collectionId) {
-    try (GeoPackage gpkg = open(serviceId)) {
-      ObjectType schema =
-          JSONSchemaBuilder.objectType().title(collectionId).schema(Schemas.DRAFT_2019_09);
-
-      FeatureDao featureDao = gpkg.getFeatureDao(collectionId);
+    try (GeoPackage gpkg = loadService(serviceId)) {
+      FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
       String geometryColumn = featureDao.getGeometryColumnName();
       GeometryType geometryType = featureDao.getGeometryType();
+      ObjectType schema =
+          JSONSchemaBuilder.objectType().title(collectionId).schema(Schemas.DRAFT_2019_09);
 
       featureDao.getColumns().stream().forEach((column) -> {
         if (column.getName().equals(geometryColumn)) {
@@ -330,13 +332,11 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       }
 
       return new Queryables().serviceId(serviceId).collectionId(collectionId).schema(schema);
-    } catch (GeoPackageException ex) {
-      throw new NotFoundException("Collection with ID '" + collectionId + "' does not exist.", ex);
     }
   }
 
-  public GeoPackage open(String file) throws WebApplicationException {
-    File path = Paths.get(workspace.getAbsolutePath(), file + ".gpkg").toFile();
+  public GeoPackage loadService(String serviceId) throws WebApplicationException {
+    File path = Paths.get(workspace.getAbsolutePath(), serviceId + ".gpkg").toFile();
     GeoPackage gpkg = null;
     try {
       gpkg = GeoPackageManager.open(path);
@@ -348,7 +348,10 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       if (gpkg != null) {
         gpkg.close();
       }
+
       throw new WebApplicationException(ex);
+    } catch (GeoPackageException ex) {
+      throw new NotFoundException("Service with ID '" + serviceId + "' does not exist.", ex);
     }
 
     return gpkg;
@@ -369,8 +372,18 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       try (Statement stmt = con.createStatement()) {
         stmt.execute("SELECT EnableGpkgMode()");
       }
+    } catch (SQLException ex) {
+      throw new SQLException("Failed to load Spatialite extension", ex);
     } finally {
       db.enable_load_extension(false);
+    }
+  }
+
+  public FeatureDao loadCollection(GeoPackage gpkg, String collectionId) {
+    try {
+      return gpkg.getFeatureDao(collectionId);
+    } catch (GeoPackageException ex) {
+      throw new NotFoundException("Collection with ID '" + collectionId + "' does not exist.", ex);
     }
   }
 
