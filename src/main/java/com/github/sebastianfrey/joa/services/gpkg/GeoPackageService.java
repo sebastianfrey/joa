@@ -300,7 +300,6 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       });
 
       JSONSchema geometrySchema = null;
-
       switch (geometryType) {
         case GEOMETRY:
           geometrySchema = Schemas.GeoJSON.geometry();
