@@ -117,11 +117,17 @@ public class GeoPackageServiceTest {
   }
 
   @Test
+  public void should_throw_when_collection_is_not_found_for_queryables() {
+    assertThatThrownBy(() -> geoPackageService.getQueryables("example", "notacollection"))
+        .isInstanceOf(NotFoundException.class);
+  }
+
+  @Test
   public void should_return_items_from_collection() throws Exception {
     FeatureQueryRequest query = new FeatureQueryRequest().offset(Long.valueOf(0))
         .limit(10)
         .datetime(new Datetime("2021-03-04T17:44:25.873Z"))
-        .bbox(new Bbox().minX(-180.0).minY(-90.0).maxX(80.0).maxX(90.0));
+        .bbox(new Bbox().minX(-180.0).minY(-90.0).maxX(80.0).maxY(90.0));
 
     GeoPackageItems items = geoPackageService.getItems(TEST_SERVICE, TEST_COLLECTION_POINT, query);
 
