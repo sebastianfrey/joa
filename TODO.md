@@ -1,14 +1,18 @@
 - [x] Basic resources
 - [ ] Publish resources
+  - [ ] Add service
+  - [ ] Update service
+  - [ ] Remove service
 - [x] Open API
 - [x] Hateos
 - [ ] Projection (CRS)
-- [-] Query
+- [ ] Query
   - [x] Limit
   - [x] Offset
   - [x] Bbox
   - [x] Datetime
   - [ ] Sortby
   - [ ] Properties
+  - [ ] q-Parameter
   - [ ] CQL
 - [ ] Tests
