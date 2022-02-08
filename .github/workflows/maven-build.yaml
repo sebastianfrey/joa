@@ -25,7 +25,7 @@ jobs:
         cache: maven
     - name: Install dependencies
       run: >
-        apt-get update && export DEBIAN_FRONTEND=noninteractive \
-          && apt-get -y install --no-install-recommends gdal-bin sqlite3 libsqlite3-mod-spatialite
+        sudo apt-get update && export DEBIAN_FRONTEND=noninteractive \
+          && sudo apt-get -y install --no-install-recommends gdal-bin sqlite3 libsqlite3-mod-spatialite
     - name: Build with Maven
       run: mvn -B package --file pom.xml
