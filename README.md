@@ -22,14 +22,14 @@ $ mkdir -p $HOME/joa/workspace
 
 Place one or more GeoPackage-Files under `$HOME/joa/workspace/`.
 
-> If you have no GeoPackage-File available, you can download a sample file from [JOA](https://github.com/sebastianfrey/joa/raw/main/data/example.gpkg).
+> If you have no GeoPackage-File available, you can download a sample file from [GitHub](https://github.com/sebastianfrey/joa/raw/main/data/example.gpkg).
 
 ### 2. Spin up a container:
 
 ```bash
 $ docker run -d -it -v $HOME/joa/workspace:/data/joa/workspace -p 8080:8080 sfrey/joa:0.1.0
 ```
-### 3. Open your browser at http://localhost:8080/api/**
+### 3. Open your browser at http://localhost:8080/api/
 
 ### 4. Enjoy your **Zero Config** OGC API. =)
 
