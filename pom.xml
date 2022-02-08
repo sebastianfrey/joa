@@ -10,6 +10,12 @@
 
     <name>joa</name>
 
+    <scm>
+        <url>https://github.com/sebastianfrey/joa</url>
+        <connection>scm:git:git://github.com/sebastianfrey/joa.git</connection>
+        <developerConnection>scm:git:git@github.com:sebastianfrey/joa.git</developerConnection>
+    </scm>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -188,6 +194,13 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-site-plugin</artifactId>
