@@ -35,9 +35,9 @@ Place one or more GeoPackage-Files under `$HOME/joa/workspace/`.
 ```bash
 $ docker run -d -it -v $HOME/joa/workspace:/data/joa/workspace -p 8080:8080 sfrey/joa:0.1.0
 ```
+### 3. Open your browser at http://localhost:8080/api/**
 
-3. **Then open your browser and go to http://localhost:8080/api/**
-4. **Enjoy your **Zero Config** OGC API. =)**
+### 4. Enjoy your **Zero Config** OGC API. =)
 
 
 ### Manual Installation
