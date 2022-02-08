@@ -20,7 +20,7 @@ This section demonstrates, how JOA can be deployed.
 
 ### Run with Docker
 
-Create a workspace
+### 1. Create a workspace:
 
 ```bash
 $ mkdir -p $HOME/joa/workspace
@@ -30,36 +30,37 @@ Place one or more GeoPackage-Files under `$HOME/joa/workspace/`.
 
 > If you have no GeoPackage-File available, you can download a sample file from [JOA](https://github.com/sebastianfrey/joa/raw/main/data/example.gpkg).
 
-Spin up a container
+### 2. Spin up a container:
 
 ```bash
 $ docker run -d -it -v $HOME/joa/workspace:/data/joa/workspace -p 8080:8080 sfrey/joa:0.1.0
 ```
 
-Then open your browser, go to http://localhost:8080/api/ and enjoy your **Zero Config** OGC API. =)
+3. **Then open your browser and go to http://localhost:8080/api/**
+4. **Enjoy your **Zero Config** OGC API. =)**
 
 
 ### Manual Installation
 
-Install dependencies:
+### 1. Install dependencies:
 
 ```bash
 $ sudo apt-get install openjdk-17-jre gdal-bin libsqlite3-mod-spatialite
 ```
 
-Download binaries:
+### 2. Download binaries:
 
 ```bash
 $ wget -O joa-0.1.0.jar https://github.com/sebastianfrey/joa/releases/download/v0.1.0/joa-0.1.0.jar
 ```
 
-Create a working directory:
+### 3. Create a working directory:
 
 ```bash
 $ mkdir -p /data/joa/workspace/ && cd /data/joa/
 ```
 
-Create a file `config.yml`
+### 4. Create a config file called `config.yml`
 
 ```bash
 $ touch config.yml
@@ -80,12 +81,12 @@ joa:
     runtime: mod_spatialite
 ```
 
-Place one or more GeoPackage-Files under `/data/joa/workspace/`.
+### 5. Place one or more GeoPackage-Files under `/data/joa/workspace/`.
 
 > If you have no GeoPackage-File available, you can download a sample file from [JOA](https://github.com/sebastianfrey/joa/raw/main/data/example.gpkg).
 Then open your browser, go to http://localhost:8080/api/ and enjoy your **Zero Config** OGC API. =)
 
-Now you should be able to start the application
+### 6. Now start the application
 
 ```bash
 java -jar joa-0.1.0.jar server config.yml
