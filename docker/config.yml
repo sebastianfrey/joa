@@ -1,0 +1,10 @@
+logging:
+  level: INFO
+  loggers:
+    com.github.sebastianfrey.joa: DEBUG
+server:
+  rootPath: /api
+joa:
+  gpkg:
+    worksapce: /data/joa/workspace/
+    runtime: mod_spatialite
