@@ -8,15 +8,11 @@ JOA
 
 - follows a minimialistic aproach, which allows **Zero Config** deployment of an **OGC API**.
 - supports currently the following backends:
-  - [GeoPackage](ht (`Default`)tps://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
+  - [GeoPackage](https://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
 - conforms to the following standards:
   - [OGC API - Features - Part 1: Core](http://docs.opengeospatial.org/is/17-069r3/17-069r3.html)
 
-## Getting started (`Default`)
-
-This section demonstrates, how JOA can be deployed.
-
-### Run with Docker
+## Getting Started with Docker
 
 ### 1. Create a workspace:
 
@@ -38,7 +34,7 @@ $ docker run -d -it -v $HOME/joa/workspace:/data/joa/workspace -p 8080:8080 sfre
 ### 4. Enjoy your **Zero Config** OGC API. =)
 
 
-### Manual Installation
+## Getting Started Old School
 
 ### 1. Install dependencies:
 
