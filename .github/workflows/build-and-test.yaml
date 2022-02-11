@@ -3,12 +3,7 @@
 
 name: Java CI with Maven
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+on: [workflow_dispatch, push, pull_request]
 
 jobs:
   build:
