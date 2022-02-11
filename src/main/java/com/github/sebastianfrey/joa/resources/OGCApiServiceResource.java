@@ -22,6 +22,7 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
+import com.github.sebastianfrey.joa.resources.views.ServicesView;
 import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
@@ -31,7 +32,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
-@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
+@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
 public class OGCApiServiceResource {
 
   @Inject
@@ -46,8 +47,8 @@ public class OGCApiServiceResource {
   @GET
   @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  public Services getServices() throws IOException {
-    return ogcApiService.getServices();
+  public ServicesView getServices() throws IOException {
+    return new ServicesView(ogcApiService.getServices());
   }
 
   @GET

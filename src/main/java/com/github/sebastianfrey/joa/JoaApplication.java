@@ -1,6 +1,7 @@
 package com.github.sebastianfrey.joa;
 
 import java.util.EnumSet;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.servlet.DispatcherType;
@@ -11,6 +12,7 @@ import com.github.sebastianfrey.joa.extensions.jackson.LinkDeserializer;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
 import com.github.sebastianfrey.joa.resources.OGCApiServiceResource;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
+import com.github.sebastianfrey.joa.resources.filters.RewriteFormatQueryParamToAcceptHeaderFilter;
 import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -21,6 +23,7 @@ import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.views.ViewBundle;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -46,6 +49,14 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
     // serve assets folder
     bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
+
+    // html views
+    bootstrap.addBundle(new ViewBundle<JoaConfiguration>() {
+      @Override
+      public Map<String, Map<String, String>> getViewConfiguration(JoaConfiguration config) {
+          return config.getViewRendererConfiguration();
+      }
+    });
   }
 
   @Override
@@ -75,6 +86,8 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
     // return 400 for QueryParamExceptions
     environment.jersey().register(QueryParamExceptionHandler.class);
+
+    environment.jersey().register(RewriteFormatQueryParamToAcceptHeaderFilter.class);
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {

@@ -4,6 +4,11 @@ logging:
     com.github.sebastianfrey.joa: DEBUG
 server:
   rootPath: /api
+views:
+  freemarker:
+    strict_syntax: true
+    template_update_delay: 0
+    cache_storage: freemarker.cache.NullCacheStorage
 joa:
   gpkg:
     worksapce: /workspaces/joa/data/

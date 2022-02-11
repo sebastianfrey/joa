@@ -25,7 +25,8 @@
 	"extensions": [
 		"vscjava.vscode-java-pack",
 		"hookyqr.beautify",
-		"redhat.vscode-xml"
+		"redhat.vscode-xml",
+		"dcortes92.FreeMarker"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
