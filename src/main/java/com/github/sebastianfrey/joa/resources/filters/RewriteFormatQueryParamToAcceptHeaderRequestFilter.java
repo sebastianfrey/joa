@@ -12,10 +12,16 @@ import javax.ws.rs.ext.Provider;
 import com.github.sebastianfrey.joa.models.MediaType;
 import com.google.common.net.HttpHeaders;
 
+/**
+ * Rewrites the format query parameter as Accept-Header, to use jerseys automatic message bod writer
+ * detection.
+ *
+ * @author sfrey
+ */
 @Provider
 @PreMatching
 @Priority(3000)
-public class RewriteFormatQueryParamToAcceptHeaderFilter implements ContainerRequestFilter {
+public class RewriteFormatQueryParamToAcceptHeaderRequestFilter implements ContainerRequestFilter {
 
   private static final Map<String, String> mappings = Collections
       .unmodifiableMap(Map.of("html", MediaType.TEXT_HTML, "json", MediaType.APPLICATION_JSON));
@@ -28,7 +34,8 @@ public class RewriteFormatQueryParamToAcceptHeaderFilter implements ContainerReq
       if (mediaType != null) {
         request.getHeaders().putSingle(HttpHeaders.ACCEPT, mediaType);
       } else {
-        throw new BadRequestException("Invalid parameter: Format '" +  format + "' is not supported.");
+        throw new BadRequestException(
+            "Invalid parameter: Format '" + format + "' is not supported.");
       }
     }
   }

@@ -2,13 +2,12 @@ package com.github.sebastianfrey.joa.resources.views;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.github.sebastianfrey.joa.models.Services;
-import io.dropwizard.views.View;
 
-public class ServicesView extends View {
+public class ServicesView extends LinkableView {
   private final Services services;
 
   public ServicesView(Services services) {
-    super("services.ftl");
+    super("Services.ftl", services);
     this.services = services;
   }
 

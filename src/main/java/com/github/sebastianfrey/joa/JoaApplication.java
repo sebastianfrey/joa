@@ -1,5 +1,6 @@
 package com.github.sebastianfrey.joa;
 
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,16 +12,14 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkDeserializer;
 import com.github.sebastianfrey.joa.extensions.jackson.LinkSerializer;
 import com.github.sebastianfrey.joa.resources.OGCApiServiceResource;
-import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
-import com.github.sebastianfrey.joa.resources.filters.RewriteFormatQueryParamToAcceptHeaderFilter;
 import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
-import org.glassfish.jersey.server.ServerProperties;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
+import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -54,43 +53,34 @@ public class JoaApplication extends Application<JoaConfiguration> {
     bootstrap.addBundle(new ViewBundle<JoaConfiguration>() {
       @Override
       public Map<String, Map<String, String>> getViewConfiguration(JoaConfiguration config) {
-          return config.getViewRendererConfiguration();
+        return config.getViewRendererConfiguration();
       }
     });
   }
 
   @Override
   public void run(final JoaConfiguration configuration, final Environment environment) {
-    // set up jersey
-    jersey(configuration, environment);
-
-    // set up cors
-    cors(configuration, environment);
-
     // set up features
     linking(configuration, environment);
 
     // set up providers
     jackson(configuration, environment);
 
+    // set up cors
+    cors(configuration, environment);
+
     // set up resources
     resources(configuration, environment);
 
     // set up openapi
     openapi(configuration, environment);
-  }
 
-  private void jersey(final JoaConfiguration configuration, final Environment environment) {
-    // include body for 4xx and 5xx
-    environment.jersey().property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, true);
-
-    // return 400 for QueryParamExceptions
-    environment.jersey().register(QueryParamExceptionHandler.class);
-
-    environment.jersey().register(RewriteFormatQueryParamToAcceptHeaderFilter.class);
+    //environment.jersey().setUrlPattern("/*");
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {
+    environment.jersey().register(JoaFeature.class);
+
     // fetch the service
     final OGCApiService<?, ?> ogcApiService = configuration.getOGCApiService();
 

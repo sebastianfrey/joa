@@ -22,6 +22,7 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
+import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
 import com.github.sebastianfrey.joa.services.OGCApiService;
 import org.glassfish.jersey.linking.ProvideLink;
@@ -35,157 +36,166 @@ import org.glassfish.jersey.server.model.Resource;
 @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
 public class OGCApiServiceResource {
 
-  @Inject
-  private OGCApiService<Object, Object> ogcApiService;
+    @Inject
+    private OGCApiService<Object, Object> ogcApiService;
 
-  public OGCApiServiceResource() {}
+    public OGCApiServiceResource() {}
 
-  public OGCApiServiceResource(OGCApiService<Object, Object> ogcApiService) {
-    this.ogcApiService = ogcApiService;
-  }
+    public OGCApiServiceResource(OGCApiService<Object, Object> ogcApiService) {
+        this.ogcApiService = ogcApiService;
+    }
 
-  @GET
-  @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-      style = InjectLink.Style.ABSOLUTE)
-  public ServicesView getServices() throws IOException {
-    return new ServicesView(ogcApiService.getServices());
-  }
+    @GET
+    @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
+            style = InjectLink.Style.ABSOLUTE, title = "HTML")
+    @ProvideLink(value = Services.class, rel = Linkable.ALTERNATE,
+            type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE, title = "JSON")
+    public ServicesView getServices() throws IOException {
+        Services services = ogcApiService.getServices();
+        return new ServicesView(services);
+    }
 
-  @GET
-  @Path("{serviceId}")
-  @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-      style = InjectLink.Style.ABSOLUTE)
-  public Service getCapabilities(@PathParam("serviceId") String serviceId) {
-    return ogcApiService.getService(serviceId);
-  }
+    @GET
+    @Path("{serviceId}")
+    @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE, title = "HTML")
+    @ProvideLink(value = Service.class, rel = Linkable.ALTERNATE, type = MediaType.APPLICATION_JSON,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE, title = "JSON")
+    public ServiceView getCapabilities(@PathParam("serviceId") String serviceId) {
+        Service service = ogcApiService.getService(serviceId);
+        return new ServiceView(service);
+    }
 
-  @POST
-  public Response addService(@FormDataParam("file") FormDataBodyPart body) throws Exception {
-    ogcApiService.addService(body);
+    @POST
+    public Response addService(@FormDataParam("file") FormDataBodyPart body) throws Exception {
+        ogcApiService.addService(body);
 
-    return Response.ok("Data uploaded successfully !!").build();
-  }
+        return Response.ok("Data uploaded successfully !!").build();
+    }
 
-  @GET
-  @Path("{serviceId}/conformance")
-  @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE, type = MediaType.APPLICATION_JSON,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-      style = InjectLink.Style.ABSOLUTE)
-  public Conformance getConformance(@PathParam("serviceId") String serviceId) {
-    return ogcApiService.getConformance(serviceId);
-  }
+    @GET
+    @Path("{serviceId}/conformance")
+    @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE,
+            type = MediaType.APPLICATION_JSON,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
+            style = InjectLink.Style.ABSOLUTE)
+    public Conformance getConformance(@PathParam("serviceId") String serviceId) {
+        return ogcApiService.getConformance(serviceId);
+    }
 
-  @GET
-  @Path("{serviceId}/collections")
-  @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.APPLICATION_JSON,
-      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-      style = InjectLink.Style.ABSOLUTE)
-  public Collections getCollections(@PathParam("serviceId") String serviceId) {
-    return ogcApiService.getCollections(serviceId);
-  }
+    @GET
+    @Path("{serviceId}/collections")
+    @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.APPLICATION_JSON,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE)
+    public Collections getCollections(@PathParam("serviceId") String serviceId) {
+        return ogcApiService.getCollections(serviceId);
+    }
 
-  @Path("{serviceId}/api")
-  @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
-      type = MediaType.APPLICATION_OPENAPI_JSON,
-      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
-      type = MediaType.APPLICATION_OPENAPI_YAML,
-      bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-      style = InjectLink.Style.ABSOLUTE)
-  @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
-  public Resource getApi() {
-    return Resource.from(OpenAPIResource.class);
-  }
+    @Path("{serviceId}/api")
+    @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
+            type = MediaType.APPLICATION_OPENAPI_JSON,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE, title="JSON")
+    @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
+            type = MediaType.APPLICATION_OPENAPI_YAML,
+            bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+            style = InjectLink.Style.ABSOLUTE, title="YAML")
+    @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
+    public Resource getApi() {
+        return Resource.from(OpenAPIResource.class);
+    }
 
-  @GET
-  @Path("{serviceId}/collections/{collectionId}")
-  @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Item.class, rel = Linkable.COLLECTION,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Collection getCollection(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId) {
-    return ogcApiService.getCollection(serviceId, collectionId);
-  }
+    @GET
+    @Path("{serviceId}/collections/{collectionId}")
+    @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Item.class, rel = Linkable.COLLECTION,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
+    public Collection getCollection(@PathParam("serviceId") String serviceId,
+            @PathParam("collectionId") String collectionId) {
+        return ogcApiService.getCollection(serviceId, collectionId);
+    }
 
-  @GET
-  @Path("{serviceId}/collections/{collectionId}/items")
-  @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
-      type = MediaType.APPLICATION_GEO_JSON,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = Linkable.SELF,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = Linkable.NEXT,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      condition = "${instance.nextPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = Linkable.PREV,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      condition = "${instance.prevPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = Linkable.FIRST,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      condition = "${instance.firstPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-      style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Items.class, rel = Linkable.LAST,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
-      style = InjectLink.Style.ABSOLUTE)
-  public Items<Object, ?> getItems(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId,
-      @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
-    final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
+    @GET
+    @Path("{serviceId}/collections/{collectionId}/items")
+    @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
+            type = MediaType.APPLICATION_GEO_JSON,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Items.class, rel = Linkable.SELF,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Items.class, rel = Linkable.NEXT,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            condition = "${instance.nextPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Items.class, rel = Linkable.PREV,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            condition = "${instance.prevPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Items.class, rel = Linkable.FIRST,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            condition = "${instance.firstPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+            style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Items.class, rel = Linkable.LAST,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
+            style = InjectLink.Style.ABSOLUTE)
+    public Items<Object, ?> getItems(@PathParam("serviceId") String serviceId,
+            @PathParam("collectionId") String collectionId,
+            @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
+        final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
 
-    // validate query parameters
-    featureQuery.validateQueryParameters(queryables);
+        // validate query parameters
+        featureQuery.validateQueryParameters(queryables);
 
-    return ogcApiService.getItems(serviceId, collectionId, featureQuery);
-  }
+        return ogcApiService.getItems(serviceId, collectionId, featureQuery);
+    }
 
-  @GET
-  @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
-  @ProvideLink(value = Item.class, rel = Linkable.SELF,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),
-          @Binding(name = "featureId", value = "${instance.id}"),},
-      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Item<Object, ?> getItem(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
-    return ogcApiService.getItem(serviceId, collectionId, featureId);
-  }
+    @GET
+    @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
+    @ProvideLink(value = Item.class, rel = Linkable.SELF,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),
+                    @Binding(name = "featureId", value = "${instance.id}"),},
+            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+    public Item<Object, ?> getItem(@PathParam("serviceId") String serviceId,
+            @PathParam("collectionId") String collectionId,
+            @PathParam("featureId") Long featureId) {
+        return ogcApiService.getItem(serviceId, collectionId, featureId);
+    }
 
-  @GET
-  @Path("{serviceId}/collections/{collectionId}/queryables")
-  @ProvideLink(value = Queryables.class, rel = Linkable.SELF,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
-      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
-          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Queryables getQueryables(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId) {
-    return ogcApiService.getQueryables(serviceId, collectionId);
-  }
+    @GET
+    @Path("{serviceId}/collections/{collectionId}/queryables")
+    @ProvideLink(value = Queryables.class, rel = Linkable.SELF,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+    @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
+            bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+                    @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+            type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+    public Queryables getQueryables(@PathParam("serviceId") String serviceId,
+            @PathParam("collectionId") String collectionId) {
+        return ogcApiService.getQueryables(serviceId, collectionId);
+    }
 }
