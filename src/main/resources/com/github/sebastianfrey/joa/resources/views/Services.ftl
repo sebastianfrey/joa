@@ -4,7 +4,7 @@
 <#import "Icons.ftl" as icons>
 
 <@layout.layout>
-  <@components.header>
+  <@components.nav>
     <@components.navlist>
       <@components.navitem href="/">
         JOA
@@ -15,12 +15,12 @@
     </@components.navlist>
     <div class="flex-grow"></div>
     <@components.navalternates linkable=services />
-  </@components.header>
+  </@components.nav>
 
   <@components.main>
     <@components.grid>
       <#list services.getServices() as service>
-        <@components.griditem class="space-x-4 ">
+        <@components.griditem class="space-x-4">
           <div class="shrink-0">
             <img class="h-40 w-40 xl:h-60 xl:w-60" src="/img/placeholder-200x200.png" alt="Thumbnail">
           </div>
@@ -29,10 +29,10 @@
             <p class="text-sm lg:text-base text-slate-500">${(service.getDescription())!"No description"}</p>
             <div class="flex-grow"></div>
             <#assign link = service.getFirstLinkByRel("self") />
-            <div class="self-end text-sm lg:text-base text-[#caae53] justify-items-center">
-              <a class="flex flex-row" href="${link.getUri().toString()}" title="Show Service">
-                View <@icons.externallink class="stroke-[#caae53] pl-1" />
-              </a>
+            <div class="self-end">
+              <@components.link href="${link.getUri().toString()}" title="Show Service">
+                View
+              </@components.link>
             </div>
           </div>
         </@components.griditem>

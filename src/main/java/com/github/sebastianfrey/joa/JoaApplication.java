@@ -1,6 +1,5 @@
 package com.github.sebastianfrey.joa;
 
-import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,7 +18,6 @@ import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.forms.MultiPartBundle;
-import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
@@ -74,8 +72,6 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
     // set up openapi
     openapi(configuration, environment);
-
-    //environment.jersey().setUrlPattern("/*");
   }
 
   private void resources(final JoaConfiguration configuration, final Environment environment) {

@@ -1,3 +1,19 @@
+<#macro header>
+  <div class="sticky top-0 bg-slate-50 border-b-2 border-[#caae53] p-3 min-h-4 w-full">
+    <header class="m-auto w-full lg:w-3/4 flex">
+      Header TODO<#nested />
+    </header>
+  </div>
+</#macro>
+
+<#macro footer>
+  <div class="fixed bottom-0 bg-slate-50 p-3 w-full shadow-inner">
+    <footer class="m-auto w-full lg:w-3/4 flex">
+      Footer TODO<#nested />
+    </footer>
+  </div>
+</#macro>
+
 <#macro layout>
   <!doctype html>
 
@@ -24,8 +40,10 @@
       <script src="https://cdn.tailwindcss.com"></script>
     </head>
 
-    <body class="min-h-screen bg-[#e1e2e1]">
+    <body class="min-h-screen bg-[#f5f5f6] overflow-y-scroll">
+      <@header />
       <#nested />
+      <@footer />
     </body>
   </html>
 </#macro>

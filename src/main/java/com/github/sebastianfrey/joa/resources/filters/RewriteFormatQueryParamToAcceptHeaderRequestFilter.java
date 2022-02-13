@@ -23,20 +23,21 @@ import com.google.common.net.HttpHeaders;
 @Priority(3000)
 public class RewriteFormatQueryParamToAcceptHeaderRequestFilter implements ContainerRequestFilter {
 
-  private static final Map<String, String> mappings = Collections
-      .unmodifiableMap(Map.of("html", MediaType.TEXT_HTML, "json", MediaType.APPLICATION_JSON));
+  private static final Map<String, String> mappings =
+      Collections.unmodifiableMap(Map.of("html", MediaType.TEXT_HTML, "json",
+          MediaType.APPLICATION_JSON, "yaml", MediaType.APPLICATION_OPENAPI_YAML));
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
-    final String format = request.getUriInfo().getQueryParameters().getFirst("f");
-    if (format != null) {
-      final String mediaType = mappings.get(format);
-      if (mediaType != null) {
-        request.getHeaders().putSingle(HttpHeaders.ACCEPT, mediaType);
-      } else {
-        throw new BadRequestException(
-            "Invalid parameter: Format '" + format + "' is not supported.");
-      }
+    String format = request.getUriInfo().getQueryParameters().getFirst("f");
+    if (format == null) {
+      format = "html";
+    }
+    final String mediaType = mappings.get(format);
+    if (mediaType != null) {
+      request.getHeaders().putSingle(HttpHeaders.ACCEPT, mediaType);
+    } else {
+      throw new BadRequestException("Invalid parameter: Format '" + format + "' is not supported.");
     }
   }
 }

@@ -4,7 +4,7 @@
 <#import "Icons.ftl" as icons>
 
 <@layout.layout>
-  <@components.header>
+  <@components.nav>
     <@components.navlist>
       <@components.navitem href="/">
         JOA
@@ -18,7 +18,7 @@
     </@components.navlist>
     <div class="flex-grow"></div>
     <@components.navalternates linkable=service />
-  </@components.header>
+  </@components.nav>
 
   <@components.main class="h-full">
     <@components.grid>
@@ -28,22 +28,26 @@
         </h2>
         <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
           <#assign collectionsLink = service.getFirstLinkByRel("data") />
-          <a class="hover:underline flex flex-row" href="${collectionsLink.getUri().toString()}" title="Browse the available collections">Browse the available collections <@icons.externallink class="pl-1" /></a>
+          <@components.link href="${collectionsLink.getUri().toString()}" title="Browse the available collections">
+            Browse the available collections
+          </@components.link>
         </div>
         <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
           Open API 3.0
         </h2>
         <#list service.getLinksByRel("service-desc") as openApiLink>
-          <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
-            <a class="hover:underline flex flex-row" href="${openApiLink.getUri().toString()}" title="View the OpenAPI document (${openApiLink.getTitle()})">View the OpenAPI document (${openApiLink.getTitle()}) <@icons.externallink class="pl-1" /></a>
-          </div>
+          <@components.link href="${openApiLink.getUri().toString()}" title="View the OpenAPI document (${openApiLink.getTitle()})">
+            View the OpenAPI document (${openApiLink.getTitle()})
+          </@components.link>
         </#list>
         <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
           Conformance
         </h2>
         <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
           <#assign conformanceLink = service.getFirstLinkByRel("conformance") />
-          <a class="hover:underline flex flex-row" href="${conformanceLink.getUri().toString()}" title="View the supported conformance classes">View the supported conformance classes <@icons.externallink class="pl-1"/></a>
+          <@components.link href="${conformanceLink.getUri().toString()}" title="View the supported conformance classes">
+            View the supported conformance classes
+          </@components.link>
         </div>
       </@components.griditem>
     </@components.grid>

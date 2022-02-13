@@ -48,7 +48,7 @@ public class OGCApiServiceResource {
     @GET
     @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
             style = InjectLink.Style.ABSOLUTE, title = "HTML")
-    @ProvideLink(value = Services.class, rel = Linkable.ALTERNATE,
+    @ProvideLink(value = Services.class, rel = Linkable.SELF,
             type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE, title = "JSON")
     public ServicesView getServices() throws IOException {
         Services services = ogcApiService.getServices();
@@ -60,7 +60,7 @@ public class OGCApiServiceResource {
     @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
             bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
             style = InjectLink.Style.ABSOLUTE, title = "HTML")
-    @ProvideLink(value = Service.class, rel = Linkable.ALTERNATE, type = MediaType.APPLICATION_JSON,
+    @ProvideLink(value = Service.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
             bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
             style = InjectLink.Style.ABSOLUTE, title = "JSON")
     public ServiceView getCapabilities(@PathParam("serviceId") String serviceId) {
