@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.glassfish.jersey.linking.InjectLinks;
 
 /**
@@ -14,6 +16,7 @@ import org.glassfish.jersey.linking.InjectLinks;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Linkable {
+  private final static ObjectMapper objectMapper = new ObjectMapper();
 
   /**
    * The conformance relationship.
@@ -127,5 +130,9 @@ public class Linkable {
             (link) -> link.getRel().equalsIgnoreCase(rel) && link.getType().equalsIgnoreCase(type))
         .findFirst()
         .orElse(null);
+  }
+
+  public String toJSON() throws JsonProcessingException {
+    return objectMapper.writeValueAsString(this);
   }
 }

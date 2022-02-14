@@ -22,6 +22,7 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
+import com.github.sebastianfrey.joa.resources.views.CollectionView;
 import com.github.sebastianfrey.joa.resources.views.CollectionsView;
 import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
@@ -38,11 +39,11 @@ import org.glassfish.jersey.server.model.Resource;
 public class OGCApiServiceResource {
 
   @Inject
-  private OGCApiService<Object, Object> ogcApiService;
+  private OGCApiService ogcApiService;
 
   public OGCApiServiceResource() {}
 
-  public OGCApiServiceResource(OGCApiService<Object, Object> ogcApiService) {
+  public OGCApiServiceResource(OGCApiService ogcApiService) {
     this.ogcApiService = ogcApiService;
   }
 
@@ -140,9 +141,10 @@ public class OGCApiServiceResource {
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       type = MediaType.APPLICATION_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Collection getCollection(@PathParam("serviceId") String serviceId,
+  public CollectionView getCollection(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
-    return ogcApiService.getCollection(serviceId, collectionId);
+    Collection collection = ogcApiService.getCollection(serviceId, collectionId);
+    return new CollectionView(collection);
   }
 
   @GET
@@ -182,7 +184,7 @@ public class OGCApiServiceResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  public Items<Object, ?> getItems(@PathParam("serviceId") String serviceId,
+  public Items<?> getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
     final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
@@ -200,7 +202,7 @@ public class OGCApiServiceResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),
           @Binding(name = "featureId", value = "${instance.id}"),},
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
-  public Item<Object, ?> getItem(@PathParam("serviceId") String serviceId,
+  public Item<?> getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
     return ogcApiService.getItem(serviceId, collectionId, featureId);
   }

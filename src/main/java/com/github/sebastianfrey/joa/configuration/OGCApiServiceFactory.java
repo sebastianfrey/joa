@@ -22,7 +22,7 @@ public class OGCApiServiceFactory {
     this.geoPackageConfiguration = geoPackageConfiguration;
   }
 
-  public OGCApiService<?, ?> getOGCApiService() {
+  public OGCApiService getOGCApiService() {
     if (geoPackageConfiguration != null) {
       String workspace = geoPackageConfiguration.getWorkspace();
       String runtime = geoPackageConfiguration.getRuntime();

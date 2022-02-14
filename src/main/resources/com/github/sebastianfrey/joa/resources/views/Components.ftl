@@ -69,3 +69,75 @@
     <@icons.externallink class="stroke-[#caae53] pl-1" />
   </a>
 </#macro>
+
+<#macro map data>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+  <div id="map" class="h-[400px]"></div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYXN0aWFuZnJleSIsImEiOiJja3puYWI1bGYwN21sMnhxc2xnaGk4bDl1In0.EePnZo2Vsk02AN721nHZwQ';
+
+    <#outputformat "JSON">
+    const data = JSON.parse('${data.toJSON()}');
+    </#outputformat>
+
+    const bbox = data.extent.spatial.bbox[0];
+    let minx, miny, minz, maxx, maxy, maxz;
+    if (bbox.length === 4) {
+      [minx, miny, maxx, maxy] = bbox;
+    } else {
+      [minx, miny, minz,maxx, maxy, maxz] = bbox;
+    }
+
+    const bounds = [[minx, miny], [maxx, maxy]];
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v11',
+      bounds,
+    });
+    map.on('load', () => {
+      map.fitBounds(bounds, { padding: 50 });
+      // add bbox source
+      map.addSource('bbox', {
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [minx, miny],
+                [minx, maxy],
+                [maxx, maxy],
+                [maxx, miny],
+                [minx, miny],
+              ]
+            ]
+          }
+        }
+      });
+      // Add a new layer to visualize the polygon.
+      map.addLayer({
+        id: 'fill',
+        type: 'fill',
+        source: 'bbox', // reference the data source
+        layout: {},
+        paint: {
+          'fill-color': '#0080ff', // blue color fill
+          'fill-opacity': 0.5
+        }
+      });
+      // Add a black outline around the polygon.
+      map.addLayer({
+        id: 'outline',
+        type: 'line',
+        source: 'bbox',
+        layout: {},
+        paint: {
+          'line-color': '#000',
+          'line-width': 3
+        }
+      });
+    });
+  </script>
+</#macro>

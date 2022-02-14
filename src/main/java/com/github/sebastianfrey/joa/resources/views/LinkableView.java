@@ -4,7 +4,7 @@ import com.github.sebastianfrey.joa.models.Linkable;
 import io.dropwizard.views.View;
 
 public class LinkableView extends View {
-  Linkable linkable;
+  private final Linkable linkable;
 
   public LinkableView(String view, Linkable linkable) {
     super(view);

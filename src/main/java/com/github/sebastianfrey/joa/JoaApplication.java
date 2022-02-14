@@ -78,7 +78,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
     environment.jersey().register(JoaFeature.class);
 
     // fetch the service
-    final OGCApiService<?, ?> ogcApiService = configuration.getOGCApiService();
+    final OGCApiService ogcApiService = configuration.getOGCApiService();
 
     // setup dependency injection for CollectionService
     environment.jersey().register(new AbstractBinder() {

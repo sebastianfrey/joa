@@ -66,8 +66,7 @@ public class OGCApiServiceResourceTest {
       .resourcePackages(
           Stream.of("com.github.sebastianfrey.joa.resources").collect(Collectors.toSet()));
 
-  @SuppressWarnings("unchecked")
-  private static final OGCApiService<Object, Object> DAO = mock(OGCApiService.class);
+  private static final OGCApiService DAO = mock(OGCApiService.class);
 
   private static final ResourceExtension EXT = ResourceExtension.builder()
       .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
@@ -85,7 +84,7 @@ public class OGCApiServiceResourceTest {
     EXT.getObjectMapper().registerModule(module);
   }
 
-  private static class TestItems extends Items<Object, TestItems> {
+  private static class TestItems extends Items<TestItems> {
     private boolean firstPageAvailable = false;
     private boolean lastPageAvailable = false;
     private boolean nextPageAvailable = false;
@@ -134,7 +133,7 @@ public class OGCApiServiceResourceTest {
     }
   }
 
-  public static class TestItem extends Item<Object, TestItem> {
+  public static class TestItem extends Item<TestItem> {
     private String id;
     private Map<String, Object> properties = new HashMap<>();
     private double[] bbox;
@@ -171,7 +170,7 @@ public class OGCApiServiceResourceTest {
     }
 
     @Override
-    public Object getGeometry() {
+    public Geometry getGeometry() {
       return geometry;
     }
 
@@ -233,7 +232,6 @@ public class OGCApiServiceResourceTest {
   }
 
   @AfterEach
-  @SuppressWarnings("unchecked")
   void tearDown() {
     reset(DAO);
   }
@@ -415,7 +413,7 @@ public class OGCApiServiceResourceTest {
     doReturn(items).when(DAO)
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
-    Items<Object, TestItems> found =
+    Items<TestItems> found =
         EXT.target("/service1/collections/collection1/items").request().get(TestItems.class);
 
     assertThat(found.getFeatures()).isEmpty();

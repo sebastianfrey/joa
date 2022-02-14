@@ -6,14 +6,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Linkable;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
-import mil.nga.sf.geojson.Feature;
 
 /**
  * GeoPackage specific implementation of the Items model.
  *
  * @author sfrey
  */
-public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
+public class GeoPackageItems extends Items<GeoPackageItems> {
   @JsonIgnore
   private String queryString = "";
   @JsonIgnore

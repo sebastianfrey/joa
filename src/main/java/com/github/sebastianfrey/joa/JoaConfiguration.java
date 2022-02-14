@@ -37,7 +37,7 @@ public class JoaConfiguration extends Configuration {
     this.viewRendererConfiguration = viewRendererConfiguration;
   }
 
-  public OGCApiService<?, ?> getOGCApiService() {
+  public OGCApiService getOGCApiService() {
     return joaServiceFactory.getOGCApiService();
   }
 }

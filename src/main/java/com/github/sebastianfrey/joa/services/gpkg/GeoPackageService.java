@@ -50,7 +50,6 @@ import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
-import mil.nga.sf.geojson.Geometry;
 import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.GeometryType;
 import mil.nga.sf.geojson.Feature;
@@ -63,7 +62,7 @@ import mil.nga.sf.geojson.FeatureConverter;
  *
  * @author sfrey
  */
-public class GeoPackageService implements OGCApiService<Feature, Geometry> {
+public class GeoPackageService implements OGCApiService {
   private File workspace;
   private String runtime;
 
