@@ -12,8 +12,8 @@
       <@components.navitem href="/api">
         Services
       </@components.navitem>
-      <@components.navitem>
-        ${service.getTitle()}
+      <@components.navitem href="/api/${service.getServiceId()}" content="">
+        ${service.getServiceId()}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
@@ -37,14 +37,14 @@
         </h2>
         <#list service.getLinksByRel("service-desc") as openApiLink>
           <@components.link href="${openApiLink.getUri().toString()}" title="View the OpenAPI document (${openApiLink.getTitle()})">
-            View the OpenAPI document (${openApiLink.getTitle()})
+            View the (${openApiLink.getTitle()})
           </@components.link>
         </#list>
         <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
           Conformance
         </h2>
         <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
-          <#assign conformanceLink = service.getFirstLinkByRel("conformance") />
+          <#assign conformanceLink = service.getFirstLinkByRelAndType("conformance", "text/html") />
           <@components.link href="${conformanceLink.getUri().toString()}" title="View the supported conformance classes">
             View the supported conformance classes
           </@components.link>

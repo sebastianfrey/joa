@@ -112,6 +112,20 @@ public class Linkable {
    * @return
    */
   public Link getFirstLinkByRel(String rel) {
-    return getLinks().stream().filter((link) -> link.getRel().equals(rel)).findFirst().orElse(null);
+    return getLinks().stream().filter((link) -> link.getRel().equalsIgnoreCase(rel)).findFirst().orElse(null);
+  }
+
+  /**
+   * returns the first link of a given rel.
+   *
+   * @param rel
+   * @return
+   */
+  public Link getFirstLinkByRelAndType(String rel, String type) {
+    return getLinks().stream()
+        .filter(
+            (link) -> link.getRel().equalsIgnoreCase(rel) && link.getType().equalsIgnoreCase(type))
+        .findFirst()
+        .orElse(null);
   }
 }

@@ -2,14 +2,14 @@
 
 <!-- Main -->
 <#macro main class="">
-  <div class="m-auto w-full lg:w-3/4 mt-6 pb-12 mb-6 ${class}">
+  <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 lg:px-0 ${class}">
     <#nested />
   </div>
 </#macro>
 
 <#macro nav>
-  <div class="bg-[#ffe082] p-4 w-full">
-    <nav class="m-auto w-full lg:w-3/4 flex">
+  <div class="bg-[#ffe082] px-6 py-4 w-full">
+    <nav class="m-auto w-full lg:w-3/4 flex flex-wrap ">
       <#nested />
     </nav>
   </div>
@@ -23,13 +23,16 @@
 </#macro>
 
 <#macro navitem href="" title="" content=">">
-  <li class="text-xl font-bold">
+  <li class="text-sm md:text-base">
     <#if href != "">
-      <a class="hover:underline after:content-['${content}'] after:ml-0.5 after:mr-1 after:no-underline after:inline-block" href="${href}" title="${title}">
+      <a class="hover:underline" href="${href}" title="${title}">
         <#nested />
       </a>
     <#else>
         <#nested />
+    </#if>
+    <#if content?has_content>
+      <span class="m-1 select-none">${content}</span>
     </#if>
   </li>
 </#macro>
@@ -61,7 +64,7 @@
 </#macro>
 
 <#macro link href title="">
-  <a class="flex flex-row text-sm lg:text-base text-[#caae53] hover:underline " href="${href}" title="${title}">
+  <a class="flex flex-row text-sm lg:text-base text-[#caae53] hover:underline" href="${href}" title="${title}">
     <#nested>
     <@icons.externallink class="stroke-[#caae53] pl-1" />
   </a>

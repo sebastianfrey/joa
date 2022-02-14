@@ -1,5 +1,5 @@
 <#macro header>
-  <div class="sticky top-0 bg-slate-50 border-b-2 border-[#caae53] p-3 min-h-4 w-full">
+  <div class="sticky top-0 bg-slate-50 border-b-2 border-[#caae53] px-6 py-3 min-h-4 w-full">
     <header class="m-auto w-full lg:w-3/4 flex">
       Header TODO<#nested />
     </header>
@@ -7,7 +7,7 @@
 </#macro>
 
 <#macro footer>
-  <div class="fixed bottom-0 bg-slate-50 p-3 w-full shadow-inner">
+  <div class="fixed bottom-0 bg-slate-50 px-6 py-3 w-full shadow-inner">
     <footer class="m-auto w-full lg:w-3/4 flex">
       Footer TODO<#nested />
     </footer>
@@ -38,6 +38,16 @@
       <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
       <script src="https://cdn.tailwindcss.com"></script>
+      <script>
+        tailwind.config = {
+          plugins: [
+            tailwind.plugin(function ({ addVariant }) {
+              // Add a `third` variant, ie. `third:pb-0`
+              addVariant('third', '&:nth-child(3)')
+            }),
+          ],
+        };
+      </script>
     </head>
 
     <body class="min-h-screen bg-[#f5f5f6] overflow-y-scroll">
