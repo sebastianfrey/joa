@@ -37,8 +37,12 @@
 <#macro navalternates linkable>
   <@components.navlist>
     <#list linkable.getLinksByRel("alternate") as link>
-      <@components.navitem href="${link.getUri().toString()}" title="This resource as ${link.getTitle()}" content="">
-        ${link.getTitle()}
+      <@components.navitem href="${link.getUri().toString()}" title="${link.getTitle()}" content="">
+        <#if link.getType()?contains("json")>
+          JSON
+        <#else>
+          ${link.getType()}
+        </#if>
       </@components.navitem>
     </#list>
   </@components.navlist>
