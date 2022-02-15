@@ -216,7 +216,7 @@ public class OGCApiServiceResource {
   @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE)
+      type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE, title="Queryables in this collection")
   public Queryables getQueryables(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId) {
     return ogcApiService.getQueryables(serviceId, collectionId);

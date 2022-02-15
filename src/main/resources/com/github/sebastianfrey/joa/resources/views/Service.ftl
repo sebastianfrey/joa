@@ -32,6 +32,8 @@
             Browse the available collections
           </@components.link>
         </div>
+      </@components.griditem>
+      <@components.griditem class="flex-col">
         <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
           Open API 3.0
         </h2>
@@ -40,6 +42,8 @@
             View the (${openApiLink.getTitle()})
           </@components.link>
         </#list>
+      </@components.griditem>
+      <@components.griditem class="flex-col">
         <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
           Conformance
         </h2>

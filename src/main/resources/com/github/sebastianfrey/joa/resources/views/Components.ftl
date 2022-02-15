@@ -8,16 +8,16 @@
 </#macro>
 
 <#macro nav>
-  <div class="bg-[#ffe082] px-6 py-4 w-full">
-    <nav class="m-auto w-full lg:w-3/4 flex flex-wrap ">
+  <div class="bg-[#ffe082] px-6 py-4 lg:px-0 w-full">
+    <nav class="m-auto w-full lg:w-3/4 flex flex-col sm:flex-row">
       <#nested />
     </nav>
   </div>
 </#macro>
 
 
-<#macro navlist>
-  <ol class="h-2 flex flex-row items-center">
+<#macro navlist class="">
+  <ol class="h-2 flex flex-row flex-wrap items-center h-[25px] sm:flex-nowrap sm:h-0 ${class}">
     <#nested />
   </ol>
 </#macro>
@@ -38,7 +38,7 @@
 </#macro>
 
 <#macro navalternates linkable>
-  <@components.navlist>
+  <@components.navlist class="justify-end">
     <#list linkable.getLinksByRel("alternate") as link>
       <@components.navitem href="${link.getUri().toString()}" title="${link.getTitle()}" content="">
         <#if link.getType()?contains("json")>
@@ -70,74 +70,83 @@
   </a>
 </#macro>
 
-<#macro map data>
+<#macro spatial spatial>
+  <#nested />
+  <#list spatial.getBbox()>
+    <ul class="text-sm">
+      <#items as bbox>
+        <li class="py-1 flex flex-col">
+          <span class="flex space-x-4">
+            <span class="min-w-[85px]">Lower Left:</span>
+            <#assign i = 0>
+            <span>${bbox[i]?c!"-"}</span>
+            <#assign i = i + 1>
+            <span>${bbox[i]?c!"-"}</span>
+            <#if bbox?size == 6>
+              <#assign i = i + 1>
+              <span>${bbox[i]?c!"-"}</span>
+            </#if>
+          </span>
+          <span class="flex space-x-4">
+            <span class="min-w-[85px]">Upper Right:</span>
+            <#assign i = i + 1>
+            <span>${bbox[i]?c!"-"}</span>
+            <#assign i = i + 1>
+            <span>${bbox[i]?c!"-"}</span>
+            <#if bbox?size == 6>
+              <#assign i = i + 1>
+              <span>${bbox[i]?c!"-"}</span>
+            </#if>
+          </span>
+        </li>
+      </#items>
+    </ul>
+    <#else>
+      -
+  </#list>
+  <div id="map" class="h-[400px] w-full mt-2"></div>
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
   <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
-  <div id="map" class="h-[400px]"></div>
   <script>
     mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYXN0aWFuZnJleSIsImEiOiJja3puYWI1bGYwN21sMnhxc2xnaGk4bDl1In0.EePnZo2Vsk02AN721nHZwQ';
-
-    <#outputformat "JSON">
-    const data = JSON.parse('${data.toJSON()}');
-    </#outputformat>
-
-    const bbox = data.extent.spatial.bbox[0];
-    let minx, miny, minz, maxx, maxy, maxz;
-    if (bbox.length === 4) {
-      [minx, miny, maxx, maxy] = bbox;
-    } else {
-      [minx, miny, minz,maxx, maxy, maxz] = bbox;
-    }
-
-    const bounds = [[minx, miny], [maxx, maxy]];
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/streets-v11',
-      bounds,
-    });
-    map.on('load', () => {
-      map.fitBounds(bounds, { padding: 50 });
-      // add bbox source
-      map.addSource('bbox', {
-        type: 'geojson',
-        data: {
-          type: 'Feature',
-          geometry: {
-            type: 'Polygon',
-            coordinates: [
-              [
-                [minx, miny],
-                [minx, maxy],
-                [maxx, maxy],
-                [maxx, miny],
-                [minx, miny],
-              ]
-            ]
-          }
-        }
-      });
-      // Add a new layer to visualize the polygon.
-      map.addLayer({
-        id: 'fill',
-        type: 'fill',
-        source: 'bbox', // reference the data source
-        layout: {},
-        paint: {
-          'fill-color': '#0080ff', // blue color fill
-          'fill-opacity': 0.5
-        }
-      });
-      // Add a black outline around the polygon.
-      map.addLayer({
-        id: 'outline',
-        type: 'line',
-        source: 'bbox',
-        layout: {},
-        paint: {
-          'line-color': '#000',
-          'line-width': 3
-        }
-      });
-    });
+    joa = JSON.parse(<#outputformat "JSON">'${collection.toJSON()}'</#outputformat>);
   </script>
+  <script src="/js/overview.js"></script>
+</#macro>
+
+<#macro temporal temporal>
+  <#nested />
+  <#list temporal.getInterval()>
+    <ul class="text-sm">
+      <#items as interval>
+        <li class="py-1 flex">
+          <span class="flex min-w-[120px] space-x-4">
+            <span>Lower:</span>
+            <span>${interval[0]!"-"}</span>
+          </span>
+          <span class="flex min-w-[120px] space-x-4">
+            <span class="pl-1">Upper:</span>
+            <span>${interval[1]!"-"}</span>
+          </span>
+        </li>
+      </#items>
+    </ul>
+  <#else>
+    -
+  </#list>
+</#macro>
+
+<#macro crs crs>
+  <#nested />
+  <#list crs>
+    <ul class="text-sm">
+      <#items as value>
+        <li>
+          <@link href=value title=value>
+            ${value}
+          </@link>
+        </li>
+      </#items>
+    </ul>
+  </#list>
 </#macro>

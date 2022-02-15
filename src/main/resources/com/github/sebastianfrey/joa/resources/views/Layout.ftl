@@ -1,5 +1,5 @@
 <#macro header>
-  <div class="sticky top-0 bg-slate-50 border-b-2 border-[#caae53] px-6 py-3 min-h-4 w-full">
+  <div class="sticky top-0 z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 py-3 min-h-4 w-full lg:px-0">
     <header class="m-auto w-full lg:w-3/4 flex">
       Header TODO<#nested />
     </header>
@@ -7,7 +7,7 @@
 </#macro>
 
 <#macro footer>
-  <div class="fixed bottom-0 bg-slate-50 px-6 py-3 w-full shadow-inner">
+  <div class="fixed bottom-0 z-10 bg-slate-50 px-6 py-3 w-full shadow-inner lg:px-0 ">
     <footer class="m-auto w-full lg:w-3/4 flex">
       Footer TODO<#nested />
     </footer>

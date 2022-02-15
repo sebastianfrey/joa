@@ -22,10 +22,10 @@
       <#list services.getServices() as service>
         <@components.griditem class="space-x-4">
           <div class="shrink-0">
-            <img class="h-40 w-40 xl:h-60 xl:w-60" src="/img/placeholder-200x200.png" alt="Thumbnail">
+            <img class="h-40 w-40" src="/img/placeholder-200x200.png" alt="Thumbnail">
           </div>
           <div class="flex flex-col flex-1 h-full">
-            <h2 class="text-lg lg:text-xl font-medium text-black">${service.getTitle()}</h2>
+            <h2 class="text-sm lg:text-base font-medium text-black">${service.getTitle()}</h2>
             <p class="text-sm lg:text-base text-slate-500">${(service.getDescription())!"No description"}</p>
             <div class="flex-grow"></div>
             <#assign link = service.getFirstLinkByRel("self") />
