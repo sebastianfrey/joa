@@ -36,20 +36,22 @@
         </@components.h1>
         <@components.map script = "/js/items.js" data = items.toJSON() class = "mb-6" />
         <#list items.getFeatures()>
-          <div class="w-full min-h-[400px] overflow-auto border-2">
+          <div class="w-full h-[400px] overflow-auto border-2 relative">
             <#assign first = items.getFeatures()[0] />
-            <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(200px,_1fr))]">
+            <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))] sticky z-index-1 top-0 bg-white">
               <#list first.getProperties()?keys>
                 <#items as property>
-                  <span class="hidden text-sm md:text-base lg:block lg:font-bold lg:p-2 lg:border-b-2">${property}</span>
+                  <span class="hidden bg-white text-sm overflow-hidden whitespace-nowrap text-ellipsis md:text-base lg:block lg:font-bold lg:p-2 lg:border-b-2">${property}</span>
                 </#items>
               </#list>
+            </div>
+            <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))]">
               <#items as feature>
                 <#list feature.getProperties()>
                   <#items as property, value>
                     <span class="p-2 flex flex-row items-center">
                       <span class="font-bold text-sm md:text-base flex-grow lg:hidden">${property}</span>
-                      <span class="text-sm">
+                      <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis" title="${value!""}">
                         <#if value??>
                           <#if value?is_string>
                             <#if property == items.getIdColumn()>
@@ -57,7 +59,13 @@
                                   ${value}
                               </@components.link>
                             <#else>
-                              ${value}
+                              <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
+                                <@components.link href="${value}" title="${value}">
+                                  Open
+                                </@components.link>
+                              <#else>
+                                ${value}
+                              </#if>
                             </#if>
                           <#elseif value?is_number>
                             <#if property == items.getIdColumn()>
