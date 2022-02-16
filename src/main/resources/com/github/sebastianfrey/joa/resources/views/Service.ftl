@@ -23,36 +23,24 @@
   <@components.main class="h-full">
     <@components.grid>
       <@components.griditem class="flex-col">
-        <h2 class="text-lg lg:text-xl font-medium text-black pb-4">
-          Collections
-        </h2>
-        <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
-          <#assign collectionsLink = service.getFirstLinkByRel("data") />
-          <@components.link href="${collectionsLink.getUri().toString()}" title="Browse the available collections">
+        <@components.h1>
+          ${service.getServiceId()}
+        </@components.h1>
+        <@components.links links = [service.getFirstLinkByRel("data")]>
+          <@components.h2 class="pt-4">
             Browse the available collections
-          </@components.link>
-        </div>
-      </@components.griditem>
-      <@components.griditem class="flex-col">
-        <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
-          Open API 3.0
-        </h2>
-        <#list service.getLinksByRel("service-desc") as openApiLink>
-          <@components.link href="${openApiLink.getUri().toString()}" title="View the OpenAPI document (${openApiLink.getTitle()})">
-            View the (${openApiLink.getTitle()})
-          </@components.link>
-        </#list>
-      </@components.griditem>
-      <@components.griditem class="flex-col">
-        <h2 class="text-lg lg:text-xl font-medium text-black pb-4 pt-4">
-          Conformance
-        </h2>
-        <div class="text-sm lg:text-base text-[#caae53] justify-items-center">
-          <#assign conformanceLink = service.getFirstLinkByRelAndType("conformance", "text/html") />
-          <@components.link href="${conformanceLink.getUri().toString()}" title="View the supported conformance classes">
-            View the supported conformance classes
-          </@components.link>
-        </div>
+          </@components.h2>
+        </@components.links>
+        <@components.links links = service.getLinksByRel("service-desc")>
+          <@components.h2 class="pt-4">
+            Open API 3.0
+          </@components.h2>
+        </@components.links>
+        <@components.links links = [service.getFirstLinkByRelAndType("conformance", "text/html")]>
+          <@components.h2 class="pt-4">
+            Conformance
+          </@components.h2>
+        </@components.links>
       </@components.griditem>
     </@components.grid>
   </@components.main>

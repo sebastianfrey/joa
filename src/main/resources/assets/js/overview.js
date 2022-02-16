@@ -11,12 +11,12 @@ const bounds = [[minx, miny], [maxx, maxy]];
 
 const map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v11',
+  style: 'mapbox://styles/mapbox/light-v10',
   bounds,
 });
 
 map.on('load', () => {
-  map.fitBounds(bounds, { padding: 50 });
+  map.fitBounds(bounds, { padding: 50, duration: 0 });
   // add bbox source
   map.addSource('bbox', {
     type: 'geojson',
@@ -36,7 +36,7 @@ map.on('load', () => {
       }
     }
   });
-  // Add a new layer to visualize the polygon.
+  // Add a new layer to visualize the polygon
   map.addLayer({
     id: 'fill',
     type: 'fill',
@@ -47,7 +47,7 @@ map.on('load', () => {
       'fill-opacity': 0.5
     }
   });
-  // Add a golden outline around the polygon.
+  // Add a golden outline around the polygon
   map.addLayer({
     id: 'outline',
     type: 'line',

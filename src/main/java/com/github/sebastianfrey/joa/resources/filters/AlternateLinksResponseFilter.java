@@ -73,8 +73,8 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
             // set rel to ALTERNATE
             alternateLink = Link.fromUri(alternateLink.getUri())
                 .rel(Linkable.ALTERNATE)
-                .title(link.getTitle())
-                .type(link.getType())
+                .title(alternateLink.getTitle())
+                .type(alternateLink.getType())
                 .build();
           }
 

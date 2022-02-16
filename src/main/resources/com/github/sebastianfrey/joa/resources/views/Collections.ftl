@@ -24,11 +24,11 @@
   </@components.nav>
 
   <@components.main class="h-full">
-    <h2 class="text-lg lg:text-xl font-medium text-black pb-4">
-      Available Collections
-    </h2>
     <@components.grid>
       <@components.griditem class="flex-col">
+        <@components.h1>
+          Available Collections
+        </@components.h1>
         <div class="w-full grid grid-cols-1 lg:grid-cols-3">
           <span class="hidden text-sm md:text-base lg:block lg:font-bold lg:p-2 lg:border-b-2">Title</span>
           <span class="hidden text-sm md:text-base lg:block lg:font-bold lg:p-2 lg:border-b-2">Description</span>
@@ -38,7 +38,7 @@
               <span class="font-bold text-sm md:text-base flex-grow lg:hidden">Title</span>
               <#assign collectionLink = collection.getFirstLinkByRelAndType("self", "text/html") />
               <span class="text-sm">
-                <@components.link href="${collectionLink.getUri().toString()}" title="${collection.getTitle()}">
+                <@components.link href = "${collectionLink.getUri().toString()}" title = "${collection.getTitle()}">
                   ${collection.getTitle()}
                 </@components.link>
               </span>
@@ -57,9 +57,9 @@
               <span class="font-bold text-sm md:text-base flex-grow lg:hidden">Type</span>
               <span class="text-sm">${collection.getItemType()}</span>
             </span>
-            <#if collection?has_next>
+            <#sep>
               <span class="border-b-2 my-6 lg:hidden"></span>
-            </#if>
+            </#sep>
           </#list>
         </div>
       </@components.griditem>

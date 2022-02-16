@@ -6,19 +6,19 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href="/">
+      <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href="/api">
+      <@components.navitem href = "/api">
         Services
       </@components.navitem>
-      <@components.navitem href="/api/${collection.getServiceId()}">
+      <@components.navitem href = "/api/${collection.getServiceId()}">
         ${collection.getServiceId()}
       </@components.navitem>
-      <@components.navitem href="/api/${collection.getServiceId()}/collections">
+      <@components.navitem href = "/api/${collection.getServiceId()}/collections">
         Collections
       </@components.navitem>
-      <@components.navitem href="/api/${collection.getServiceId()}/collections/${collection.getCollectionId()}" content="">
+      <@components.navitem href = "/api/${collection.getServiceId()}/collections/${collection.getCollectionId()}" content = "">
         ${collection.getCollectionId()}
       </@components.navitem>
     </@components.navlist>
@@ -27,32 +27,47 @@
   </@components.nav>
 
   <@components.main class="h-full">
-    <h2 class="text-lg lg:text-xl font-medium text-black pb-4">
-      ${collection.getTitle()}
-    </h2>
-
     <@components.grid>
       <@components.griditem class="flex-col">
-        <@components.spatial spatial = collection.getExtent().getSpatial()>
-          <h2 class="test-base lg:text-lg fond-bold pb-2">Spatial Extent</h2>
-        </@components.spatial>
-      </@components.griditem>
-      <@components.griditem class="flex-col">
-        <@components.temporal temporal = collection.getExtent().getTemporal()>
-          <h2 class="test-base lg:text-lg fond-bold pb-2">Temporal Extent</h2>
-        </@components.temporal>
-      </@components.griditem>
-      <@components.griditem class="flex-col">
-        <@components.crs crs = collection.getCrs()>
-          <h2 class="test-base lg:text-lg fond-bold pb-2">Supported CRS</h2>
-        </@components.crs>
-      </@components.griditem>
-      <@components.griditem class="flex-col">
-        <h2 class="test-base lg:text-lg fond-bold pb-2">Schemas</h2>
-        <#assign link = collection.getFirstLinkByRel("http://www.opengis.net/def/rel/ogc/1.0/queryables") />
-        <@components.link href="${link.getUri().toString()}" title="${link.getTitle()}">
-          ${link.getTitle()}
-        </@components.link>
+        <@components.h1>
+          ${collection.getTitle()}
+        </@components.h1>
+        <p class="pb-2">
+          <#if collection.getDescription()?has_content>
+            ${collection.getDescription()}
+          <#else>
+            No description
+          </#if>
+        </p>
+        <div class="w-full flex justify-end">
+          <#assign itemsLink = collection.getFirstLinkByRelAndType("items", "text/html") />
+          <@components.link href = "${itemsLink.getUri().toString()}" title = "${itemsLink.getTitle()}">
+            View the data
+          </@components.link>
+        </div>
+        <div class="pb-4 w-full">
+          <@components.spatial spatial = collection.getExtent().getSpatial()>
+            <@components.h2>Spatial Extent</@components.h2>
+          </@components.spatial>
+        </div>
+        <div class="pb-4 w-full">
+          <@components.temporal temporal = collection.getExtent().getTemporal()>
+            <@components.h2>Temporal Extent</@components.h2>
+          </@components.temporal>
+        </div>
+        <div class="pb-4 w-full">
+          <@components.crs crs = collection.getCrs()>
+            <@components.h2>Supported CRS</@components.h2>
+          </@components.crs>
+        </div>
+        <div class="pb-4 w-full">
+          <@components.links links = [collection.getFirstLinkByRel("http://www.opengis.net/def/rel/ogc/1.0/queryables")]>
+            <@components.h2>Schemas</@components.h2>
+          </@components.links>
+        </div>
+        <@components.links links = collection.getLinks()>
+          <@components.h2>Links</@components.h2>
+        </@components.links>
       </@components.griditem>
     </@components.grid>
 

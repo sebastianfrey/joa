@@ -173,8 +173,8 @@ public class GeoPackageService implements OGCApiService {
    * @return
    */
   @Override
-  public GeoPackageItems getItems(String serviceId, String collectionId,
-      FeatureQuery query) throws Exception {
+  public GeoPackageItems getItems(String serviceId, String collectionId, FeatureQuery query)
+      throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -186,7 +186,35 @@ public class GeoPackageService implements OGCApiService {
 
       GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
-      items.numberMatched(result.getCount());
+      String geometryType = null;
+      switch (featureDao.getGeometryType()) {
+        case POINT:
+          geometryType = "Point";
+          break;
+        case LINESTRING:
+          geometryType = "LineString";
+          break;
+        case POLYGON:
+          geometryType = "Polygon";
+          break;
+        case MULTIPOINT:
+          geometryType = "MultiPoint";
+          break;
+        case MULTILINESTRING:
+          geometryType = "MultiLineString";
+          break;
+        case MULTIPOLYGON:
+          geometryType = "MultiPolygon";
+          break;
+        default:
+          break;
+      }
+
+      items.numberMatched(result.getCount())
+          .geometryType(geometryType)
+          .idColumn(featureDao.getIdColumnName());
+
+      GeometryEnvelope bbox = null;
 
       FeatureResultSet featureResultSet = result.getFeatureResultSet();
       try {
@@ -194,13 +222,30 @@ public class GeoPackageService implements OGCApiService {
           FeatureRow featureRow = featureResultSet.getRow();
 
           Feature feature = createFeature(featureRow);
-
           if (feature != null) {
             items.feature(feature);
+          }
+
+          GeometryEnvelope envelope = createEnvelope(featureRow);
+          if (envelope != null) {
+            if (bbox == null) {
+              bbox = envelope.copy();
+            } else {
+              bbox = bbox.union(envelope);
+            }
           }
         }
       } finally {
         featureResultSet.close();
+      }
+
+      if (bbox != null) {
+        if (bbox.is3D()) {
+          items.bbox(List.of(bbox.getMinX(), bbox.getMinY(), bbox.getMinZ(), bbox.getMaxX(),
+              bbox.getMaxY(), bbox.getMaxZ()));
+        } else {
+          items.bbox(List.of(bbox.getMinX(), bbox.getMinY(), bbox.getMaxX(), bbox.getMaxY()));
+        }
       }
     }
 
@@ -421,8 +466,8 @@ public class GeoPackageService implements OGCApiService {
 
     GeoPackageGeometryData geometryData = featureRow.getGeometry();
     if (geometryData != null && !geometryData.isEmpty()) {
-
       feature = FeatureConverter.toFeature(geometryData.getGeometry());
+
       feature.setProperties(new HashMap<>());
 
       for (Map.Entry<String, ColumnValue> entry : featureRow.getAsMap()) {
@@ -437,6 +482,14 @@ public class GeoPackageService implements OGCApiService {
     }
 
     return feature;
+  }
+
+  public GeometryEnvelope createEnvelope(FeatureRow featureRow) {
+    GeoPackageGeometryData geometryData = featureRow.getGeometry();
+    if (geometryData != null && !geometryData.isEmpty()) {
+      return geometryData.getGeometry().getEnvelope();
+    }
+    return null;
   }
 
   @Override

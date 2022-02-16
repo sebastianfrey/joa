@@ -1,7 +1,19 @@
 <#import "Icons.ftl" as icons>
 
+<#macro h1 class = "">
+  <h1 class="text-lg lg:text-xl font-medium pb-4 ${class}">
+    <#nested />
+  </h1>
+</#macro>
+
+<#macro h2 class = "">
+  <h2 class="test-base lg:text-lg fond-bold pb-2 ${class}">
+    <#nested />
+  </h2>
+</#macro>
+
 <!-- Main -->
-<#macro main class="">
+<#macro main class = "">
   <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 lg:px-0 ${class}">
     <#nested />
   </div>
@@ -15,32 +27,29 @@
   </div>
 </#macro>
 
-
-<#macro navlist class="">
-  <ol class="h-2 flex flex-row flex-wrap items-center h-[25px] sm:flex-nowrap sm:h-0 ${class}">
+<#macro navlist class = "">
+  <div class="h-2 flex flex-row flex-wrap items-center h-auto sm:flex-nowrap sm:h-0 ${class}">
     <#nested />
-  </ol>
+  </div>
 </#macro>
 
-<#macro navitem href="" title="" content=">">
-  <li class="text-sm md:text-base">
-    <#if href != "">
-      <a class="hover:underline" href="${href}" title="${title}">
-        <#nested />
-      </a>
-    <#else>
-        <#nested />
-    </#if>
-    <#if content?has_content>
-      <span class="m-1 select-none">${content}</span>
-    </#if>
-  </li>
+<#macro navitem href = "" title = "" content = ">">
+  <#if href != "">
+    <a class="text-sm md:text-base hover:underline" href="${href}" title="${title}">
+      <#nested />
+    </a>
+  <#else>
+      <#nested />
+  </#if>
+  <#if content?has_content>
+    <span class="m-1 select-none">${content}</span>
+  </#if>
 </#macro>
 
 <#macro navalternates linkable>
-  <@components.navlist class="justify-end">
+  <@components.navlist class = "justify-end">
     <#list linkable.getLinksByRel("alternate") as link>
-      <@components.navitem href="${link.getUri().toString()}" title="${link.getTitle()}" content="">
+      <@components.navitem href = "${link.getUri().toString()}" title = "${link.getTitle()}" content="">
         <#if link.getType()?contains("json")>
           JSON
         <#else>
@@ -57,17 +66,50 @@
   </div>
 </#macro>
 
-<#macro griditem class="">
+<#macro griditem class = "">
   <div class="p-6 bg-white shadow-xl flex items-start w-full h-full ${class}">
     <#nested />
   </div>
 </#macro>
 
-<#macro link href title="">
-  <a class="flex flex-row text-sm lg:text-base text-[#caae53] hover:underline" href="${href}" title="${title}">
+<#macro link href title = "" class = "">
+  <a class="flex flex-row text-sm lg:text-base text-[#caae53] hover:underline ${class}" href="${href}" title="${title}">
     <#nested>
-    <@icons.externallink class="stroke-[#caae53] pl-1" />
+    <@icons.externallink class = "stroke-[#caae53] pl-1" />
   </a>
+</#macro>
+
+<#macro links links>
+  <#nested />
+  <#list links>
+    <ul class="list-disc pl-6">
+      <#items as link>
+        <li>
+          <#assign uri = link.getUri().toString() />
+          <#assign title = uri />
+          <#if link.getTitle()??>
+            <#assign title = link.getTitle() />
+          </#if>
+          <@components.link href = "${uri}" title = "${title}">
+            ${title}
+          </@components.link>
+        </li>
+      </#items>
+    </ul>
+  <#else>
+    -
+  </#list>
+</#macro>
+
+<#macro map script data class = "">
+  <div id="map" class="h-[400px] w-full mt-2 border-2 ${class}"></div>
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYXN0aWFuZnJleSIsImEiOiJja3puYWI1bGYwN21sMnhxc2xnaGk4bDl1In0.EePnZo2Vsk02AN721nHZwQ';
+    joa = JSON.parse(<#outputformat "JSON">'${data}'</#outputformat>);
+  </script>
+  <script src="${script}"></script>
 </#macro>
 
 <#macro spatial spatial>
@@ -104,14 +146,7 @@
     <#else>
       -
   </#list>
-  <div id="map" class="h-[400px] w-full mt-2"></div>
-  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
-  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
-  <script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYXN0aWFuZnJleSIsImEiOiJja3puYWI1bGYwN21sMnhxc2xnaGk4bDl1In0.EePnZo2Vsk02AN721nHZwQ';
-    joa = JSON.parse(<#outputformat "JSON">'${collection.toJSON()}'</#outputformat>);
-  </script>
-  <script src="/js/overview.js"></script>
+  <@components.map script = "/js/overview.js" data = collection.toJSON() />
 </#macro>
 
 <#macro temporal temporal>
@@ -139,7 +174,7 @@
 <#macro crs crs>
   <#nested />
   <#list crs>
-    <ul class="text-sm">
+    <ul class="list-disc pl-6">
       <#items as value>
         <li>
           <@link href=value title=value>

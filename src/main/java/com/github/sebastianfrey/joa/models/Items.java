@@ -19,7 +19,7 @@ import mil.nga.sf.geojson.Feature;
  * @author sfrey
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/featureCollectionGeoJSON.yaml"
  */
-@JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})
+@JsonPropertyOrder({"type", "geometryType", "idColumn", "numberReturned", "numberMatched", "timeStamp", "bbox", "features", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId", "nextPageAvailable", "prevPageAvailable",
     "firstPageAvailable", "lastPageAvailable"})
 public abstract class Items<T extends Items<T>> extends Linkable implements Iterable<Feature> {
@@ -28,7 +28,10 @@ public abstract class Items<T extends Items<T>> extends Linkable implements Iter
   @JsonIgnore
   private String collectionId = "";
 
+  private String geometryType;
+  private String idColumn;
   private Long numberMatched;
+  private List<Double> bbox;
   private List<Feature> features = new ArrayList<>();
 
   /**
@@ -79,6 +82,44 @@ public abstract class Items<T extends Items<T>> extends Linkable implements Iter
   }
 
   /**
+   * returns the geometryType property from a Items instance
+   *
+   * @return String geometryType
+   */
+  public String getGeometryType() {
+    return geometryType;
+  }
+
+  public void setGeometryType(String geometryType) {
+    this.geometryType = geometryType;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T geometryType(String geometryType) {
+    setGeometryType(geometryType);
+    return (T) this;
+  }
+
+  /**
+   * returns the idColumn property from a Items instance
+   *
+   * @return String idColumn
+   */
+  public String getIdColumn() {
+    return idColumn;
+  }
+
+  public void setIdColumn(String idColumn) {
+    this.idColumn = idColumn;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T idColumn(String idColumn) {
+    setIdColumn(idColumn);
+    return (T) this;
+  }
+
+  /**
    * returns the features property from a Items instance
    *
    * @return List of features
@@ -104,6 +145,25 @@ public abstract class Items<T extends Items<T>> extends Linkable implements Iter
   @SuppressWarnings("unchecked")
   public T feature(Feature feature) {
     this.addFeature(feature);
+    return (T) this;
+  }
+
+  /**
+   * returns the bbox property from a Items instance
+   *
+   * @return Bbox
+   */
+  public List<Double> getBbox() {
+    return bbox;
+  }
+
+  public void setBbox(List<Double> bbox) {
+    this.bbox = bbox;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T bbox(List<Double> bbox) {
+    setBbox(bbox);
     return (T) this;
   }
 

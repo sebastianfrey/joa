@@ -24,6 +24,7 @@ import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
 import com.github.sebastianfrey.joa.resources.views.CollectionView;
 import com.github.sebastianfrey.joa.resources.views.CollectionsView;
+import com.github.sebastianfrey.joa.resources.views.ItemsView;
 import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
 import com.github.sebastianfrey.joa.services.OGCApiService;
@@ -160,10 +161,15 @@ public class OGCApiServiceResource {
       type = MediaType.APPLICATION_GEO_JSON, style = InjectLink.Style.ABSOLUTE,
       title = "This document as JSON")
   @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
+      type = MediaType.TEXT_HTML,
+      bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+          @Binding(name = "collectionId", value = "${instance.collectionId}"),},
+      style = InjectLink.Style.ABSOLUTE, title = "Items as HTML")
+  @ProvideLink(value = Collection.class, rel = Linkable.ITEMS,
       type = MediaType.APPLICATION_GEO_JSON,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-      style = InjectLink.Style.ABSOLUTE)
+      style = InjectLink.Style.ABSOLUTE, title = "Items as JSON")
   @ProvideLink(value = Items.class, rel = Linkable.NEXT,
       bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
@@ -184,7 +190,7 @@ public class OGCApiServiceResource {
           @Binding(name = "collectionId", value = "${instance.collectionId}"),},
       condition = "${instance.lastPageAvailable}", type = MediaType.APPLICATION_GEO_JSON,
       style = InjectLink.Style.ABSOLUTE)
-  public Items<?> getItems(@PathParam("serviceId") String serviceId,
+  public ItemsView getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
     final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
@@ -192,7 +198,8 @@ public class OGCApiServiceResource {
     // validate query parameters
     featureQuery.validateQueryParameters(queryables);
 
-    return ogcApiService.getItems(serviceId, collectionId, featureQuery);
+    Items<?> items = ogcApiService.getItems(serviceId, collectionId, featureQuery);
+    return new ItemsView(items);
   }
 
   @GET
