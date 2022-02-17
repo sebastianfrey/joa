@@ -1,5 +1,6 @@
 package com.github.sebastianfrey.joa.models.schema.type;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = StringType.class)
@@ -22,6 +23,7 @@ public class StringType extends GenericType<StringType> {
     setMinLength(Long.valueOf(minLength));
   }
 
+  @JsonSetter
   public void setMinLength(Long minLength) {
     this.minLength = minLength;
   }
@@ -39,6 +41,7 @@ public class StringType extends GenericType<StringType> {
     setMaxLength(Long.valueOf(maxLength));
   }
 
+  @JsonSetter
   public void setMaxLength(Long maxLength) {
     this.maxLength = maxLength;
   }
