@@ -1,10 +1,10 @@
-const bbox = joa.bbox;
-const geometryType = joa.geometryType;
+const data = joa;
+const bbox = data.bbox;
+const geometryType = data.geometryType;
 
 const lineLayer = {
   id: 'outline',
   type: 'line',
-  source: 'items',
   layout: {},
   paint: {
     'line-color': '#caae53',
@@ -14,7 +14,6 @@ const lineLayer = {
 const fillLayer = {
   id: 'fill',
   type: 'fill',
-  source: 'items', // reference the data source
   layout: {},
   paint: {
     'fill-color': '#ffe082', // amber color fill
@@ -24,12 +23,11 @@ const fillLayer = {
 const circleLayer = {
   id: 'circle',
   type: 'circle',
-  source: 'items',
   layout: {},
   paint: {
     'circle-color': '#ffe082',
-    'circle-stroke-color':  '#caae53',
-    'circle-stroke-width':  2,
+    'circle-stroke-color': '#caae53',
+    'circle-stroke-width': 2,
   },
 };
 
@@ -38,9 +36,12 @@ let minx, miny, minz, maxx, maxy, maxz;
 if (bbox.length === 4) {
   [minx, miny, maxx, maxy] = bbox;
 } else {
-  [minx, miny, minz,maxx, maxy, maxz] = bbox;
+  [minx, miny, minz, maxx, maxy, maxz] = bbox;
 }
-const bounds = [[minx, miny], [maxx, maxy]];
+const bounds = [
+  [minx, miny],
+  [maxx, maxy]
+];
 
 const map = new mapboxgl.Map({
   container: 'map',
@@ -49,37 +50,96 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', () => {
-  map.fitBounds(bounds, { padding: 50, duration: 0 });
-  // add bbox source
-  map.addSource('items', {
-    type: 'geojson',
-    data: joa
+  map.fitBounds(bounds, {
+    padding: 50,
+    duration: 0
   });
 
-  const layers = [];
+  const sourceInfos = [];
+
+  const createSourceInfo = (data, name, layers) => ({
+    name,
+    source: {
+      type: 'geojson',
+      data
+    },
+    layers,
+  });
+
+  const createPointsSourceInfo = (data) => createSourceInfo(data, 'points', [circleLayer]);
+  const createLinesSourceInfo = (data) => createSourceInfo(data, 'lines', [lineLayer]);
+  const createPolygonsSourceInfo = (data) => createSourceInfo(data, 'points', [lineLayer, fillLayer]);
 
   switch (geometryType) {
     case "Point":
     case "MultiPoint":
-      layers.push(circleLayer);
+      sourceInfos.push(createPointsSourceInfo(data));
       break;
 
     case "LineString":
     case "MultiLineString":
-      layers.push(lineLayer);
+      sourceInfos.push(createLinesSourceInfo(data));
       break;
 
     case "Polygon":
     case "MultiPolygon":
-      layers.push(lineLayer, fillLayer);
+      sourceInfos.push(createPolygonsSourceInfo(data));
       break;
 
     default:
-      layers.push(circleLayer, lineLayer, fillLayer);
+      const pointFeatures = [],
+        lineFeatures = [],
+        polygonFeatures = [];
+
+      for (const feature of data.features) {
+        switch (feature.geometry.type) {
+          case "Point":
+          case "MultiPoint":
+            pointFeatures.push(feature);
+            break;
+
+          case "LineString":
+          case "MultiLineString":
+            lineFeatures.push(feature);
+            break;
+
+          case "Polygon":
+          case "MultiPolygon":
+            polygonFeatures.push(feature);
+            break;
+        }
+      }
+
+      sourceInfos.push(
+        createPointsSourceInfo({
+          ...data,
+          features: pointFeatures
+        }),
+        createLinesSourceInfo({
+          ...data,
+          features: lineFeatures
+        }),
+        createPolygonsSourceInfo({
+          ...data,
+          features: polygonFeatures
+        }),
+      );
+
       break;
   }
 
-  for (const layer of layers) {
-    map.addLayer(layer);
+
+  for (const {
+      name,
+      source,
+      layers
+    } of sourceInfos) {
+    map.addSource(name, source);
+    for (const layer of layers) {
+      map.addLayer({
+        ...layer,
+        source: name,
+      });
+    }
   }
 });

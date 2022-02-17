@@ -48,42 +48,39 @@
             <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))]">
               <#items as feature>
                 <#list feature.getProperties()>
-                  <#items as property, value>
+                  <#items as property, rawvalue>
+                    <#assign value = rawvalue />
                     <span class="p-2 flex flex-row items-center">
+                      <#if value??>
+                        <#if value?is_string>
+                          <#assign value = value />
+                        <#elseif value?is_number>
+                          <#assign value = value?string />
+                        <#elseif value?is_boolean>
+                          <#assign value = value?string />
+                        <#elseif value?is_date_like>
+                          <#assign value = value?datetime?string />
+                        <#else>
+                          <#assign value = "<unsupported>" />
+                        </#if>
+                      <#else>
+                        <#assign value = "<null>" />
+                      </#if>
+
                       <span class="font-bold text-sm md:text-base flex-grow lg:hidden">${property}</span>
                       <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis" title="${value!""}">
-                        <#if value??>
-                          <#if value?is_string>
-                            <#if property == items.getIdColumn()>
-                              <@components.link href="/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items/${value}">
-                                  ${value}
-                              </@components.link>
-                            <#else>
-                              <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
-                                <@components.link href="${value}" title="${value}">
-                                  Open
-                                </@components.link>
-                              <#else>
-                                ${value}
-                              </#if>
-                            </#if>
-                          <#elseif value?is_number>
-                            <#if property == items.getIdColumn()>
-                              <@components.link href="/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items/${value}">
-                                  ${value?string}
-                              </@components.link>
-                            <#else>
-                              ${value?string}
-                            </#if>
-                          <#elseif value?is_number>
-                            ${value?string}
-                          <#elseif value?is_boolean>
-                            ${value?string}
-                          <#elseif value?is_date>
-                            ${value?datetime?string}
-                          </#if>
+                        <#if property == items.getIdColumn()>
+                          <@components.link href="/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items/${value}">
+                              ${value}
+                          </@components.link>
                         <#else>
-                          -
+                          <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
+                            <@components.link href="${value}" title="${value}">
+                              Open
+                            </@components.link>
+                          <#else>
+                            ${value}
+                          </#if>
                         </#if>
                       </span>
                     </span>
