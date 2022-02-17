@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(as = StringType.class)
 public class StringType extends GenericType<StringType> {
-  private Integer minLength;
-  private Integer maxLength;
+  private Long minLength;
+  private Long maxLength;
   private String pattern;
   private String format;
 
@@ -14,11 +14,15 @@ public class StringType extends GenericType<StringType> {
     return "string";
   }
 
-  public Integer getMinLength() {
+  public Long getMinLength() {
     return minLength;
   }
 
   public void setMinLength(Integer minLength) {
+    setMinLength(Long.valueOf(minLength));
+  }
+
+  public void setMinLength(Long minLength) {
     this.minLength = minLength;
   }
 
@@ -27,16 +31,25 @@ public class StringType extends GenericType<StringType> {
     return this;
   }
 
-  public Integer getMaxLength() {
+  public Long getMaxLength() {
     return maxLength;
   }
 
   public void setMaxLength(Integer maxLength) {
-    setMaxLength(maxLength);
+    setMaxLength(Long.valueOf(maxLength));
+  }
+
+  public void setMaxLength(Long maxLength) {
+    this.maxLength = maxLength;
   }
 
   public StringType maxLength(Integer maxLength) {
-    this.maxLength = maxLength;
+    setMaxLength(maxLength);
+    return this;
+  }
+
+  public StringType maxLength(Long maxLength) {
+    setMaxLength(maxLength);
     return this;
   }
 

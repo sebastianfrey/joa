@@ -291,14 +291,17 @@ public class GeoPackageService implements OGCApiService {
       FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
       String geometryColumn = featureDao.getGeometryColumnName();
-      GeometryType geometryType = featureDao.getGeometryType();
 
       featureDao.getColumns().stream().forEach((column) -> {
-        if (column.getName().equals(geometryColumn)) {
+        if (column.isGeometry()) {
           return;
         }
 
+        Long max = column.getMax();
+        Object defaultValue = column.getDefaultValue();
+
         GenericType<?> type = null;
+
         switch (column.getDataType()) {
           case BOOLEAN:
             type = JSONSchemaBuilder.booleanType();
@@ -306,14 +309,13 @@ public class GeoPackageService implements OGCApiService {
           case BLOB:
           case TINYINT:
           case TEXT:
-            type = JSONSchemaBuilder.stringType();
+            type = JSONSchemaBuilder.stringType().maxLength(max);
             break;
           case DATE:
-            type = JSONSchemaBuilder.stringType().format("date");
-
+            type = JSONSchemaBuilder.stringType().maxLength(max).format("date");
             break;
           case DATETIME:
-            type = JSONSchemaBuilder.stringType().format("date-time");
+            type = JSONSchemaBuilder.stringType().maxLength(max).format("date-time");
             break;
           case DOUBLE:
           case FLOAT:
@@ -324,7 +326,7 @@ public class GeoPackageService implements OGCApiService {
           case INTEGER:
           case MEDIUMINT:
           case SMALLINT:
-            type = JSONSchemaBuilder.integerType();
+            type = JSONSchemaBuilder.integerType().maximum(max);
             break;
           default:
             break;
@@ -334,11 +336,20 @@ public class GeoPackageService implements OGCApiService {
           return;
         }
 
-        schema.property(column.getName(), type.title(column.getName()));
+        String columnName = column.getName();
+
+        type.title(columnName);
+
+        if (defaultValue != null) {
+          type.defaultValue(defaultValue.toString());
+        }
+
+        schema.property(columnName, type);
       });
 
-      JSONSchema geometrySchema = null;
+      GeometryType geometryType = featureDao.getGeometryType();
 
+      JSONSchema geometrySchema = null;
       switch (geometryType) {
         case GEOMETRY:
           geometrySchema = Schemas.GeoJSON.geometry();
