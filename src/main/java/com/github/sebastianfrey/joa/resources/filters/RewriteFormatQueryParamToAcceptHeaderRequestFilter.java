@@ -31,8 +31,19 @@ public class RewriteFormatQueryParamToAcceptHeaderRequestFilter implements Conta
   public void filter(ContainerRequestContext request) throws IOException {
     String format = request.getUriInfo().getQueryParameters().getFirst("f");
     if (format == null) {
+      // analyze URI path whether it ends with .json | .yaml
+      String uri = request.getUriInfo().getPath();
+      String[] parts = uri.split("\\.");
+      String last = parts[parts.length - 1];
+
+      // and if so return
+      if (mappings.containsKey(last)) {
+        return;
+      }
+
       format = "html";
     }
+
     final String mediaType = mappings.get(format);
     if (mediaType != null) {
       request.getHeaders().putSingle(HttpHeaders.ACCEPT, mediaType);

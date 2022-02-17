@@ -75,11 +75,15 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
           if (Linkable.SELF.equals(rel) && linkFormat != null && targetFormat != null
               && !linkFormat.equals(targetFormat)) {
             // set rel to ALTERNATE
-            alternateLink = Link.fromUri(alternateLink.getUri())
+            Link.Builder alternateLinkBuilder = Link.fromUri(alternateLink.getUri())
                 .rel(Linkable.ALTERNATE)
-                .title(alternateLink.getTitle())
-                .type(alternateLink.getType())
-                .build();
+                .type(alternateLink.getType());
+
+            if (alternateLink.getTitle() != null) {
+              alternateLinkBuilder.title(alternateLink.getTitle());
+            }
+
+            alternateLink = alternateLinkBuilder.build();
           }
 
           links.set(index, alternateLink);
