@@ -12,6 +12,18 @@
   </h2>
 </#macro>
 
+<#macro button onclick="" disabled=false>
+  <#if disabled>
+    <button disabled class="bg-[#ffe082] text-sm font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
+      <#nested />
+    </button>
+  <#else>
+    <button type="button" onclick="${onclick}" class="bg-[#ffe082] text-sm hover:bg-[#caae53] font-bold py-2 px-4 rounded">
+      <#nested />
+    </button>
+  </#if>
+</#macro>
+
 <!-- Main -->
 <#macro main class = "">
   <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 lg:px-0 ${class}">
@@ -184,4 +196,48 @@
       </#items>
     </ul>
   </#list>
+</#macro>
+
+<#macro pagination links>
+  <div class="my-2">
+    <#assign firstHref = "" />
+    <#assign prevHref = "" />
+    <#assign nextHref = "" />
+    <#assign lastHref = "" />
+
+    <#list links as link>
+      <#if link.getType() == "text/html">
+        <#if link.getRel() == "first">
+          <#assign firstHref = link.getUri().toString() />
+        <#elseif link.getRel() == "prev">
+          <#assign prevHref = link.getUri().toString() />
+        <#elseif link.getRel() == "next">
+          <#assign nextHref = link.getUri().toString() />
+        <#elseif link.getRel() == "last">
+          <#assign lastHref = link.getUri().toString() />
+        </#if>
+      </#if>
+    </#list>
+
+    <#if firstHref?has_content>
+      <@components.button onclick = "location.href='${firstHref}'">First</@components.button>
+    <#else>
+      <@components.button disabled = true>First</@components.button>
+    </#if>
+    <#if prevHref?has_content>
+      <@components.button onclick = "location.href='${prevHref}'">Prev</@components.button>
+    <#else>
+      <@components.button disabled = true>Prev</@components.button>
+    </#if>
+    <#if nextHref?has_content>
+      <@components.button onclick = "location.href='${nextHref}'">Next</@components.button>
+    <#else>
+      <@components.button disabled = true>Next</@components.button>
+    </#if>
+    <#if lastHref?has_content>
+      <@components.button onclick = "location.href='${lastHref}'">Last</@components.button>
+    <#else>
+      <@components.button disabled = true>Last</@components.button>
+    </#if>
+  </div>
 </#macro>

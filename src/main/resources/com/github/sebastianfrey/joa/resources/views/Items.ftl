@@ -34,9 +34,10 @@
         <@components.h1>
           ${items.getCollectionId()}
         </@components.h1>
+        <@components.pagination links = items.getLinks() />
         <@components.map script = "/js/items.js" data = items.toJSON() class = "mb-6" />
         <#list items.getFeatures()>
-          <div class="w-full h-[400px] overflow-auto border-2 relative">
+          <div class="w-full lg:max-h-[400px] overflow-auto border-2 relative">
             <#assign first = items.getFeatures()[0] />
             <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))] sticky z-index-1 top-0 bg-white">
               <#list first.getProperties()?keys>
@@ -49,26 +50,30 @@
               <#items as feature>
                 <#list feature.getProperties()>
                   <#items as property, rawvalue>
-                    <#assign value = rawvalue />
+                    <#assign value = rawvalue!"<null>">
                     <span class="p-2 flex flex-row items-center">
-                      <#if value??>
-                        <#if value?is_string>
-                          <#assign value = value />
-                        <#elseif value?is_number>
-                          <#assign value = value?string />
-                        <#elseif value?is_boolean>
-                          <#assign value = value?string />
-                        <#elseif value?is_date_like>
-                          <#assign value = value?datetime?string />
-                        <#else>
-                          <#assign value = "<unsupported>" />
+                      <#if value?is_string>
+                        <#if !(value?has_content)>
+                          <#assign value = "-" />
                         </#if>
+                      <#elseif value?is_number>
+                        <#assign value = value?string />
+                      <#elseif value?is_boolean>
+                        <#assign value = value?string />
+                      <#elseif value?is_date_only>
+                        <#assign value = value?date?iso_utc />
+                      <#elseif value?is_datetime>
+                        <#assign value = value?datetime?iso_utc />
+                      <#elseif value?is_time>
+                        <#assign value = value?time?iso_utc />
+                      <#elseif value?is_unknown_date_like>
+                        <#assign value = value?datetime?iso_utc />
                       <#else>
-                        <#assign value = "<null>" />
+                        <#assign value = "<unsupported>" />
                       </#if>
 
                       <span class="font-bold text-sm md:text-base flex-grow lg:hidden">${property}</span>
-                      <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis" title="${value!""}">
+                      <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
                         <#if property == items.getIdColumn()>
                           <@components.link href="/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items/${value}">
                               ${value}

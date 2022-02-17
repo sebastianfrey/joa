@@ -63,12 +63,12 @@ map.on('load', () => {
       type: 'geojson',
       data
     },
-    layers,
+    layers: layers.map((layer) => ({ ...layer, id: `${name}-${layer.id}` })),
   });
 
   const createPointsSourceInfo = (data) => createSourceInfo(data, 'points', [circleLayer]);
   const createLinesSourceInfo = (data) => createSourceInfo(data, 'lines', [lineLayer]);
-  const createPolygonsSourceInfo = (data) => createSourceInfo(data, 'points', [lineLayer, fillLayer]);
+  const createPolygonsSourceInfo = (data) => createSourceInfo(data, 'polygons', [lineLayer, fillLayer]);
 
   switch (geometryType) {
     case "Point":
