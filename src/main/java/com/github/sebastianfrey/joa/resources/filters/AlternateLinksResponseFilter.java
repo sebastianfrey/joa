@@ -44,6 +44,10 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
 
   public void processLinks(Object entity, ContainerRequestContext requestContext)
       throws IllegalAccessException {
+    if (entity == null) {
+      return;
+    }
+
     if (entity instanceof LinkableView) {
       LinkableView linkableView = (LinkableView) entity;
       entity = linkableView.getLinkable();
