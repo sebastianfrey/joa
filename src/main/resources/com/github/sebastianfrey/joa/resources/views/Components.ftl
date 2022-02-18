@@ -1,13 +1,13 @@
 <#import "Icons.ftl" as icons>
 
 <#macro h1 class = "">
-  <h1 class="text-lg lg:text-xl font-medium pb-4 ${class}">
+  <h1 class="text-lg font-medium pb-4 ${class}">
     <#nested />
   </h1>
 </#macro>
 
 <#macro h2 class = "">
-  <h2 class="test-base lg:text-lg fond-bold pb-2 ${class}">
+  <h2 class="test-base fond-bold pb-2 ${class}">
     <#nested />
   </h2>
 </#macro>
@@ -26,28 +26,28 @@
 
 <!-- Main -->
 <#macro main class = "">
-  <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 lg:px-0 ${class}">
+  <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 ${class}">
     <#nested />
   </div>
 </#macro>
 
 <#macro nav>
-  <div class="bg-[#ffe082] px-6 py-4 lg:px-0 w-full">
-    <nav class="m-auto w-full lg:w-3/4 flex flex-col sm:flex-row">
+  <div class="bg-[#ffe082] w-full">
+    <nav class="m-auto w-full px-6 py-1 lg:w-3/4 flex flex-row">
       <#nested />
     </nav>
   </div>
 </#macro>
 
 <#macro navlist class = "">
-  <div class="h-2 flex flex-row flex-wrap items-center h-auto sm:flex-nowrap sm:h-0 ${class}">
+  <div class="flex flex-row flex-wrap items-center h-auto ${class}">
     <#nested />
   </div>
 </#macro>
 
-<#macro navitem href = "" title = "" content = ">">
+<#macro navitem href = "" title = "" content = "/">
   <#if href != "">
-    <a class="text-sm md:text-base hover:underline" href="${href}" title="${title}">
+    <a class="text-base hover:underline" href="${href}" title="${title}">
       <#nested />
     </a>
   <#else>
@@ -59,7 +59,7 @@
 </#macro>
 
 <#macro navalternates linkable>
-  <@components.navlist class = "justify-end">
+  <@components.navlist class = "ml-2 justify-end">
     <#list linkable.getLinksByRel("alternate") as link>
       <@components.navitem href = "${link.getUri().toString()}" title = "${link.getTitle()}" content="">
         <#if link.getType()?contains("json")>
@@ -85,7 +85,7 @@
 </#macro>
 
 <#macro link href title = "" class = "">
-  <a class="flex flex-row text-sm lg:text-base text-[#caae53] hover:underline ${class}" href="${href}" title="${title}">
+  <a class="flex flex-row text-sm text-[#caae53] hover:underline ${class}" href="${href}" title="${title}">
     <#nested>
     <@icons.externallink class = "stroke-[#caae53] pl-1" />
   </a>
@@ -113,15 +113,67 @@
   </#list>
 </#macro>
 
+<#macro properties feature box=false idColumn="" serviceId="" collectionId="">
+  <#list feature.getProperties()>
+    <#items as property, rawvalue>
+      <#assign value = rawvalue!"<null>">
+      <#assign labelClasses = "">
+      <#assign valueClasses = "">
+      <#if box == false>
+         <#assign labelClasses = "lg:hidden">
+      </#if>
+      <span class="p-2 flex flex-row items-center">
+        <#if value?is_string>
+          <#if !(value?has_content)>
+            <#assign value = "-" />
+          </#if>
+        <#elseif value?is_number>
+          <#assign value = value?string />
+          <#assign valueClasses = "lg:flex-grow lg:text-right">
+        <#elseif value?is_boolean>
+          <#assign value = value?string />
+        <#elseif value?is_date_only>
+          <#assign value = value?date?iso_utc />
+        <#elseif value?is_datetime>
+          <#assign value = value?datetime?iso_utc />
+        <#elseif value?is_time>
+          <#assign value = value?time?iso_utc />
+        <#elseif value?is_unknown_date_like>
+          <#assign value = value?datetime?iso_utc />
+        <#else>
+          <#assign value = "<unsupported>" />
+        </#if>
+
+        <span class="font-bold text-sm md:text-base flex-grow ${labelClasses}">${property}</span>
+        <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis ${valueClasses}">
+          <#if idColumn?has_content && property == idColumn>
+            <@components.link href="/api/${serviceId}/collections/${collectionId}/items/${value}">
+                ${value}
+            </@components.link>
+          <#else>
+            <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
+              <@components.link href="${value}" title="${value}">
+                Open
+              </@components.link>
+            <#else>
+              ${value}
+            </#if>
+          </#if>
+        </span>
+      </span>
+    </#items>
+  </#list>
+</#macro>
+
 <#macro map script data class = "">
-  <div id="map" class="h-[400px] w-full mt-2 border-2 ${class}"></div>
-  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
-  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+  <div id="map" class="${class}"></div>
+   <script src="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.js"></script>
+   <link href="https://unpkg.com/maplibre-gl@1.15.2/dist/maplibre-gl.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
   <script>
-    mapboxgl.accessToken = 'pk.eyJ1Ijoic2ViYXN0aWFuZnJleSIsImEiOiJja3puYWI1bGYwN21sMnhxc2xnaGk4bDl1In0.EePnZo2Vsk02AN721nHZwQ';
     joa = JSON.parse(<#outputformat "JSON">'${data}'</#outputformat>);
   </script>
-  <script src="${script}"></script>
+  <script type="module" src="${script}"></script>
 </#macro>
 
 <#macro spatial spatial>
@@ -158,7 +210,7 @@
     <#else>
       -
   </#list>
-  <@components.map script = "/js/overview.js" data = collection.toJSON() />
+  <@components.map script = "/js/overview.mjs" data = collection.toJSON() class="h-[400px] w-full mt-2 border-2 mb-6"/>
 </#macro>
 
 <#macro temporal temporal>

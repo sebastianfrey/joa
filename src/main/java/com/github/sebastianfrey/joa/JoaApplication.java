@@ -58,6 +58,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
 
   @Override
   public void run(final JoaConfiguration configuration, final Environment environment) {
+    environment.getApplicationContext().getMimeTypes().addMimeMapping("mjs", "text/javascript");
     // set up features
     linking(configuration, environment);
 

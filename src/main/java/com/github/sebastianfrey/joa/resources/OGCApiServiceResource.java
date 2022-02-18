@@ -32,6 +32,7 @@ import com.github.sebastianfrey.joa.resources.annotations.ServicesLinks;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
 import com.github.sebastianfrey.joa.resources.views.CollectionView;
 import com.github.sebastianfrey.joa.resources.views.CollectionsView;
+import com.github.sebastianfrey.joa.resources.views.ItemView;
 import com.github.sebastianfrey.joa.resources.views.ItemsView;
 import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
@@ -123,9 +124,10 @@ public class OGCApiServiceResource {
   @GET
   @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
   @ItemLinks
-  public Item<?> getItem(@PathParam("serviceId") String serviceId,
+  public ItemView getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
-    return ogcApiService.getItem(serviceId, collectionId, featureId);
+    Item<?> item = ogcApiService.getItem(serviceId, collectionId, featureId);
+    return new ItemView(item);
   }
 
   @GET

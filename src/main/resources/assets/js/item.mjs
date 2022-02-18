@@ -1,60 +1,15 @@
-const data = joa;
-const bbox = data.bbox;
-const geometryType = data.geometryType;
+import { createBounds, createLayers, createMap } from './map.mjs';
 
-const lineLayer = {
-  id: 'outline',
-  type: 'line',
-  layout: {},
-  paint: {
-    'line-color': '#caae53',
-    'line-width': 2
-  },
-};
-const fillLayer = {
-  id: 'fill',
-  type: 'fill',
-  layout: {},
-  paint: {
-    'fill-color': '#ffe082', // amber color fill
-    'fill-opacity': 0.5
-  },
-};
-const circleLayer = {
-  id: 'circle',
-  type: 'circle',
-  layout: {},
-  paint: {
-    'circle-color': '#ffe082',
-    'circle-stroke-color': '#caae53',
-    'circle-stroke-width': 2,
-  },
-};
+const feature = joa;
+const geometryType = feature.geometry.type;
+const bbox = turf.bbox(feature);
+const data = turf.featureCollection([feature]);
 
-let minx, miny, minz, maxx, maxy, maxz;
-
-if (bbox.length === 4) {
-  [minx, miny, maxx, maxy] = bbox;
-} else {
-  [minx, miny, minz, maxx, maxy, maxz] = bbox;
-}
-const bounds = [
-  [minx, miny],
-  [maxx, maxy]
-];
-
-const map = new mapboxgl.Map({
-  container: 'map',
-  style: 'mapbox://styles/mapbox/light-v10',
-  bounds,
-});
+const { circleLayer, lineLayer, fillLayer } = createLayers();
+const { bounds } = createBounds(bbox);
+const map = createMap({ bounds });
 
 map.on('load', () => {
-  map.fitBounds(bounds, {
-    padding: 50,
-    duration: 0
-  });
-
   const sourceInfos = [];
 
   const createSourceInfo = (data, name, layers) => ({
@@ -63,7 +18,10 @@ map.on('load', () => {
       type: 'geojson',
       data
     },
-    layers: layers.map((layer) => ({ ...layer, id: `${name}-${layer.id}` })),
+    layers: layers.map((layer) => ({
+      ...layer,
+      id: `${name}-${layer.id}`
+    })),
   });
 
   const createPointsSourceInfo = (data) => createSourceInfo(data, 'points', [circleLayer]);

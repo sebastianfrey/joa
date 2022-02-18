@@ -35,7 +35,7 @@
           ${items.getCollectionId()}
         </@components.h1>
         <@components.pagination links = items.getLinks() />
-        <@components.map script = "/js/items.js" data = items.toJSON() class = "mb-6" />
+        <@components.map script = "/js/items.mjs" data = items.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
         <#list items.getFeatures()>
           <div class="w-full lg:max-h-[400px] overflow-auto border-2 relative">
             <#assign first = items.getFeatures()[0] />
@@ -48,49 +48,7 @@
             </div>
             <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))]">
               <#items as feature>
-                <#list feature.getProperties()>
-                  <#items as property, rawvalue>
-                    <#assign value = rawvalue!"<null>">
-                    <span class="p-2 flex flex-row items-center">
-                      <#if value?is_string>
-                        <#if !(value?has_content)>
-                          <#assign value = "-" />
-                        </#if>
-                      <#elseif value?is_number>
-                        <#assign value = value?string />
-                      <#elseif value?is_boolean>
-                        <#assign value = value?string />
-                      <#elseif value?is_date_only>
-                        <#assign value = value?date?iso_utc />
-                      <#elseif value?is_datetime>
-                        <#assign value = value?datetime?iso_utc />
-                      <#elseif value?is_time>
-                        <#assign value = value?time?iso_utc />
-                      <#elseif value?is_unknown_date_like>
-                        <#assign value = value?datetime?iso_utc />
-                      <#else>
-                        <#assign value = "<unsupported>" />
-                      </#if>
-
-                      <span class="font-bold text-sm md:text-base flex-grow lg:hidden">${property}</span>
-                      <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis">
-                        <#if property == items.getIdColumn()>
-                          <@components.link href="/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items/${value}">
-                              ${value}
-                          </@components.link>
-                        <#else>
-                          <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
-                            <@components.link href="${value}" title="${value}">
-                              Open
-                            </@components.link>
-                          <#else>
-                            ${value}
-                          </#if>
-                        </#if>
-                      </span>
-                    </span>
-                  </#items>
-                </#list>
+                <@components.properties feature=feature idColumn=items.getIdColumn() serviceId=items.getServiceId() collectionId=items.getCollectionId() />
                 <#sep>
                   <span class="border-b-2 my-6 lg:hidden"></span>
                 </#sep>

@@ -25,11 +25,11 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Item.class, rel = Linkable.COLLECTION, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Item as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "Collection as HTML")
 @ProvideLink(value = Item.class, rel = Linkable.COLLECTION, type = MediaType.APPLICATION_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Item as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "Collection as JSON")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

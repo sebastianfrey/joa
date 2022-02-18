@@ -1,6 +1,5 @@
 package com.github.sebastianfrey.joa.resources.annotations;
 
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,11 +12,16 @@ import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
 
+@ProvideLink(value = Item.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
+    bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
+        @Binding(name = "collectionId", value = "${instance.collectionId}"),
+        @Binding(name = "featureId", value = "${instance.id}"),},
+    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
 @ProvideLink(value = Item.class, rel = Linkable.SELF, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),
         @Binding(name = "featureId", value = "${instance.id}"),},
-    style = InjectLink.Style.ABSOLUTE)
+    style = InjectLink.Style.ABSOLUTE, title = "This document as JSON")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
