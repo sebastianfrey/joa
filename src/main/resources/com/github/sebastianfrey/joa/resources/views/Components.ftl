@@ -12,6 +12,18 @@
   </h2>
 </#macro>
 
+<#macro p class = "">
+  <p class="text-base pb-4">
+    <#nested />
+  </p>
+</#macro>
+
+<#macro list>
+  <ul class="list-disc pl-6">
+    <#nested />
+  </ul>
+</#macro>
+
 <#macro button onclick="" disabled=false>
   <#if disabled>
     <button disabled class="bg-[#ffe082] text-sm font-bold py-2 px-4 rounded opacity-50 cursor-not-allowed">
@@ -94,7 +106,7 @@
 <#macro links links>
   <#nested />
   <#list links>
-    <ul class="list-disc pl-6">
+    <@components.list>
       <#items as link>
         <li>
           <#assign uri = link.getUri().toString() />
@@ -107,7 +119,7 @@
           </@components.link>
         </li>
       </#items>
-    </ul>
+    </@components.list>
   <#else>
     -
   </#list>

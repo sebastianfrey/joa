@@ -34,6 +34,9 @@
         <@components.h1>
           ${items.getCollectionId()}
         </@components.h1>
+        <@components.p>
+          Items of collection '${items.getCollectionId()}'
+        </@components.p>
         <@components.pagination links = items.getLinks() />
         <@components.map script = "/js/items.mjs" data = items.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
         <#list items.getFeatures()>

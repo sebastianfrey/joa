@@ -32,8 +32,10 @@ import com.github.sebastianfrey.joa.resources.annotations.ServicesLinks;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
 import com.github.sebastianfrey.joa.resources.views.CollectionView;
 import com.github.sebastianfrey.joa.resources.views.CollectionsView;
+import com.github.sebastianfrey.joa.resources.views.ConformanceView;
 import com.github.sebastianfrey.joa.resources.views.ItemView;
 import com.github.sebastianfrey.joa.resources.views.ItemsView;
+import com.github.sebastianfrey.joa.resources.views.QueryablesView;
 import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
 import com.github.sebastianfrey.joa.services.OGCApiService;
@@ -78,8 +80,9 @@ public class OGCApiServiceResource {
   @GET
   @Path("{serviceId}/conformance")
   @ConformanceLinks
-  public Conformance getConformance(@PathParam("serviceId") String serviceId) {
-    return ogcApiService.getConformance(serviceId);
+  public ConformanceView getConformance(@PathParam("serviceId") String serviceId) {
+    Conformance conformance = ogcApiService.getConformance(serviceId);
+    return new ConformanceView(conformance);
   }
 
   @Path("{serviceId}/api")
@@ -106,13 +109,23 @@ public class OGCApiServiceResource {
     return new CollectionView(collection);
   }
 
+
+  @GET
+  @Path("{serviceId}/collections/{collectionId}/queryables")
+  @QueryableLinks
+  public QueryablesView getQueryables(@PathParam("serviceId") String serviceId,
+      @PathParam("collectionId") String collectionId) {
+    Queryables queryables = ogcApiService.getQueryables(serviceId, collectionId);
+    return new QueryablesView(queryables);
+  }
+
   @GET
   @Path("{serviceId}/collections/{collectionId}/items")
   @ItemsLinks
   public ItemsView getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
-    final Set<String> queryables = getQueryables(serviceId, collectionId).getColumns();
+    final Set<String> queryables = getQueryables(serviceId, collectionId).getQueryables().getColumns();
 
     // validate query parameters
     featureQuery.validateQueryParameters(queryables);
@@ -128,13 +141,5 @@ public class OGCApiServiceResource {
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
     Item<?> item = ogcApiService.getItem(serviceId, collectionId, featureId);
     return new ItemView(item);
-  }
-
-  @GET
-  @Path("{serviceId}/collections/{collectionId}/queryables")
-  @QueryableLinks
-  public Queryables getQueryables(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId) {
-    return ogcApiService.getQueryables(serviceId, collectionId);
   }
 }

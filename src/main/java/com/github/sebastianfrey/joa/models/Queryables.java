@@ -1,8 +1,10 @@
 package com.github.sebastianfrey.joa.models;
 
+import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 
@@ -54,8 +56,12 @@ public class Queryables extends Linkable {
     return schema.getProperties().keySet();
   }
 
+  public Map<String, JSONSchema> getProperties() {
+    return schema.getProperties();
+  }
+
   @JsonValue
-  public ObjectType toJson() {
+  public ObjectType getJSONSChema() {
     for (Link link : getLinks()) {
       if (link.getRel().equals("self")) {
         schema.id(link.getUri().toString());

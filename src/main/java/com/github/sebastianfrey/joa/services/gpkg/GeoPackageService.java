@@ -106,7 +106,8 @@ public class GeoPackageService implements OGCApiService {
     Conformance conformance = new Conformance().serviceId(serviceId)
         .conformsTo(Conformance.FEATURES_CORE)
         .conformsTo(Conformance.FEATURES_OAS30)
-        .conformsTo(Conformance.FEATURES_GEOJSON);
+        .conformsTo(Conformance.FEATURES_GEOJSON)
+        .conformsTo(Conformance.FEATURES_HTML);
 
     return conformance;
   }
