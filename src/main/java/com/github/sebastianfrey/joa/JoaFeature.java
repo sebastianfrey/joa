@@ -5,6 +5,7 @@ import javax.ws.rs.core.FeatureContext;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
 import com.github.sebastianfrey.joa.resources.filters.RewriteFormatQueryParamToAcceptHeaderRequestFilter;
 import com.github.sebastianfrey.joa.resources.filters.AlternateLinksResponseFilter;
+import com.github.sebastianfrey.joa.resources.filters.ContextAwareViewResponseFilter;
 import org.glassfish.jersey.server.ServerProperties;
 
 public class JoaFeature implements Feature {
@@ -22,6 +23,9 @@ public class JoaFeature implements Feature {
 
      // transform linkable entities
     context.register(AlternateLinksResponseFilter.class);
+
+    // context access for Freemarker templates
+    context.register(ContextAwareViewResponseFilter.class);
 
     return true;
   }

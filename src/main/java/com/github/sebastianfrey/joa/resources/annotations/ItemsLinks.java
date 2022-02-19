@@ -33,35 +33,43 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Items.class, rel = Linkable.NEXT, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.nextPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.nextPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Next page of features as HTML")
 @ProvideLink(value = Items.class, rel = Linkable.NEXT, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.nextPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.nextPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Next page of features as JSON")
 @ProvideLink(value = Items.class, rel = Linkable.PREV, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.prevPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.prevPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Previous page of features as HTML")
 @ProvideLink(value = Items.class, rel = Linkable.PREV, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.prevPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.prevPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Previous page of features as JSON")
 @ProvideLink(value = Items.class, rel = Linkable.FIRST, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.firstPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.firstPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Last page of features as HTML")
 @ProvideLink(value = Items.class, rel = Linkable.FIRST, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.firstPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.firstPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "First page of features as JSON")
 @ProvideLink(value = Items.class, rel = Linkable.LAST, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.lastPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.lastPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Last page of features as HTML")
 @ProvideLink(value = Items.class, rel = Linkable.LAST, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    condition = "${instance.lastPageAvailable}", style = InjectLink.Style.ABSOLUTE)
+    condition = "${instance.lastPageAvailable}", style = InjectLink.Style.ABSOLUTE,
+    title = "Last page of features as JSON")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

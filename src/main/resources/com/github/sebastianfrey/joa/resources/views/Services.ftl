@@ -9,7 +9,7 @@
       <@components.navitem href="/">
         JOA
       </@components.navitem>
-      <@components.navitem href="/api" content="">
+      <@components.navitem context.toAbsoluteUrl("") content="">
         Services
       </@components.navitem>
     </@components.navlist>

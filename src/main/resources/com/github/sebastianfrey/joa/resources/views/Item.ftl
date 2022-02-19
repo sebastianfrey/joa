@@ -9,22 +9,22 @@
       <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href = "/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href = "/api/${item.getServiceId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}")>
         ${item.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${item.getServiceId()}/collections">
+      <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections")>
         Collections
       </@components.navitem>
-      <@components.navitem href = "/api/${item.getServiceId()}/collections/${item.getCollectionId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}")>
         ${item.getCollectionId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${item.getServiceId()}/collections/${item.getCollectionId()}/items">
+      <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}/items")>
         Items
       </@components.navitem>
-      <@components.navitem href = "/api/${item.getServiceId()}/collections/${item.getCollectionId()}/items/${item.getId()}" content = "">
+      <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}/items/${item.getId()}") content = "">
         ${item.getId()}
       </@components.navitem>
     </@components.navlist>
@@ -39,7 +39,7 @@
         </@components.h1>
         <@components.map script = "/js/item.mjs" data = item.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
         <div class="w-full grid grid-cols-1 border-2">
-          <@components.properties feature = item box = true/>
+          <@components.properties feature = item context = item box = true/>
         </div>
       </@components.griditem>
     </@components.grid>

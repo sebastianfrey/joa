@@ -44,7 +44,7 @@ import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
-@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
+@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
 public class OGCApiServiceResource {
 
   @Inject
@@ -87,7 +87,8 @@ public class OGCApiServiceResource {
 
   @Path("{serviceId}/api")
   @OpenAPILinks
-  @Produces({MediaType.APPLICATION_OPENAPI_JSON, MediaType.APPLICATION_OPENAPI_YAML})
+  @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_OPENAPI_JSON,
+      MediaType.APPLICATION_OPENAPI_YAML})
   public Resource getApi() {
     return Resource.from(OpenAPIResource.class);
   }
@@ -121,11 +122,13 @@ public class OGCApiServiceResource {
 
   @GET
   @Path("{serviceId}/collections/{collectionId}/items")
+  @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
   @ItemsLinks
   public ItemsView getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
       @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
-    final Set<String> queryables = getQueryables(serviceId, collectionId).getQueryables().getColumns();
+    final Set<String> queryables =
+        getQueryables(serviceId, collectionId).getQueryables().getColumns();
 
     // validate query parameters
     featureQuery.validateQueryParameters(queryables);
@@ -136,6 +139,7 @@ public class OGCApiServiceResource {
 
   @GET
   @Path("{serviceId}/collections/{collectionId}/items/{featureId}")
+  @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
   @ItemLinks
   public ItemView getItem(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {

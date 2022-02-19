@@ -74,6 +74,11 @@ public class Linkable {
   public final static String SERVICE_DESC = "service-desc";
 
   /**
+   * The OpenAPI service-doc relationship.
+   */
+  public final static String SERVICE_DOC = "service-doc";
+
+  /**
    * The OpenAPI queryables relationship.
    */
   public final static String QUERYABLES = "http://www.opengis.net/def/rel/ogc/1.0/queryables";
@@ -104,8 +109,13 @@ public class Linkable {
    * @param rel
    * @return
    */
-  public List<Link> getLinksByRel(String rel) {
-    return getLinks().stream().filter((link) -> link.getRel().equals(rel)).toList();
+  public List<Link> getLinksByRel(String ...rel) {
+
+    List<String> rels = List.of(rel);
+
+    return getLinks().stream().filter((link) -> {
+      return rels.contains(link.getRel());
+    }).toList();
   }
 
   /**

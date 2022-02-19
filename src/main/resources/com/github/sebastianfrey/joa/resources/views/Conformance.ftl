@@ -9,13 +9,13 @@
       <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href = "/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href = "/api/${conformance.getServiceId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${conformance.getServiceId()}")>
         ${conformance.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${conformance.getServiceId()}/conformance" content="">
+      <@components.navitem href = context.toAbsoluteUrl("/${conformance.getServiceId()}/conformance") content="">
         Collections
       </@components.navitem>
     </@components.navlist>

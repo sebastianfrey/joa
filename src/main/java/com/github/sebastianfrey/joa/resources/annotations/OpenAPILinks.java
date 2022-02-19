@@ -13,6 +13,10 @@ import org.glassfish.jersey.linking.InjectLink;
 import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.Binding;
 
+@ProvideLink(value = Service.class, rel = Linkable.SERVICE_DOC,
+    type = MediaType.TEXT_HTML,
+    bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
+    style = InjectLink.Style.ABSOLUTE, title = "OpenAPI document as HTML")
 @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
     type = MediaType.APPLICATION_OPENAPI_JSON,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),

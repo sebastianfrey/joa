@@ -6,16 +6,16 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href="/">
+      <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href="/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href="/api/${collections.getServiceId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${collections.getServiceId()}")>
         ${collections.getServiceId()}
       </@components.navitem>
-      <@components.navitem href="/api/${collections.getServiceId()}/collections" content="">
+      <@components.navitem href = context.toAbsoluteUrl("/${collections.getServiceId()}/collections") content="">
         Collections
       </@components.navitem>
     </@components.navlist>

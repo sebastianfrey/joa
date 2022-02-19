@@ -8,6 +8,7 @@ import javax.ws.rs.core.UriInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.sebastianfrey.joa.models.MediaType;
 import com.github.sebastianfrey.joa.resources.request.OpenAPIRequest;
+import com.github.sebastianfrey.joa.resources.views.OpenAPIView;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -18,23 +19,28 @@ import io.swagger.v3.oas.models.OpenAPI;
  * @author sfrey
  */
 public class OpenAPIProcessor {
-  String format;
-  UriInfo uriInfo;
-  OpenAPI openAPI;
+  private final String serviceId;
+  private final String format;
+  private final UriInfo uriInfo;
+
+  private OpenAPI openAPI;
 
   public OpenAPIProcessor(OpenAPIRequest options) {
+    this.serviceId = options.getServiceId();
     this.format = options.getFormat();
     this.uriInfo = options.getUriInfo();
   }
 
   public OpenAPIProcessor fetch() throws JsonProcessingException {
-    URI uri = uriInfo.getBaseUriBuilder().host("localhost").path("/openapi." + format).build();
-    String entity = ClientBuilder.newClient().target(uri).request().get(String.class);
+    if (!format.equals("html")) {
+      URI uri = uriInfo.getBaseUriBuilder().host("localhost").path("/openapi." + format).build();
+      String entity = ClientBuilder.newClient().target(uri).request().get(String.class);
 
-    if (format.equals("yaml")) {
-      openAPI = Yaml.mapper().readValue(entity, OpenAPI.class);
-    } else {
-      openAPI = Json.mapper().readValue(entity, OpenAPI.class);
+      if (format.equals("yaml")) {
+        openAPI = Yaml.mapper().readValue(entity, OpenAPI.class);
+      } else {
+        openAPI = Json.mapper().readValue(entity, OpenAPI.class);
+      }
     }
 
     return this;
@@ -42,7 +48,7 @@ public class OpenAPIProcessor {
 
   public OpenAPIProcessor process(Consumer<OpenAPI> processor) throws JsonProcessingException {
     if (openAPI == null) {
-      throw new IllegalStateException("OpenAPI document must be fetched before it can be processed.");
+      return this;
     }
 
     processor.accept(openAPI);
@@ -51,25 +57,29 @@ public class OpenAPIProcessor {
   }
 
   public Response send() {
-    String response = getResponse();
+    Object response = getResponse();
     String type = getType();
 
     return Response.ok(response, type).build();
   }
 
-  private String getResponse() {
-    if (openAPI == null) {
-      throw new IllegalStateException("OpenAPI document must be fetched before it can be send.");
-    }
-
+  private Object getResponse() {
     if (format.equals("yaml")) {
       return Yaml.pretty(openAPI);
-    } else {
+    } else if (format.equals("json")) {
       return Json.pretty(openAPI);
+    } else {
+      return new OpenAPIView(serviceId);
     }
   }
 
   private String getType() {
-    return format.equals("json") ? MediaType.APPLICATION_JSON : MediaType.APPLICATION_OPENAPI_YAML;
+    if (format.equals("yaml")) {
+      return MediaType.APPLICATION_OPENAPI_YAML;
+    } else if (format.equals("json")) {
+      return MediaType.APPLICATION_JSON;
+    } else {
+      return MediaType.TEXT_HTML;
+    }
   }
 }

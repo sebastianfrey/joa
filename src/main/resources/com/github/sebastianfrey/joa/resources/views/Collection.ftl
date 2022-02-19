@@ -9,21 +9,21 @@
       <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href = "/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href = "/api/${collection.getServiceId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${collection.getServiceId()}")>
         ${collection.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${collection.getServiceId()}/collections">
+      <@components.navitem href = context.toAbsoluteUrl("/${collection.getServiceId()}/collections")>
         Collections
       </@components.navitem>
-      <@components.navitem href = "/api/${collection.getServiceId()}/collections/${collection.getCollectionId()}" content = "">
+      <@components.navitem href = context.toAbsoluteUrl("/${collection.getServiceId()}/collections/${collection.getCollectionId()}") content = "">
         ${collection.getCollectionId()}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
-    <@components.navalternates linkable=collection />
+    <@components.navalternates linkable = collection />
   </@components.nav>
 
   <@components.main class="h-full">

@@ -125,7 +125,7 @@
   </#list>
 </#macro>
 
-<#macro properties feature box=false idColumn="" serviceId="" collectionId="">
+<#macro properties feature context box=false idColumn="" serviceId="" collectionId="">
   <#list feature.getProperties()>
     <#items as property, rawvalue>
       <#assign value = rawvalue!"<null>">
@@ -156,10 +156,10 @@
           <#assign value = "<unsupported>" />
         </#if>
 
-        <span class="font-bold text-sm md:text-base flex-grow ${labelClasses}">${property}</span>
+        <span class="font-bold text-smhref md:text-base flex-grow ${labelClasses}">${property}</span>
         <span class="text-sm overflow-hidden whitespace-nowrap text-ellipsis ${valueClasses}">
           <#if idColumn?has_content && property == idColumn>
-            <@components.link href="/api/${serviceId}/collections/${collectionId}/items/${value}">
+            <@components.link href = context.toAbsoluteUrl("/${serviceId}/collections/${collectionId}/items/${value}")>
                 ${value}
             </@components.link>
           <#else>

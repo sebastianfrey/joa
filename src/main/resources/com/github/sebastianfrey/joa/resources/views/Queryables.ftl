@@ -9,19 +9,19 @@
       <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href = "/api">
+      <@components.navitem href = "">
         Services
       </@components.navitem>
-      <@components.navitem href = "/api/${queryables.getServiceId()}">
+      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}")>
         ${queryables.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${queryables.getServiceId()}/collections">
+      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections")>
         Collections
       </@components.navitem>
-      <@components.navitem href = "/api/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}">
+      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}")>
         ${queryables.getCollectionId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}/queryables">
+      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}/queryables") content = "">
         Queryables
       </@components.navitem>
     </@components.navlist>

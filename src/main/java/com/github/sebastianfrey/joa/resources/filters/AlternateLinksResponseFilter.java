@@ -67,7 +67,11 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
           int index = links.indexOf(link);
 
           Link alternateLink = LinkUtils.transformUri(link, (uriBuilder) -> {
-            uriBuilder.replaceQueryParam("f", linkFormat);
+            if (linkFormat.equals("html")) {
+              uriBuilder.removeQueryParam("f");
+            } else {
+              uriBuilder.replaceQueryParam("f", linkFormat);
+            }
           });
 
           // set rel='alternate' for links with rel='self', when they are not the requested

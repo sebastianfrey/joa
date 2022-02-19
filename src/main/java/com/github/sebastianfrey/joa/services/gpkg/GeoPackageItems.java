@@ -129,7 +129,7 @@ public class GeoPackageItems extends Items<GeoPackageItems> {
         // since query string is replaced, we must set the f parameter accordingly
         switch (link.getType()) {
           case MediaType.TEXT_HTML:
-            uriBuilder.replaceQueryParam("f", "html");
+            uriBuilder.removeQueryParam("f");
             break;
           case MediaType.APPLICATION_GEO_JSON:
           case MediaType.APPLICATION_JSON:

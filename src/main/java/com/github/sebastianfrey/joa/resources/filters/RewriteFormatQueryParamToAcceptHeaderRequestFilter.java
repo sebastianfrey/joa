@@ -23,24 +23,43 @@ import com.google.common.net.HttpHeaders;
 @Priority(3000)
 public class RewriteFormatQueryParamToAcceptHeaderRequestFilter implements ContainerRequestFilter {
 
+  private static final Map<String, String> acceptedHeaders =
+      Collections.unmodifiableMap(Map.of(MediaType.TEXT_HTML, "html", MediaType.APPLICATION_JSON,
+          "json", MediaType.APPLICATION_GEO_JSON, "json", MediaType.APPLICATION_OPENAPI_JSON,
+          "json", MediaType.APPLICATION_OPENAPI_YAML, "yaml"));
+
   private static final Map<String, String> mappings =
       Collections.unmodifiableMap(Map.of("html", MediaType.TEXT_HTML, "json",
           MediaType.APPLICATION_JSON, "yaml", MediaType.APPLICATION_OPENAPI_YAML));
 
   @Override
   public void filter(ContainerRequestContext request) throws IOException {
+    // analyze URI path whether it ends with .json | .yaml
+    String uri = request.getUriInfo().getPath();
+    String[] parts = uri.split("\\.");
+    String last = parts[parts.length - 1];
+
+    // and if so return
+    if (mappings.containsKey(last)) {
+      return;
+    }
+
     String format = request.getUriInfo().getQueryParameters().getFirst("f");
+
     if (format == null) {
-      // analyze URI path whether it ends with .json | .yaml
-      String uri = request.getUriInfo().getPath();
-      String[] parts = uri.split("\\.");
-      String last = parts[parts.length - 1];
-
-      // and if so return
-      if (mappings.containsKey(last)) {
-        return;
+      String acceptHeader = request.getHeaderString(HttpHeaders.ACCEPT);
+      if (acceptHeader != null) {
+        for (String acceptHeaderPart : acceptHeader.split(",")) {
+          String accept = acceptHeaderPart.trim();
+          if (acceptedHeaders.containsKey(accept)) {
+            format = acceptedHeaders.get(accept);
+            break;
+          }
+        }
       }
+    }
 
+    if (format == null) {
       format = "html";
     }
 

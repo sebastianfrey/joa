@@ -6,18 +6,18 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href="/">
+      <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href="/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href="/api/${service.getServiceId()}" content="">
+      <@components.navitem href = context.toAbsoluteUrl("/${service.getServiceId()}") content = "">
         ${service.getServiceId()}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
-    <@components.navalternates linkable=service />
+    <@components.navalternates linkable = service />
   </@components.nav>
 
   <@components.main class="h-full">
@@ -28,10 +28,10 @@
         </@components.h1>
         <@components.links links = [service.getFirstLinkByRel("data")]>
           <@components.h2 class="pt-4">
-            Browse the available collections
+            ${messages.get("browse")}
           </@components.h2>
         </@components.links>
-        <@components.links links = service.getLinksByRel("service-desc")>
+        <@components.links links = service.getLinksByRel("service-doc", "service-desc")>
           <@components.h2 class="pt-4">
             Open API 3.0
           </@components.h2>

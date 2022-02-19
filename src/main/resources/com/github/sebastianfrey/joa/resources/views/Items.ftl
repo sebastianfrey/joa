@@ -9,19 +9,19 @@
       <@components.navitem href = "/">
         JOA
       </@components.navitem>
-      <@components.navitem href = "/api">
+      <@components.navitem href = context.toAbsoluteUrl("")>
         Services
       </@components.navitem>
-      <@components.navitem href = "/api/${items.getServiceId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}")>
         ${items.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${items.getServiceId()}/collections">
+      <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections")>
         Collections
       </@components.navitem>
-      <@components.navitem href = "/api/${items.getServiceId()}/collections/${items.getCollectionId()}">
+      <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections/${items.getCollectionId()}")>
         ${items.getCollectionId()}
       </@components.navitem>
-      <@components.navitem href = "/api/${items.getServiceId()}/collections/${items.getCollectionId()}/items" content = "">
+      <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections/${items.getCollectionId()}/items") content = "">
         Items
       </@components.navitem>
     </@components.navlist>
@@ -51,7 +51,7 @@
             </div>
             <div class="w-full grid grid-cols-1 lg:grid-cols-[repeat(${first.getProperties()?size},_minmax(300px,_1fr))]">
               <#items as feature>
-                <@components.properties feature=feature idColumn=items.getIdColumn() serviceId=items.getServiceId() collectionId=items.getCollectionId() />
+                <@components.properties feature = feature context = context idColumn = items.getIdColumn() serviceId = items.getServiceId() collectionId = items.getCollectionId() />
                 <#sep>
                   <span class="border-b-2 my-6 lg:hidden"></span>
                 </#sep>
