@@ -10,19 +10,19 @@
         JOA
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
-        Services
+        ${messages.get("services")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}")>
         ${items.getServiceId()}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections")>
-        Collections
+        ${messages.get("collections")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections/${items.getCollectionId()}")>
         ${items.getCollectionId()}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${items.getServiceId()}/collections/${items.getCollectionId()}/items") content = "">
-        Items
+        ${messages.get("items")}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
@@ -35,7 +35,7 @@
           ${items.getCollectionId()}
         </@components.h1>
         <@components.p>
-          Items of collection '${items.getCollectionId()}'
+          ${messages.get("items.of.collection", "${items.getCollectionId()}")}
         </@components.p>
         <@components.pagination links = items.getLinks() />
         <@components.map script = "/js/items.mjs" data = items.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
@@ -59,7 +59,7 @@
             </div>
           </div>
         <#else>
-          No Features
+           ${messages.get("no.items.in.collection", "${items.getCollectionId()}")}
         </#list>
       </@components.griditem>
     </@components.grid>

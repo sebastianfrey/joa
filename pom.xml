@@ -185,6 +185,8 @@
                         ${surefireArgLine}
                         --add-opens java.base/java.lang=ALL-UNNAMED
                         --add-opens java.base/java.util=ALL-UNNAMED
+                        --add-opens java.base/java.io=ALL-UNNAMED
+                        --add-opens java.base/java.nio.charset=ALL-UNNAMED
 </argLine>
                 </configuration>
             </plugin>

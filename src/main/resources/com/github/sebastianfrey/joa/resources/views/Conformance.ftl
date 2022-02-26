@@ -10,13 +10,13 @@
         JOA
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
-        Services
+        ${messages.get("services")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${conformance.getServiceId()}")>
         ${conformance.getServiceId()}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${conformance.getServiceId()}/conformance") content="">
-        Collections
+        ${messages.get("conformance")}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
@@ -25,8 +25,8 @@
   <@components.main>
     <@components.grid>
       <@components.griditem class = "flex-col">
-        <@components.h1>Conformance</@components.h1>
-        <@components.p>This API conforms to the following specification classes</@components.p>
+        <@components.h1>${messages.get("conformance")}</@components.h1>
+        <@components.p>${messages.get("conforms.to.classes")}</@components.p>
         <@components.list>
           <#list conformance.getConformsTo() as conformsTo>
             <li>

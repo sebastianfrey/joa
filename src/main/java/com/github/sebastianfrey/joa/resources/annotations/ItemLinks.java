@@ -16,12 +16,12 @@ import org.glassfish.jersey.linking.Binding;
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),
         @Binding(name = "featureId", value = "${instance.id}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Item.class, rel = Linkable.SELF, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),
         @Binding(name = "featureId", value = "${instance.id}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

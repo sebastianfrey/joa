@@ -9,8 +9,8 @@
       <@components.navitem href="/">
         JOA
       </@components.navitem>
-      <@components.navitem context.toAbsoluteUrl("") content="">
-        Services
+      <@components.navitem href=context.toAbsoluteUrl("") content="">
+        ${messages.get("services")}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
@@ -26,12 +26,14 @@
           </div>
           <div class="flex flex-col flex-1 h-full">
             <h2 class="text-sm lg:text-base font-medium text-black">${service.getTitle()}</h2>
-            <p class="text-sm lg:text-base text-slate-500">${(service.getDescription())!"No description"}</p>
+            <p class="text-sm lg:text-base text-slate-500">
+              ${service.getDescription()!"${messages.get(\"missing.description\")}"}
+            </p>
             <div class="flex-grow"></div>
             <#assign link = service.getFirstLinkByRel("self") />
             <div class="self-end">
               <@components.link href="${link.getUri().toString()}" title="Show Service">
-                View
+                ${messages.get("view.service")}
               </@components.link>
             </div>
           </div>

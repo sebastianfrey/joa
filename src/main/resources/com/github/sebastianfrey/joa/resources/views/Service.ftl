@@ -10,7 +10,7 @@
         JOA
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
-        Services
+        ${messages.get("services")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${service.getServiceId()}") content = "">
         ${service.getServiceId()}
@@ -28,17 +28,17 @@
         </@components.h1>
         <@components.links links = [service.getFirstLinkByRel("data")]>
           <@components.h2 class="pt-4">
-            ${messages.get("browse")}
+            ${messages.get("browse.collections")}
           </@components.h2>
         </@components.links>
         <@components.links links = service.getLinksByRel("service-doc", "service-desc")>
           <@components.h2 class="pt-4">
-            Open API 3.0
+            ${messages.get("openapi")}
           </@components.h2>
         </@components.links>
         <@components.links links = [service.getFirstLinkByRelAndType("conformance", "text/html")]>
           <@components.h2 class="pt-4">
-            Conformance
+            ${messages.get("conformance")}
           </@components.h2>
         </@components.links>
       </@components.griditem>

@@ -13,9 +13,9 @@ import org.glassfish.jersey.linking.ProvideLink;
 import org.glassfish.jersey.linking.InjectLink;
 
 @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Services.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
-    style = InjectLink.Style.ABSOLUTE, title = "This document as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

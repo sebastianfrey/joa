@@ -165,7 +165,7 @@
           <#else>
             <#if value?matches("\\b(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")>
               <@components.link href="${value}" title="${value}">
-                Open
+                ${messages.get("open.link")}
               </@components.link>
             <#else>
               ${value}
@@ -195,7 +195,7 @@
       <#items as bbox>
         <li class="py-1 flex flex-col">
           <span class="flex space-x-4">
-            <span class="min-w-[85px]">Lower Left:</span>
+            <span class="min-w-[85px]">${messages.get("spatial.bbox.lowerleft")}</span>
             <#assign i = 0>
             <span>${bbox[i]?c!"-"}</span>
             <#assign i = i + 1>
@@ -206,7 +206,7 @@
             </#if>
           </span>
           <span class="flex space-x-4">
-            <span class="min-w-[85px]">Upper Right:</span>
+            <span class="min-w-[85px]">${messages.get("spatial.bbox.upperright")}</span>
             <#assign i = i + 1>
             <span>${bbox[i]?c!"-"}</span>
             <#assign i = i + 1>
@@ -225,6 +225,7 @@
   <@components.map script = "/js/overview.mjs" data = collection.toJSON() class="h-[400px] w-full mt-2 border-2 mb-6"/>
 </#macro>
 
+
 <#macro temporal temporal>
   <#nested />
   <#list temporal.getInterval()>
@@ -232,11 +233,11 @@
       <#items as interval>
         <li class="py-1 flex">
           <span class="flex min-w-[120px] space-x-4">
-            <span>Lower:</span>
+            <span>${messages.get("temporal.interval.lower")}</span>
             <span>${interval[0]!"-"}</span>
           </span>
           <span class="flex min-w-[120px] space-x-4">
-            <span class="pl-1">Upper:</span>
+            <span class="pl-1">${messages.get("temporal.interval.upper")}</span>
             <span>${interval[1]!"-"}</span>
           </span>
         </li>
@@ -284,24 +285,32 @@
     </#list>
 
     <#if firstHref?has_content>
-      <@components.button onclick = "location.href='${firstHref}'">First</@components.button>
+      <@components.button onclick = "location.href='${firstHref}'">
+        ${messages.get("pagination.first")}
+      </@components.button>
     <#else>
-      <@components.button disabled = true>First</@components.button>
+      <@components.button disabled = true>${messages.get("pagination.first")}</@components.button>
     </#if>
     <#if prevHref?has_content>
-      <@components.button onclick = "location.href='${prevHref}'">Prev</@components.button>
+      <@components.button onclick = "location.href='${prevHref}'">
+        ${messages.get("pagination.prev")}
+      </@components.button>
     <#else>
-      <@components.button disabled = true>Prev</@components.button>
+      <@components.button disabled = true>${messages.get("pagination.prev")}</@components.button>
     </#if>
     <#if nextHref?has_content>
-      <@components.button onclick = "location.href='${nextHref}'">Next</@components.button>
+      <@components.button onclick = "location.href='${nextHref}'">
+        ${messages.get("pagination.next")}
+      </@components.button>
     <#else>
-      <@components.button disabled = true>Next</@components.button>
+      <@components.button disabled = true>${messages.get("pagination.next")}</@components.button>
     </#if>
     <#if lastHref?has_content>
-      <@components.button onclick = "location.href='${lastHref}'">Last</@components.button>
+      <@components.button onclick = "location.href='${lastHref}'">
+        ${messages.get("pagination.last")}
+      </@components.button>
     <#else>
-      <@components.button disabled = true>Last</@components.button>
+      <@components.button disabled = true>${messages.get("pagination.last")}</@components.button>
     </#if>
   </div>
 </#macro>

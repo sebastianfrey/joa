@@ -7,12 +7,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Priority;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Link;
 import javax.ws.rs.ext.Provider;
+import com.github.sebastianfrey.joa.i18n.Messages;
 import com.github.sebastianfrey.joa.models.Linkable;
 import com.github.sebastianfrey.joa.models.MediaType;
 import com.github.sebastianfrey.joa.resources.views.LinkableView;
@@ -26,13 +29,24 @@ import com.github.sebastianfrey.joa.utils.LinkUtils;
 @Provider
 @Priority(0)
 public class AlternateLinksResponseFilter implements ContainerResponseFilter {
+
+  private static final String BUNDLE_NAME = "com.github.sebastianfrey.joa.i18n.LinkResources";
+
   private static final Map<String, String> mappings =
       Collections.unmodifiableMap(Map.of(MediaType.TEXT_HTML, "html", MediaType.APPLICATION_JSON,
           "json", MediaType.APPLICATION_GEO_JSON, "json"));
 
+  @Context
+  HttpServletRequest request;
+
+  Messages messages;
+
+
   @Override
   public void filter(ContainerRequestContext requestContext,
       ContainerResponseContext responseContext) throws IOException {
+
+    messages = new Messages(BUNDLE_NAME, request.getLocale());
     Object entity = responseContext.getEntity();
 
     try {
@@ -60,13 +74,18 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
       String targetFormat = mappings.get(acceptHeader);
 
       for (Link link : links) {
+        int index = links.indexOf(link);
         String rel = link.getRel();
         String linkFormat = mappings.get(link.getType());
 
-        if (linkFormat != null) {
-          int index = links.indexOf(link);
+        // replace message keys
+        Link newLink = Link.fromLink(link)
+          .title(messages.get(link.getTitle()))
+          .build();
 
-          Link alternateLink = LinkUtils.transformUri(link, (uriBuilder) -> {
+        if (linkFormat != null) {
+          // remove ?f=html from query string, since HTML is default
+          newLink = LinkUtils.transformUri(newLink, (uriBuilder) -> {
             if (linkFormat.equals("html")) {
               uriBuilder.removeQueryParam("f");
             } else {
@@ -79,19 +98,19 @@ public class AlternateLinksResponseFilter implements ContainerResponseFilter {
           if (Linkable.SELF.equals(rel) && linkFormat != null && targetFormat != null
               && !linkFormat.equals(targetFormat)) {
             // set rel to ALTERNATE
-            Link.Builder alternateLinkBuilder = Link.fromUri(alternateLink.getUri())
+            Link.Builder alternateLinkBuilder = Link.fromUri(newLink.getUri())
                 .rel(Linkable.ALTERNATE)
-                .type(alternateLink.getType());
+                .type(newLink.getType());
 
-            if (alternateLink.getTitle() != null) {
-              alternateLinkBuilder.title(alternateLink.getTitle());
+            if (newLink.getTitle() != null) {
+              alternateLinkBuilder.title(newLink.getTitle());
             }
 
-            alternateLink = alternateLinkBuilder.build();
+            newLink = alternateLinkBuilder.build();
           }
-
-          links.set(index, alternateLink);
         }
+
+        links.set(index, newLink);
       }
 
       processLinkable(entity, requestContext);

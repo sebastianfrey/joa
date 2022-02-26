@@ -16,16 +16,16 @@ import org.glassfish.jersey.linking.Binding;
 
 @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Collections.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "This document as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.TEXT_HTML,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "Collections as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "collections.html")
 @ProvideLink(value = Service.class, rel = Linkable.DATA, type = MediaType.APPLICATION_JSON,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "Collections as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "collections.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

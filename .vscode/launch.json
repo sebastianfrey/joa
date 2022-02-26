@@ -11,7 +11,7 @@
       "mainClass": "com.github.sebastianfrey.joa.JoaApplication",
       "projectName": "joa",
       "args": "server config.yml",
-      "vmArgs": "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED"
+      "vmArgs": "--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-opens java.base/java.nio.charset=ALL-UNNAMED"
     },
 
   ]

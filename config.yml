@@ -9,6 +9,7 @@ views:
     strict_syntax: true
     template_update_delay: 0
     cache_storage: freemarker.cache.NullCacheStorage
+    default_encoding: "UTF-8"
 joa:
   gpkg:
     worksapce: /workspaces/joa/data/

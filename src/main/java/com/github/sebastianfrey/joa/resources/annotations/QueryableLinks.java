@@ -17,20 +17,20 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Queryables.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Queryables.class, rel = Linkable.SELF, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Queryables as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "queryables.html")
 @ProvideLink(value = Collection.class, rel = Linkable.QUERYABLES,
     type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Queryables as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "queryables.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

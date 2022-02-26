@@ -10,19 +10,19 @@
         JOA
       </@components.navitem>
       <@components.navitem href = "">
-        Services
+        ${messages.get("services")}
       </@components.navitem>
-      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}")>
+      <@components.navitem href = context.toAbsoluteUrl("/${queryables.getServiceId()}")>
         ${queryables.getServiceId()}
       </@components.navitem>
-      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections")>
-        Collections
+      <@components.navitem href = context.toAbsoluteUrl("/${queryables.getServiceId()}/collections")>
+        ${messages.get("collections")}
       </@components.navitem>
-      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}")>
+      <@components.navitem href = context.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}")>
         ${queryables.getCollectionId()}
       </@components.navitem>
-      <@components.navitem href = queryables.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}/queryables") content = "">
-        Queryables
+      <@components.navitem href = context.toAbsoluteUrl("/${queryables.getServiceId()}/collections/${queryables.getCollectionId()}/queryables") content = "">
+        ${messages.get("queryables")}
       </@components.navitem>
     </@components.navlist>
     <div class="flex-grow"></div>
@@ -31,8 +31,8 @@
   <@components.main>
     <@components.grid>
       <@components.griditem class = "flex-col">
-        <@components.h1>Queryables</@components.h1>
-        <@components.p>Queryables in this collection</@components.p>
+        <@components.h1>${messages.get("queryables")}</@components.h1>
+        <@components.p>${messages.get("queryables.in.collection")}</@components.p>
         <@components.list>
           <#list queryables.toJSON()?eval_json as key, values>
             <#if key == "properties" && values?is_hash>

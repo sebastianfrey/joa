@@ -17,19 +17,19 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Collection as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Collection.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Collection as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @ProvideLink(value = Item.class, rel = Linkable.COLLECTION, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Collection as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "collection.html")
 @ProvideLink(value = Item.class, rel = Linkable.COLLECTION, type = MediaType.APPLICATION_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "Collection as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "collection.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

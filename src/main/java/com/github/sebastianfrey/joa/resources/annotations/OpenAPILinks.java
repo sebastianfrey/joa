@@ -16,15 +16,15 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DOC,
     type = MediaType.TEXT_HTML,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "OpenAPI document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "openapi.html")
 @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
     type = MediaType.APPLICATION_OPENAPI_JSON,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "OpenAPI document as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "openapi.json")
 @ProvideLink(value = Service.class, rel = Linkable.SERVICE_DESC,
     type = MediaType.APPLICATION_OPENAPI_YAML,
     bindings = @Binding(name = "serviceId", value = "${instance.serviceId}"),
-    style = InjectLink.Style.ABSOLUTE, title = "OpenAPI document as YAML")
+    style = InjectLink.Style.ABSOLUTE, title = "openapi.yaml")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

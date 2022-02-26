@@ -1,5 +1,6 @@
 package com.github.sebastianfrey.joa.resources.views;
 
+import java.nio.charset.Charset;
 import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -27,7 +28,7 @@ public class ContextAwareView extends View {
   }
 
   public ContextAwareView(String view) {
-    super(view);
+    super(view, Charset.forName("UTF-8"));
   }
 
   public void setRequestContext(ContainerRequestContext containerRequestContext, HttpServletRequest request) {

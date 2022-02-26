@@ -16,16 +16,16 @@ import org.glassfish.jersey.linking.Binding;
 
 @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "this.html")
 @ProvideLink(value = Conformance.class, rel = Linkable.SELF, type = MediaType.APPLICATION_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-    style = InjectLink.Style.ABSOLUTE, title = "This document as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "this.json")
 @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-    style = InjectLink.Style.ABSOLUTE, title = "Conformance classes as HTML")
+    style = InjectLink.Style.ABSOLUTE, title = "conformance.html")
 @ProvideLink(value = Service.class, rel = Linkable.CONFORMANCE, type = MediaType.APPLICATION_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}")},
-    style = InjectLink.Style.ABSOLUTE, title = "Conformance classes as JSON")
+    style = InjectLink.Style.ABSOLUTE, title = "conformance.json")
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -10,19 +10,19 @@
         JOA
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
-        Services
+        ${messages.get("services")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}")>
         ${item.getServiceId()}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections")>
-        Collections
+        ${messages.get("collections")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}")>
         ${item.getCollectionId()}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}/items")>
-        Items
+        ${messages.get("items")}
       </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("/${item.getServiceId()}/collections/${item.getCollectionId()}/items/${item.getId()}") content = "">
         ${item.getId()}
@@ -35,9 +35,15 @@
     <@components.grid>
       <@components.griditem class = "flex-col">
         <@components.h1>
-          ${item.getCollectionId()} - ID: ${item.getId()}
+          ${messages.get("collection.and.id", "${item.getCollectionId()}", "${item.getId()}")}
         </@components.h1>
+        <@components.h2>
+          ${messages.get("preview")}
+        </@components.h2>
         <@components.map script = "/js/item.mjs" data = item.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
+        <@components.h2>
+          ${messages.get("attributes")}
+        </@components.h2>
         <div class="w-full grid grid-cols-1 border-2">
           <@components.properties feature = item context = item box = true/>
         </div>
