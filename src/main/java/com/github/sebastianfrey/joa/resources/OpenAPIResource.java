@@ -26,6 +26,7 @@ public class OpenAPIResource {
           "MessageBodyWorkers", "MultiPart", "ParameterizedHeader");
 
   @GET
+  @SuppressWarnings("rawtypes")
   public Response getApi(@PathParam("serviceId") String serviceId,
       @BeanParam @Valid OpenAPIRequest query) throws JsonProcessingException {
     // the openapi generate by swagger does include {serviceId} path parameters. In order to be
