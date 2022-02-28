@@ -16,6 +16,8 @@ import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.models.Spatial;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
+import com.github.sebastianfrey.joa.resources.filters.AlternateLinksResponseFilter;
+import com.github.sebastianfrey.joa.resources.filters.RewriteFormatQueryParamToAcceptHeaderRequestFilter;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
 import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
@@ -71,8 +73,10 @@ public class OGCAPIServiceResourceTest {
   private static final ResourceExtension EXT = ResourceExtension.builder()
       .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
       .addProvider(MultiPartFeature.class)
-      .addProvider(DeclarativeLinkingFeature.class)
       .addProvider(QueryParamExceptionHandler.class)
+      .addProvider(RewriteFormatQueryParamToAcceptHeaderRequestFilter.class)
+      .addProvider(DeclarativeLinkingFeature.class)
+      .addProvider(AlternateLinksResponseFilter.class)
       .addResource(new OpenApiResource().openApiConfiguration(oasConfig))
       .addResource(new OGCAPIServiceResource(DAO))
       .build();
@@ -240,7 +244,7 @@ public class OGCAPIServiceResourceTest {
   public void should_return_the_services() {
     when(DAO.getServices()).thenReturn(services);
 
-    Services found = EXT.target("/").request().get(Services.class);
+    Services found = EXT.target("/").queryParam("f", "json").request().get(Services.class);
 
     // verify that ogcApisService.getServices(...) was called
     verify(DAO).getServices();
@@ -278,7 +282,7 @@ public class OGCAPIServiceResourceTest {
   public void should_return_the_requested_service() {
     when(DAO.getService("service1")).thenReturn(service);
 
-    Service found = EXT.target("/service1").request().get(Service.class);
+    Service found = EXT.target("/service1").queryParam("f", "json").request().get(Service.class);
 
     // verify that ogcApisService.getService(...) was called
     verify(DAO).getService("service1");
@@ -305,7 +309,10 @@ public class OGCAPIServiceResourceTest {
   public void should_return_the_collections() {
     when(DAO.getCollections("service1")).thenReturn(collections);
 
-    Collections found = EXT.target("/service1/collections").request().get(Collections.class);
+    Collections found = EXT.target("/service1/collections")
+        .queryParam("f", "json")
+        .request()
+        .get(Collections.class);
 
     // verify that ogcApisService.getCollections(...) was called
     verify(DAO).getCollections("service1");
@@ -348,7 +355,10 @@ public class OGCAPIServiceResourceTest {
   public void should_return_the_conformance_classes() {
     when(DAO.getConformance("service1")).thenReturn(conformance);
 
-    Conformance found = EXT.target("/service1/conformance").request().get(Conformance.class);
+    Conformance found = EXT.target("/service1/conformance")
+        .queryParam("f", "json")
+        .request()
+        .get(Conformance.class);
 
     verify(DAO).getConformance("service1");
 
@@ -381,8 +391,10 @@ public class OGCAPIServiceResourceTest {
   public void should_return_the_requested_collection() throws Exception {
     when(DAO.getCollection("service1", "collection1")).thenReturn(collection);
 
-    Collection found =
-        EXT.target("/service1/collections/collection1").request().get(Collection.class);
+    Collection found = EXT.target("/service1/collections/collection1")
+        .queryParam("f", "json")
+        .request()
+        .get(Collection.class);
 
     // verify that ogcApisService.getCollection(...) was called
     verify(DAO).getCollection("service1", "collection1");
@@ -413,8 +425,10 @@ public class OGCAPIServiceResourceTest {
     doReturn(items).when(DAO)
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
-    Items<TestItems> found =
-        EXT.target("/service1/collections/collection1/items").request().get(TestItems.class);
+    Items<TestItems> found = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .request()
+        .get(TestItems.class);
 
     assertThat(found.getFeatures()).isEmpty();
     assertThat(found.getTimeStamp()).isNotNull();
@@ -444,8 +458,8 @@ public class OGCAPIServiceResourceTest {
       assertThat(query.getOffset()).isEqualTo(Long.valueOf(0));
       assertThat(query.getBbox()).isNull();
       assertThat(query.getDatetime()).isNull();
-      assertThat(query.getQueryString()).isNull();
-      assertThat(query.getQueryParameters()).isEmpty();
+      assertThat(query.getQueryString()).isNotEmpty();
+      assertThat(query.getQueryParameters()).containsKey("f");
     });
   }
 
@@ -456,6 +470,7 @@ public class OGCAPIServiceResourceTest {
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
     EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("bbox", "12.0,12.0,13.0,13.0")
         .queryParam("datetime", "2011-04-15T20:08:18Z")
         .queryParam("limit", "20")
@@ -498,8 +513,10 @@ public class OGCAPIServiceResourceTest {
     doReturn(items).when(DAO)
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
-    TestItems found =
-        EXT.target("/service1/collections/collection1/items").request().get(TestItems.class);
+    TestItems found = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .request()
+        .get(TestItems.class);
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
@@ -533,8 +550,10 @@ public class OGCAPIServiceResourceTest {
     doReturn(items).when(DAO)
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
-    TestItems found =
-        EXT.target("/service1/collections/collection1/items").request().get(TestItems.class);
+    TestItems found = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .request()
+        .get(TestItems.class);
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
@@ -568,8 +587,10 @@ public class OGCAPIServiceResourceTest {
 
     doReturn(item).when(DAO).getItem("service1", "collection1", Long.valueOf(1));
 
-    TestItem found =
-        EXT.target("/service1/collections/collection1/items/1").request().get(TestItem.class);
+    TestItem found = EXT.target("/service1/collections/collection1/items/1")
+        .queryParam("f", "json")
+        .request()
+        .get(TestItem.class);
 
     verify(DAO).getItem("service1", "collection1", Long.valueOf(1));
 
@@ -628,6 +649,7 @@ public class OGCAPIServiceResourceTest {
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
     Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("bbox", "12.0")
         .request()
         .get();
@@ -635,6 +657,7 @@ public class OGCAPIServiceResourceTest {
     assertThat(response.getStatus()).isEqualTo(400);
 
     response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("bbox", "12.0,12.0,13.0,13.0,160.0")
         .request()
         .get();
@@ -642,6 +665,7 @@ public class OGCAPIServiceResourceTest {
     assertThat(response.getStatus()).isEqualTo(400);
 
     response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("bbox", "12.0,12.0,13.0,13.0,160.0,161.0,152.0")
         .request()
         .get();
@@ -649,6 +673,7 @@ public class OGCAPIServiceResourceTest {
     assertThat(response.getStatus()).isEqualTo(400);
 
     response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("bbox", "abc")
         .request()
         .get();
@@ -663,6 +688,7 @@ public class OGCAPIServiceResourceTest {
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
     Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("datetime", "12.0")
         .request()
         .get();
@@ -670,6 +696,7 @@ public class OGCAPIServiceResourceTest {
     assertThat(response.getStatus()).isEqualTo(400);
 
     response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("datetime", "2021-15-12")
         .request()
         .get();
@@ -677,6 +704,7 @@ public class OGCAPIServiceResourceTest {
     assertThat(response.getStatus()).isEqualTo(400);
 
     response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("datetime", "../..")
         .request()
         .get();
@@ -691,6 +719,7 @@ public class OGCAPIServiceResourceTest {
         .getItems(eq("service1"), eq("collection1"), any(FeatureQueryRequest.class));
 
     Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
         .queryParam("unknownQueryParameter", "abc")
         .request()
         .get();
