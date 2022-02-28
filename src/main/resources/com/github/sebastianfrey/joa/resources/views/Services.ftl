@@ -19,26 +19,26 @@
 
   <@components.main>
     <@components.grid>
-      <#list services.getServices() as service>
-        <@components.griditem class="space-x-4">
-          <div class="shrink-0">
-            <img class="h-40 w-40" src="/img/placeholder-200x200.png" alt="Thumbnail">
-          </div>
-          <div class="flex flex-col flex-1 h-full">
-            <h2 class="text-sm lg:text-base font-medium text-black">${service.getTitle()}</h2>
-            <p class="text-sm lg:text-base text-slate-500">
-              ${service.getDescription()!"${messages.get(\"missing.description\")}"}
-            </p>
-            <div class="flex-grow"></div>
-            <#assign link = service.getFirstLinkByRel("self") />
-            <div class="self-end">
-              <@components.link href="${link.getUri().toString()}" title="Show Service">
-                ${messages.get("view.service")}
-              </@components.link>
+      <@components.griditem class="flex-col">
+        <#list services.getServices() as service>
+          <#assign link = service.getFirstLinkByRel("self") />
+          <div class="flex flex-row w-full my-3 space-x-4">
+            <div class="shrink-0">
+              <img class="h-40 w-40" src="/img/placeholder-200x200.png" alt="Thumbnail">
+            </div>
+            <div class="flex flex-col flex-1 h-full">
+              <h2 class="font-medium text-black">
+                <@components.link href="${link.getUri().toString()}" title="${service.getTitle()}" class="text-base lg:text-lg">
+                  ${service.getTitle()}
+                </@components.link>
+              </h2>
+              <p class="text-sm lg:text-base text-slate-500">
+                ${service.getDescription()!"${messages.get(\"missing.description\")}"}
+              </p>
             </div>
           </div>
-        </@components.griditem>
-      </#list>
+        </#list>
+      </@components.griditem>
     </@components.grid>
   </@components.main>
 </@layout.layout>
