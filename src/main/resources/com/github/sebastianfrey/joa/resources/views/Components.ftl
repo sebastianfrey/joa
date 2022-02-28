@@ -38,17 +38,17 @@
 
 <!-- Main -->
 <#macro main class = "">
-  <div class="m-auto w-full p-6 pb-12 mb-6 lg:w-3/4 ${class}">
+  <div class="m-auto w-full p-6 pb-[140px] lg:w-3/4 ${class}">
     <#nested />
   </div>
 </#macro>
 
 <#macro nav>
-  <div class="bg-[#ffe082] w-full">
-    <nav class="m-auto w-full px-6 py-1 lg:w-3/4 flex flex-row">
+  <nav class="bg-[#ffe082] w-full">
+    <div class="m-auto w-full px-6 py-1 lg:w-3/4 flex flex-row">
       <#nested />
-    </nav>
-  </div>
+    </div>
+  </nav>
 </#macro>
 
 <#macro navlist class = "">
@@ -99,7 +99,7 @@
 <#macro link href title = "" class = "">
   <a class="flex flex-row text-sm text-[#caae53] hover:underline ${class}" href="${href}" title="${title}">
     <#nested>
-    <@icons.externallink class = "stroke-[#caae53] pl-1" />
+    <!--<@icons.externallink class = "stroke-[#caae53] pl-1" />-->
   </a>
 </#macro>
 

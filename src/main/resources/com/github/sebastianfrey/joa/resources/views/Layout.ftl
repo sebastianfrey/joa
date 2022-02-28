@@ -1,17 +1,24 @@
 <#macro header>
-  <div class="sticky top-0 z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 py-3 min-h-4 w-full lg:px-0">
-    <header class="m-auto w-full px-6 lg:w-3/4 flex">
-      Header TODO<#nested />
-    </header>
-  </div>
+  <header class="z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 min-h-4 w-full lg:px-0">
+    <div class="h-16 m-auto w-full lg:w-3/4 flex">
+      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/logo.svg" />
+      <#nested />
+    </div>
+  </header>
 </#macro>
 
 <#macro footer>
-  <div class="fixed bottom-0 z-10 bg-slate-50 px-6 py-3 w-full shadow-inner lg:px-0 ">
-    <footer class="m-auto w-full px-6 lg:w-3/4 flex">
-      Footer TODO<#nested />
-    </footer>
-  </div>
+  <footer class="absolute h-28 bottom-0 z-10 bg-slate-50 px-6 py-3 w-full shadow-inner lg:px-0 ">
+    <div class="m-auto h-full w-full px-6 lg:w-3/4 flex justify-center">
+      <a href="https://github.com/sebastianfrey/joa" class="flex flex-row mr-auto items-center space-x-2">
+        <p class="text-sm hover:underline">Powerd by</p><img class="cursor-pointer h-[30px] hover:bg-slate-100" src="/logo.svg" />
+      </a>
+      <a href="https://github.com/sebastianfrey/joa" class="flex flex-row items-center space-x-2">
+        <img class="h-[30px]" src="/img/github.svg" alt="GitHub" /><p class="text-sm hover:underline">GitHub</p>
+      </a>
+      <#nested />
+    </div>
+  </footer>
 </#macro>
 
 <#macro layout>
@@ -52,7 +59,7 @@
       </script>
     </head>
 
-    <body class="min-h-screen bg-[#f5f5f6] overflow-y-scroll">
+    <body class="min-h-screen bg-[#f5f5f6] relative overflow-y-scroll">
       <@header />
       <#nested />
       <@footer />
