@@ -21,7 +21,7 @@
           <#assign link = service.getFirstLinkByRel("self") />
           <div class="flex flex-row w-full my-3 space-x-4">
             <div class="shrink-0">
-              <img class="h-40 w-40" src="/img/placeholder-200x200.png" alt="Thumbnail">
+              <img class="h-40 w-40" src="/assets/img/placeholder-200x200.png" alt="Thumbnail">
             </div>
             <div class="flex flex-col flex-1 h-full">
               <h2 class="font-medium text-black">
