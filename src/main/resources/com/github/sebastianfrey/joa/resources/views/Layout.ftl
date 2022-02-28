@@ -23,7 +23,7 @@
   </footer>
 </#macro>
 
-<#macro layout>
+<#macro layout title = "JOA">
   <!doctype html>
 
   <html lang="en">
@@ -33,7 +33,7 @@
 
       <meta name="viewport" content="width=device-width, initial-scale=1">
 
-      <title>JOA</title>
+      <title>${title}</title>
 
       <meta name="description" content="JOA - OGC API made simple">
       <meta name="author" content="Sebastian Frey">

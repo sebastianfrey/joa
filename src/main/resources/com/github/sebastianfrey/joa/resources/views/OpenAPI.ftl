@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="" type="com.github.sebastianfrey.joa.resources.views.OpenAPIView" -->
+<#-- @ftlvariable name="openAPI" type="com.github.sebastianfrey.joa.resources.views.OpenAPIView" -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta
     name="description"
-    content="SwaggerIU"
+    content="${serviceId} - SwaggerUI"
   />
-  <title>SwaggerUI</title>
+  <title>${serviceId} - SwaggerUI</title>
   <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@4.5.0/swagger-ui.css" />
 </head>
 <body>
