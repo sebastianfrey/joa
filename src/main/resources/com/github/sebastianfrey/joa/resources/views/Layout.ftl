@@ -1,7 +1,9 @@
 <#macro header>
   <header class="z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 min-h-4 w-full lg:px-0">
-    <div class="h-16 m-auto w-full lg:w-3/4 flex">
-      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/assets/img/logo.svg" />
+    <div class="m-auto w-full lg:w-3/4 flex">
+      <a href="/" alt="Home">
+        <img class="cursor-pointer h-16 hover:bg-slate-100 p-3" src="/assets/img/logo.svg" />
+      </a>
       <#nested />
     </div>
   </header>
@@ -42,9 +44,13 @@
       <meta property="og:description" content="A simple HTML5 Template for new projects.">
       <meta property="og:image" content="image.png">
 
-      <link rel="icon" href="/favicon.ico">
-      <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
-      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+      <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+      <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+      <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+      <link rel="manifest" href="/assets/site.webmanifest">
+      <link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#5bbad5">
+      <meta name="msapplication-TileColor" content="#da532c">
+      <meta name="theme-color" content="#ffffff">
 
       <script src="https://cdn.tailwindcss.com"></script>
       <script>
