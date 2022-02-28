@@ -19,7 +19,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
  *
  * @author sfrey
  */
-public interface OGCApiService<F, G> {
+public interface OGCAPIService {
   /**
    * returns a list all available OGC API services.
    *
@@ -102,7 +102,7 @@ public interface OGCApiService<F, G> {
    *
    * @return The queried items
    */
-  public Items<F, ?> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception;
+  public Items<?> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception;
 
   /**
    * returns a specific item (Feature) from an OGC API collection from a service by its id.
@@ -113,7 +113,7 @@ public interface OGCApiService<F, G> {
    *
    * @return The specific item
    */
-  public Item<G, ?> getItem(String serviceId, String collectionId, Long featureId);
+  public Item<?> getItem(String serviceId, String collectionId, Long featureId);
 
   /**
    * returns the queryables from an OGC API collection from a service by its id.

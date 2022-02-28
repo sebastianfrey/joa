@@ -33,7 +33,7 @@ import com.github.sebastianfrey.joa.models.schema.JSONSchema;
 import com.github.sebastianfrey.joa.models.schema.JSONSchemaBuilder;
 import com.github.sebastianfrey.joa.models.schema.type.GenericType;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
-import com.github.sebastianfrey.joa.services.OGCApiService;
+import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
@@ -50,20 +50,19 @@ import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
-import mil.nga.sf.geojson.Geometry;
 import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.GeometryType;
 import mil.nga.sf.geojson.Feature;
 import mil.nga.sf.geojson.FeatureConverter;
 
 /**
- * GeoPackage specific OGCApiService implementation powerd by
+ * GeoPackage specific OGCAPIService implementation powerd by
  * <a href="https://github.com/ngageoint/geopackage-java">National Geospatial-Intelligence Agency's
  * (NGA)</a> GeoPackage implementation.
  *
  * @author sfrey
  */
-public class GeoPackageService implements OGCApiService<Feature, Geometry> {
+public class GeoPackageService implements OGCAPIService {
   private File workspace;
   private String runtime;
 
@@ -107,7 +106,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
     Conformance conformance = new Conformance().serviceId(serviceId)
         .conformsTo(Conformance.FEATURES_CORE)
         .conformsTo(Conformance.FEATURES_OAS30)
-        .conformsTo(Conformance.FEATURES_GEOJSON);
+        .conformsTo(Conformance.FEATURES_GEOJSON)
+        .conformsTo(Conformance.FEATURES_HTML);
 
     return conformance;
   }
@@ -174,8 +174,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
    * @return
    */
   @Override
-  public GeoPackageItems getItems(String serviceId, String collectionId,
-      FeatureQuery query) throws Exception {
+  public GeoPackageItems getItems(String serviceId, String collectionId, FeatureQuery query)
+      throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
         .queryString(query.getQueryString())
@@ -187,7 +187,35 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
 
       GeoPackageQueryResult result = new GeoPackageQuery(featureDao, query).execute();
 
-      items.numberMatched(result.getCount());
+      String geometryType = null;
+      switch (featureDao.getGeometryType()) {
+        case POINT:
+          geometryType = "Point";
+          break;
+        case LINESTRING:
+          geometryType = "LineString";
+          break;
+        case POLYGON:
+          geometryType = "Polygon";
+          break;
+        case MULTIPOINT:
+          geometryType = "MultiPoint";
+          break;
+        case MULTILINESTRING:
+          geometryType = "MultiLineString";
+          break;
+        case MULTIPOLYGON:
+          geometryType = "MultiPolygon";
+          break;
+        default:
+          break;
+      }
+
+      items.numberMatched(result.getCount())
+          .geometryType(geometryType)
+          .idColumn(featureDao.getIdColumnName());
+
+      GeometryEnvelope bbox = null;
 
       FeatureResultSet featureResultSet = result.getFeatureResultSet();
       try {
@@ -195,13 +223,30 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           FeatureRow featureRow = featureResultSet.getRow();
 
           Feature feature = createFeature(featureRow);
-
           if (feature != null) {
             items.feature(feature);
+          }
+
+          GeometryEnvelope envelope = createEnvelope(featureRow);
+          if (envelope != null) {
+            if (bbox == null) {
+              bbox = envelope.copy();
+            } else {
+              bbox = bbox.union(envelope);
+            }
           }
         }
       } finally {
         featureResultSet.close();
+      }
+
+      if (bbox != null) {
+        if (bbox.is3D()) {
+          items.bbox(List.of(bbox.getMinX(), bbox.getMinY(), bbox.getMinZ(), bbox.getMaxX(),
+              bbox.getMaxY(), bbox.getMaxZ()));
+        } else {
+          items.bbox(List.of(bbox.getMinX(), bbox.getMinY(), bbox.getMaxX(), bbox.getMaxY()));
+        }
       }
     }
 
@@ -247,14 +292,17 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
       FeatureDao featureDao = loadCollection(gpkg, collectionId);
 
       String geometryColumn = featureDao.getGeometryColumnName();
-      GeometryType geometryType = featureDao.getGeometryType();
 
       featureDao.getColumns().stream().forEach((column) -> {
-        if (column.getName().equals(geometryColumn)) {
+        if (column.isGeometry()) {
           return;
         }
 
+        Long max = column.getMax();
+        Object defaultValue = column.getDefaultValue();
+
         GenericType<?> type = null;
+
         switch (column.getDataType()) {
           case BOOLEAN:
             type = JSONSchemaBuilder.booleanType();
@@ -262,14 +310,13 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           case BLOB:
           case TINYINT:
           case TEXT:
-            type = JSONSchemaBuilder.stringType();
+            type = JSONSchemaBuilder.stringType().maxLength(max);
             break;
           case DATE:
-            type = JSONSchemaBuilder.stringType().format("date");
-
+            type = JSONSchemaBuilder.stringType().maxLength(max).format("date");
             break;
           case DATETIME:
-            type = JSONSchemaBuilder.stringType().format("date-time");
+            type = JSONSchemaBuilder.stringType().maxLength(max).format("date-time");
             break;
           case DOUBLE:
           case FLOAT:
@@ -280,7 +327,7 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           case INTEGER:
           case MEDIUMINT:
           case SMALLINT:
-            type = JSONSchemaBuilder.integerType();
+            type = JSONSchemaBuilder.integerType().maximum(max);
             break;
           default:
             break;
@@ -290,11 +337,20 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
           return;
         }
 
-        schema.property(column.getName(), type.title(column.getName()));
+        String columnName = column.getName();
+
+        type.title(columnName);
+
+        if (defaultValue != null) {
+          type.defaultValue(defaultValue.toString());
+        }
+
+        schema.property(columnName, type);
       });
 
-      JSONSchema geometrySchema = null;
+      GeometryType geometryType = featureDao.getGeometryType();
 
+      JSONSchema geometrySchema = null;
       switch (geometryType) {
         case GEOMETRY:
           geometrySchema = Schemas.GeoJSON.geometry();
@@ -422,8 +478,8 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
 
     GeoPackageGeometryData geometryData = featureRow.getGeometry();
     if (geometryData != null && !geometryData.isEmpty()) {
-
       feature = FeatureConverter.toFeature(geometryData.getGeometry());
+
       feature.setProperties(new HashMap<>());
 
       for (Map.Entry<String, ColumnValue> entry : featureRow.getAsMap()) {
@@ -438,6 +494,14 @@ public class GeoPackageService implements OGCApiService<Feature, Geometry> {
     }
 
     return feature;
+  }
+
+  public GeometryEnvelope createEnvelope(FeatureRow featureRow) {
+    GeoPackageGeometryData geometryData = featureRow.getGeometry();
+    if (geometryData != null && !geometryData.isEmpty()) {
+      return geometryData.getGeometry().getEnvelope();
+    }
+    return null;
   }
 
   @Override

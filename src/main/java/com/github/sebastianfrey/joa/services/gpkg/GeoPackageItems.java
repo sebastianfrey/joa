@@ -5,15 +5,15 @@ import javax.ws.rs.core.Link;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Linkable;
+import com.github.sebastianfrey.joa.models.MediaType;
 import com.github.sebastianfrey.joa.utils.LinkUtils;
-import mil.nga.sf.geojson.Feature;
 
 /**
  * GeoPackage specific implementation of the Items model.
  *
  * @author sfrey
  */
-public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
+public class GeoPackageItems extends Items<GeoPackageItems> {
   @JsonIgnore
   private String queryString = "";
   @JsonIgnore
@@ -27,7 +27,6 @@ public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
   private boolean isPrevPageAvailable;
   private boolean isFirstPageAvailable;
   private boolean isLastPageAvailable;
-
 
   @Override
   public GeoPackageItems collectionId(String collectionId) {
@@ -89,7 +88,6 @@ public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
     return this;
   }
 
-
   @Override
   public void setNumberMatched(Long total) {
     super.setNumberMatched(total);
@@ -125,7 +123,19 @@ public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
     for (Link link : links) {
       int index = links.indexOf(link);
       Link newLink = LinkUtils.transformUri(link, (uriBuilder) -> {
+
         uriBuilder.replaceQuery(queryString);
+
+        // since query string is replaced, we must set the f parameter accordingly
+        switch (link.getType()) {
+          case MediaType.TEXT_HTML:
+            uriBuilder.removeQueryParam("f");
+            break;
+          case MediaType.APPLICATION_GEO_JSON:
+          case MediaType.APPLICATION_JSON:
+            uriBuilder.replaceQueryParam("f", "json");
+            break;
+        }
 
         switch (link.getRel()) {
           case Linkable.NEXT:
@@ -144,8 +154,18 @@ public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
             break;
 
           case Linkable.LAST:
-            uriBuilder.replaceQueryParam("offset", limit * pages);
+            Long total = getNumberMatched();
+            Long last = limit * pages;
+
+            Boolean hasMore = ((total - last) % limit) > 0;
+
+            if (!hasMore) {
+              last = last - limit;
+            }
+
+            uriBuilder.replaceQueryParam("offset", last);
             break;
+
         }
       });
       links.set(index, newLink);
@@ -171,9 +191,9 @@ public class GeoPackageItems extends Items<Feature, GeoPackageItems> {
       return;
     }
 
-    isNextPageAvailable = (offset + limit) <= total;
+    isNextPageAvailable = (offset + limit) < total;
     isPrevPageAvailable = (offset - limit) >= 0;
-    isLastPageAvailable = (offset + limit) <= (limit * pages);
+    isLastPageAvailable = (offset + limit) < (limit * pages);
     isFirstPageAvailable = (offset - limit) >= 0;
   }
 }

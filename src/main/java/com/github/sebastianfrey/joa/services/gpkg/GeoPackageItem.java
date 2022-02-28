@@ -11,7 +11,7 @@ import mil.nga.sf.geojson.Feature;
  *
  * @author sfrey
  */
-public class GeoPackageItem extends Item<Geometry, GeoPackageItem> {
+public class GeoPackageItem extends Item<GeoPackageItem> {
   @JsonIgnore
   private Feature feature;
 

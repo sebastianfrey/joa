@@ -85,7 +85,7 @@ public class JSONSchemaBuilderTest {
         .readOnly()
         .writeOnly()
         .deprecated()
-        .id("http://localhost/api/examples/point1/queryables?f=json")
+        .id("http://localhost/examples/point1/queryables?f=json")
         .schema("https://json-schema.org/draft/2019-09/schema");
 
     final String expected = MAPPER.writeValueAsString(

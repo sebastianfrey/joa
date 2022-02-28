@@ -8,6 +8,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import mil.nga.sf.geojson.Feature;
 
 /**
  * The Items model represents the OGC API FeatureCollection type.
@@ -18,17 +19,20 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * @author sfrey
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/featureCollectionGeoJSON.yaml"
  */
-@JsonPropertyOrder({"type", "numberReturned", "numberMatched", "timeStamp", "features", "links"})
+@JsonPropertyOrder({"type", "geometryType", "idColumn", "numberReturned", "numberMatched", "timeStamp", "bbox", "features", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId", "nextPageAvailable", "prevPageAvailable",
     "firstPageAvailable", "lastPageAvailable"})
-public abstract class Items<F, G extends Items<F, G>> extends Linkable implements Iterable<F> {
+public abstract class Items<T extends Items<T>> extends Linkable implements Iterable<Feature> {
   @JsonIgnore
   private String serviceId = "";
   @JsonIgnore
   private String collectionId = "";
 
+  private String geometryType;
+  private String idColumn;
   private Long numberMatched;
-  private List<F> features = new ArrayList<>();
+  private List<Double> bbox;
+  private List<Feature> features = new ArrayList<>();
 
   /**
    * returns the type property from a Items instance
@@ -53,9 +57,9 @@ public abstract class Items<F, G extends Items<F, G>> extends Linkable implement
   }
 
   @SuppressWarnings("unchecked")
-  public G serviceId(String serviceId) {
+  public T serviceId(String serviceId) {
     setServiceId(serviceId);
-    return (G) this;
+    return (T) this;
   }
 
   /**
@@ -72,9 +76,47 @@ public abstract class Items<F, G extends Items<F, G>> extends Linkable implement
   }
 
   @SuppressWarnings("unchecked")
-  public G collectionId(String collectionId) {
+  public T collectionId(String collectionId) {
     setCollectionId(collectionId);
-    return (G) this;
+    return (T) this;
+  }
+
+  /**
+   * returns the geometryType property from a Items instance
+   *
+   * @return String geometryType
+   */
+  public String getGeometryType() {
+    return geometryType;
+  }
+
+  public void setGeometryType(String geometryType) {
+    this.geometryType = geometryType;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T geometryType(String geometryType) {
+    setGeometryType(geometryType);
+    return (T) this;
+  }
+
+  /**
+   * returns the idColumn property from a Items instance
+   *
+   * @return String idColumn
+   */
+  public String getIdColumn() {
+    return idColumn;
+  }
+
+  public void setIdColumn(String idColumn) {
+    this.idColumn = idColumn;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T idColumn(String idColumn) {
+    setIdColumn(idColumn);
+    return (T) this;
   }
 
   /**
@@ -82,28 +124,47 @@ public abstract class Items<F, G extends Items<F, G>> extends Linkable implement
    *
    * @return List of features
    */
-  public List<F> getFeatures() {
+  public List<Feature> getFeatures() {
     return features;
   }
 
-  public void setFeatures(List<F> features) {
+  public void setFeatures(List<Feature> features) {
     this.features = features;
   }
 
   @SuppressWarnings("unchecked")
-  public G features(List<F> features) {
+  public T features(List<Feature> features) {
     setFeatures(features);
-    return (G) this;
+    return (T) this;
   }
 
-  public void addFeature(F feature) {
+  public void addFeature(Feature feature) {
     this.features.add(feature);
   }
 
   @SuppressWarnings("unchecked")
-  public G feature(F feature) {
+  public T feature(Feature feature) {
     this.addFeature(feature);
-    return (G) this;
+    return (T) this;
+  }
+
+  /**
+   * returns the bbox property from a Items instance
+   *
+   * @return Bbox
+   */
+  public List<Double> getBbox() {
+    return bbox;
+  }
+
+  public void setBbox(List<Double> bbox) {
+    this.bbox = bbox;
+  }
+
+  @SuppressWarnings("unchecked")
+  public T bbox(List<Double> bbox) {
+    setBbox(bbox);
+    return (T) this;
   }
 
   /**
@@ -141,15 +202,15 @@ public abstract class Items<F, G extends Items<F, G>> extends Linkable implement
   }
 
   @SuppressWarnings("unchecked")
-  public G numberMatched(Long numberMatched) {
+  public T numberMatched(Long numberMatched) {
     setNumberMatched(numberMatched);
-    return (G) this;
+    return (T) this;
   }
 
 
 
   @Override
-  public Iterator<F> iterator() {
+  public Iterator<Feature> iterator() {
     return features.iterator();
   }
 

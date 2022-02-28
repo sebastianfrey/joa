@@ -5,12 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import mil.nga.sf.geojson.Geometry;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
  * The Item model represents the OGC API Feature type.
  *
- * @param <G> The geometry type used by an implementer. Must be serializable to valid GeoJSON
+ * @param <T> The geometry type used by an implementer. Must be serializable to valid GeoJSON
  *        geometry.
  *
  * @author sfrey
@@ -19,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({"type", "bbox", "id", "geometry", "properties", "links"})
 @JsonIgnoreProperties({"serviceId", "collectionId"})
 @JsonInclude(Include.NON_NULL)
-public abstract class Item<G, T extends Item<G, T>> extends Linkable {
+public abstract class Item<T extends Item<T>> extends Linkable {
   @JsonIgnore
   private String serviceId = "";
   @JsonIgnore
@@ -98,5 +99,5 @@ public abstract class Item<G, T extends Item<G, T>> extends Linkable {
    *
    * @return Geometry instance
    */
-  public abstract G getGeometry();
+  public abstract Geometry getGeometry();
 }

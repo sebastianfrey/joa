@@ -1,5 +1,7 @@
 package com.github.sebastianfrey.joa.models.schema.type;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     extends GenericType<GenericNumberType<T, K>> {
   private Integer multipleOf;
@@ -32,6 +34,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     return (T) this;
   }
 
+  @JsonSetter
   public void setMinimum(K minimum) {
     this.minimum = minimum;
   }
@@ -40,6 +43,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     return exclusiveMinimum;
   }
 
+  @JsonSetter
   public void setExclusiveMinimum(K exclusiveMinimum) {
     this.exclusiveMinimum = exclusiveMinimum;
   }
@@ -55,6 +59,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     return maximum;
   }
 
+  @JsonSetter
   public void setMaximum(K maximum) {
     this.maximum = maximum;
   }
@@ -69,6 +74,7 @@ public abstract class GenericNumberType<T extends GenericNumberType<T, K>, K>
     return exclusiveMaximum;
   }
 
+  @JsonSetter
   public void setExclusiveMaximum(K exclusiveMaximum) {
     this.exclusiveMaximum = exclusiveMaximum;
   }

@@ -19,6 +19,7 @@ public class Conformance extends Linkable {
   public final static String FEATURES_CORE = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core";
   public final static String FEATURES_OAS30 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30";
   public final static String FEATURES_GEOJSON = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson";
+  public final static String FEATURES_HTML = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html";
 
   @JsonIgnore
   private String serviceId;
