@@ -2,14 +2,28 @@ logging:
   level: INFO
   loggers:
     com.github.sebastianfrey.joa: INFO
+
 server:
   rootPath: /
+
 views:
   freemarker:
     strict_syntax: true
     template_exception_handler: "rethrow"
     default_encoding: "UTF-8"
-joa:
+
+service:
   gpkg:
     worksapce: /data/joa/workspace/
     runtime: mod_spatialite
+
+openapi:
+  info:
+    title: JOA
+    version: "1.0.0"
+    description: Java based OGC-API-Features implementation.
+    license:
+      name: MIT
+    termsOfService: http://example.com/terms
+    contact:
+      email: person@example.org

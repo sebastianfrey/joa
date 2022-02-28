@@ -1,7 +1,7 @@
 package com.github.sebastianfrey.joa;
 
 import io.dropwizard.Configuration;
-
+import io.swagger.v3.oas.models.OpenAPI;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.sebastianfrey.joa.configuration.OGCAPIServiceFactory;
 import com.github.sebastianfrey.joa.services.OGCAPIService;
@@ -17,12 +17,15 @@ public class JoaConfiguration extends Configuration {
   @NotNull
   private Map<String, Map<String, String>> viewRendererConfiguration;
 
-  @JsonProperty("joa")
+  @NotNull
+  private OpenAPI openAPIConfiguration;
+
+  @JsonProperty("service")
   public OGCAPIServiceFactory getJoaServiceFactory() {
     return joaServiceFactory;
   }
 
-  @JsonProperty("joa")
+  @JsonProperty("service")
   public void setJoaServiceFactory(OGCAPIServiceFactory joaServiceFactory) {
     this.joaServiceFactory = joaServiceFactory;
   }
@@ -35,6 +38,16 @@ public class JoaConfiguration extends Configuration {
   @JsonProperty("views")
   public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
     this.viewRendererConfiguration = viewRendererConfiguration;
+  }
+
+  @JsonProperty("openapi")
+  public OpenAPI getOpenAPIConfiguration() {
+    return openAPIConfiguration;
+  }
+
+  @JsonProperty("openapi")
+  public void setOpenAPIConfiguration(OpenAPI openAPIConfiguration) {
+    this.openAPIConfiguration = openAPIConfiguration;
   }
 
   public OGCAPIService getOGCAPIService() {

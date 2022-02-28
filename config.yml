@@ -2,15 +2,29 @@ logging:
   level: INFO
   loggers:
     com.github.sebastianfrey.joa: DEBUG
+
 server:
   rootPath: /
+
 views:
   freemarker:
     strict_syntax: true
     template_update_delay: 0
     cache_storage: freemarker.cache.NullCacheStorage
     default_encoding: "UTF-8"
-joa:
+
+service:
   gpkg:
     worksapce: /workspaces/joa/data/
     runtime: mod_spatialite
+
+openapi:
+  info:
+    title: JOA
+    version: "1.0.0"
+    description: Java based OGC-API-Features implementation.
+    license:
+      name: MIT
+    termsOfService: http://example.com/terms
+    contact:
+      email: person@example.org
