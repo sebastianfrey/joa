@@ -222,7 +222,7 @@
     <#else>
       -
   </#list>
-  <@components.map script = "/js/overview.mjs" data = collection.toJSON() class="h-[400px] w-full mt-2 border-2 mb-6"/>
+  <@components.map script = "/assets/js/overview.mjs" data = collection.toJSON() class="h-[400px] w-full mt-2 border-2 mb-6"/>
 </#macro>
 
 

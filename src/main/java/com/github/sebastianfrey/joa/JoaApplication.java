@@ -45,7 +45,7 @@ public class JoaApplication extends Application<JoaConfiguration> {
     bootstrap.addBundle(new MultiPartBundle());
 
     // serve assets folder
-    bootstrap.addBundle(new AssetsBundle("/assets", "/", "index.html"));
+    bootstrap.addBundle(new AssetsBundle("/assets", "/assets", "index.html"));
 
     // html views
     bootstrap.addBundle(new ViewBundle<JoaConfiguration>() {

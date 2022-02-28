@@ -6,9 +6,6 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href="/">
-        JOA
-      </@components.navitem>
       <@components.navitem href=context.toAbsoluteUrl("") content="">
         ${messages.get("services")}
       </@components.navitem>

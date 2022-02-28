@@ -6,9 +6,6 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href = "/">
-        JOA
-      </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
         ${messages.get("services")}
       </@components.navitem>
@@ -38,7 +35,7 @@
           ${messages.get("items.of.collection", "${items.getCollectionId()}")}
         </@components.p>
         <@components.pagination links = items.getLinks() />
-        <@components.map script = "/js/items.mjs" data = items.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
+        <@components.map script = "/assets/items.mjs" data = items.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
         <#list items.getFeatures()>
           <div class="w-full lg:max-h-[400px] overflow-auto border-2 relative">
             <#assign first = items.getFeatures()[0] />

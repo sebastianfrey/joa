@@ -1,7 +1,7 @@
 <#macro header>
   <header class="z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 min-h-4 w-full lg:px-0">
     <div class="h-16 m-auto w-full lg:w-3/4 flex">
-      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/logo.svg" />
+      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/assets/logo.svg" />
       <#nested />
     </div>
   </header>
@@ -11,10 +11,10 @@
   <footer class="absolute h-28 bottom-0 z-10 bg-slate-50 px-6 py-3 w-full shadow-inner lg:px-0 ">
     <div class="m-auto h-full w-full px-6 lg:w-3/4 flex justify-center">
       <a href="https://github.com/sebastianfrey/joa" class="flex flex-row mr-auto items-center space-x-2">
-        <p class="text-sm hover:underline">Powerd by</p><img class="cursor-pointer h-[30px] hover:bg-slate-100" src="/logo.svg" />
+        <p class="text-sm hover:underline">Powerd by</p><img class="cursor-pointer h-[30px] hover:bg-slate-100" src="/assets/img/logo.svg" />
       </a>
       <a href="https://github.com/sebastianfrey/joa" class="flex flex-row items-center space-x-2">
-        <img class="h-[30px]" src="/img/github.svg" alt="GitHub" /><p class="text-sm hover:underline">GitHub</p>
+        <img class="h-[30px]" src="/assets/img/github.svg" alt="GitHub" /><p class="text-sm hover:underline">GitHub</p>
       </a>
       <#nested />
     </div>
@@ -43,7 +43,7 @@
       <meta property="og:image" content="image.png">
 
       <link rel="icon" href="/favicon.ico">
-      <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+      <link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
       <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
       <script src="https://cdn.tailwindcss.com"></script>

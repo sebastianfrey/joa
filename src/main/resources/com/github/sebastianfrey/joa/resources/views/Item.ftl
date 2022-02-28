@@ -6,9 +6,6 @@
 <@layout.layout>
   <@components.nav>
     <@components.navlist>
-      <@components.navitem href = "/">
-        JOA
-      </@components.navitem>
       <@components.navitem href = context.toAbsoluteUrl("")>
         ${messages.get("services")}
       </@components.navitem>
@@ -40,7 +37,7 @@
         <@components.h2>
           ${messages.get("preview")}
         </@components.h2>
-        <@components.map script = "/js/item.mjs" data = item.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
+        <@components.map script = "/assets/js/item.mjs" data = item.toJSON() class = "h-[400px] w-full mt-2 border-2 mb-6" />
         <@components.h2>
           ${messages.get("attributes")}
         </@components.h2>

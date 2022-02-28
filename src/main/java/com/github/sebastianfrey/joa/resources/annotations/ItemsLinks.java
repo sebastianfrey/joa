@@ -29,7 +29,7 @@ import org.glassfish.jersey.linking.Binding;
 @ProvideLink(value = Collection.class, rel = Linkable.ITEMS, type = MediaType.APPLICATION_GEO_JSON,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
-    style = InjectLink.Style.ABSOLUTE, title = "items.html")
+    style = InjectLink.Style.ABSOLUTE, title = "items.json")
 @ProvideLink(value = Items.class, rel = Linkable.NEXT, type = MediaType.TEXT_HTML,
     bindings = {@Binding(name = "serviceId", value = "${instance.serviceId}"),
         @Binding(name = "collectionId", value = "${instance.collectionId}"),},
