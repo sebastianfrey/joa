@@ -1,7 +1,7 @@
 <#macro header>
   <header class="z-10 bg-slate-50 border-b-2 border-[#caae53] px-6 min-h-4 w-full lg:px-0">
     <div class="h-16 m-auto w-full lg:w-3/4 flex">
-      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/assets/logo.svg" />
+      <img class="cursor-pointer hover:bg-slate-100 p-3" src="/assets/img/logo.svg" />
       <#nested />
     </div>
   </header>
