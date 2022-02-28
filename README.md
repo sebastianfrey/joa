@@ -68,7 +68,7 @@ logging:
   loggers:
     com.github.sebastianfrey.joa: DEBUG
 server:
-  rootPath: /api
+  rootPath: /
 joa:
   gpkg:
     worksapce: /data/joa/workspace
@@ -78,7 +78,7 @@ joa:
 ### 5. Place one or more GeoPackage-Files under `/data/joa/workspace/`.
 
 > If you have no GeoPackage-File available, you can download a sample file from [JOA](https://github.com/sebastianfrey/joa/raw/main/data/example.gpkg).
-Then open your browser, go to http://localhost:8080/api/ and enjoy your **Zero Config** OGC API. =)
+Then open your browser, go to http://localhost:8080/ and enjoy your **Zero Config** OGC API. =)
 
 ### 6. Now start the application
 
