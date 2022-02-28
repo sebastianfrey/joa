@@ -38,21 +38,21 @@ import com.github.sebastianfrey.joa.resources.views.ItemsView;
 import com.github.sebastianfrey.joa.resources.views.QueryablesView;
 import com.github.sebastianfrey.joa.resources.views.ServiceView;
 import com.github.sebastianfrey.joa.resources.views.ServicesView;
-import com.github.sebastianfrey.joa.services.OGCApiService;
+import com.github.sebastianfrey.joa.services.OGCAPIService;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.model.Resource;
 
 @Path("/")
 @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON})
-public class OGCApiServiceResource {
+public class OGCAPIServiceResource {
 
   @Inject
-  private OGCApiService ogcApiService;
+  private OGCAPIService ogcApiService;
 
-  public OGCApiServiceResource() {}
+  public OGCAPIServiceResource() {}
 
-  public OGCApiServiceResource(OGCApiService ogcApiService) {
+  public OGCAPIServiceResource(OGCAPIService ogcApiService) {
     this.ogcApiService = ogcApiService;
   }
 

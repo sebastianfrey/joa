@@ -19,7 +19,7 @@ import org.glassfish.jersey.media.multipart.FormDataBodyPart;
  *
  * @author sfrey
  */
-public interface OGCApiService {
+public interface OGCAPIService {
   /**
    * returns a list all available OGC API services.
    *

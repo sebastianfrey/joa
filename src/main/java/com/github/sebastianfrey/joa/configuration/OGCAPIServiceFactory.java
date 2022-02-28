@@ -4,10 +4,10 @@ import javax.annotation.Nullable;
 import javax.validation.Valid;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.sebastianfrey.joa.configuration.gpkg.GeoPackageConfiguration;
-import com.github.sebastianfrey.joa.services.OGCApiService;
+import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.services.gpkg.GeoPackageService;
 
-public class OGCApiServiceFactory {
+public class OGCAPIServiceFactory {
   @Nullable
   @Valid
   private GeoPackageConfiguration geoPackageConfiguration;
@@ -22,7 +22,7 @@ public class OGCApiServiceFactory {
     this.geoPackageConfiguration = geoPackageConfiguration;
   }
 
-  public OGCApiService getOGCApiService() {
+  public OGCAPIService getOGCAPIService() {
     if (geoPackageConfiguration != null) {
       String workspace = geoPackageConfiguration.getWorkspace();
       String runtime = geoPackageConfiguration.getRuntime();

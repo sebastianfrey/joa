@@ -17,7 +17,7 @@ import com.github.sebastianfrey.joa.models.Services;
 import com.github.sebastianfrey.joa.models.Spatial;
 import com.github.sebastianfrey.joa.resources.exception.QueryParamExceptionHandler;
 import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
-import com.github.sebastianfrey.joa.services.OGCApiService;
+import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -50,7 +50,7 @@ import javax.ws.rs.core.Link;
 import javax.ws.rs.core.Response;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class OGCApiServiceResourceTest {
+public class OGCAPIServiceResourceTest {
 
   // openapi
   private final static Info info = new Info().title("JOA")
@@ -66,7 +66,7 @@ public class OGCApiServiceResourceTest {
       .resourcePackages(
           Stream.of("com.github.sebastianfrey.joa.resources").collect(Collectors.toSet()));
 
-  private static final OGCApiService DAO = mock(OGCApiService.class);
+  private static final OGCAPIService DAO = mock(OGCAPIService.class);
 
   private static final ResourceExtension EXT = ResourceExtension.builder()
       .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
@@ -74,7 +74,7 @@ public class OGCApiServiceResourceTest {
       .addProvider(DeclarativeLinkingFeature.class)
       .addProvider(QueryParamExceptionHandler.class)
       .addResource(new OpenApiResource().openApiConfiguration(oasConfig))
-      .addResource(new OGCApiServiceResource(DAO))
+      .addResource(new OGCAPIServiceResource(DAO))
       .build();
 
   static {
