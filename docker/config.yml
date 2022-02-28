@@ -1,9 +1,14 @@
 logging:
   level: INFO
   loggers:
-    com.github.sebastianfrey.joa: DEBUG
+    com.github.sebastianfrey.joa: INFO
 server:
-  rootPath: /api
+  rootPath: /
+views:
+  freemarker:
+    strict_syntax: true
+    template_exception_handler: "rethrow"
+    default_encoding: "UTF-8"
 joa:
   gpkg:
     worksapce: /data/joa/workspace/
