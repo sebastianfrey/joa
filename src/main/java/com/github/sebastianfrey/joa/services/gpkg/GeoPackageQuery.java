@@ -5,21 +5,25 @@ import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sebastianfrey.joa.models.Bbox;
+import com.github.sebastianfrey.joa.models.Crs;
 import com.github.sebastianfrey.joa.models.Datetime;
-import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.ItemsQuery;
+import com.github.sebastianfrey.joa.utils.ProjectionUtils;
+import org.locationtech.proj4j.ProjCoordinate;
 import mil.nga.geopackage.db.GeoPackageDataType;
 import mil.nga.geopackage.features.user.FeatureColumn;
 import mil.nga.geopackage.features.user.FeatureDao;
 import mil.nga.geopackage.features.user.FeatureResultSet;
+import mil.nga.proj.ProjectionTransform;
 import mil.nga.sf.geojson.Polygon;
 import mil.nga.sf.geojson.Position;
 
 public class GeoPackageQuery {
   private final static ObjectMapper objectMapper = new ObjectMapper();
   FeatureDao featureDao;
-  FeatureQuery query;
+  ItemsQuery query;
 
-  public GeoPackageQuery(FeatureDao featureDao, FeatureQuery query) {
+  public GeoPackageQuery(FeatureDao featureDao, ItemsQuery query) {
     this.featureDao = featureDao;
     this.query = query;
   }
@@ -120,7 +124,7 @@ public class GeoPackageQuery {
 
     parameters.forEach((columnName, values) -> {
       if (!columnNames.contains(columnName)
-          || FeatureQuery.RESERVED_QUERY_PARAMS.contains(columnName)) {
+          || ItemsQuery.RESERVED_QUERY_PARAMS.contains(columnName)) {
         return;
       }
 
@@ -146,8 +150,10 @@ public class GeoPackageQuery {
       return;
     }
 
+    Crs bboxCrs = query.getBboxCrs();
+
     String geometryColumn = featureDao.getGeometryColumnName();
-    String polygon = objectMapper.writeValueAsString(toPolygon(bbox));
+    String polygon = objectMapper.writeValueAsString(toPolygon(bbox, bboxCrs));
 
     whereBuilder.append(" AND (ST_Intersects(")
         .append(geometryColumn)
@@ -155,13 +161,27 @@ public class GeoPackageQuery {
     whereArgs.add(polygon);
   }
 
-  private Polygon toPolygon(Bbox bbox) {
+  private Polygon toPolygon(Bbox bbox, Crs bboxCrs) {
     Double minX = bbox.getMinX();
     Double minY = bbox.getMinY();
     // Double minZ = bbox.getMinZ();
     Double maxX = bbox.getMaxX();
     Double maxY = bbox.getMaxY();
     // Double maxZ = bbox.getMaxZ();
+
+    if (bboxCrs != null) {
+      ProjectionTransform transformation = ProjectionUtils.getTransformation(bboxCrs, featureDao);
+
+      if (transformation != null) {
+        ProjCoordinate lowerLeft = ProjectionUtils.reprojectCoordinate(minX, minY, transformation);
+        ProjCoordinate upperRight = ProjectionUtils.reprojectCoordinate(maxX, maxY, transformation);
+
+        minX = lowerLeft.x;
+        minY = lowerLeft.y;
+        maxX = upperRight.x;
+        maxY = upperRight.y;
+      }
+    }
 
     Polygon polygon = new Polygon();
 

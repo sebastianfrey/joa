@@ -15,7 +15,8 @@ import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
 import com.github.sebastianfrey.joa.models.Services;
-import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
+import com.github.sebastianfrey.joa.resources.request.ItemQueryRequest;
+import com.github.sebastianfrey.joa.resources.request.ItemsQueryRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import mil.nga.sf.geojson.Point;
@@ -168,7 +169,7 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_return_items_from_collection() throws Exception {
-    FeatureQueryRequest query = new FeatureQueryRequest().offset(Long.valueOf(0))
+    ItemsQueryRequest query = new ItemsQueryRequest().offset(Long.valueOf(0))
         .limit(10)
         .datetime(new Datetime("2021-03-04T17:44:25.873Z"))
         .bbox(new Bbox().minX(-180.0).minY(-90.0).maxX(80.0).maxY(90.0));
@@ -186,8 +187,8 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_return_item_from_collection() throws Exception {
-    GeoPackageItem item =
-        geoPackageService.getItem(TEST_SERVICE, TEST_COLLECTION_POINT, Long.valueOf(1));
+    GeoPackageItem item = geoPackageService.getItem(TEST_SERVICE, TEST_COLLECTION_POINT,
+        Long.valueOf(1), new ItemQueryRequest());
 
     assertThat(item).isNotNull();
     assertThat(item.getServiceId()).isEqualTo("example");
@@ -200,13 +201,11 @@ public class GeoPackageServiceTest {
 
   @Test
   public void should_throw_when_item_is_not_found() {
-    assertThatThrownBy(
-        () -> geoPackageService.getItem("notaservice", "notacollection", Long.valueOf(10000)))
-            .isInstanceOf(NotFoundException.class);
-    assertThatThrownBy(
-        () -> geoPackageService.getItem("example", "notacollection", Long.valueOf(10000)))
-            .isInstanceOf(NotFoundException.class);
-    assertThatThrownBy(() -> geoPackageService.getItem("example", "point1", Long.valueOf(10000)))
-        .isInstanceOf(NotFoundException.class);
+    assertThatThrownBy(() -> geoPackageService.getItem("notaservice", "notacollection",
+        Long.valueOf(10000), new ItemQueryRequest())).isInstanceOf(NotFoundException.class);
+    assertThatThrownBy(() -> geoPackageService.getItem("example", "notacollection",
+        Long.valueOf(10000), new ItemQueryRequest())).isInstanceOf(NotFoundException.class);
+    assertThatThrownBy(() -> geoPackageService.getItem("example", "point1", Long.valueOf(10000),
+        new ItemQueryRequest())).isInstanceOf(NotFoundException.class);
   }
 }

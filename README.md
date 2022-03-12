@@ -11,6 +11,10 @@ JOA
   - [GeoPackage](https://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
 - conforms to the following standards:
   - [OGC API - Features - Part 1: Core](http://docs.opengeospatial.org/is/17-069r3/17-069r3.html)
+  - [OGC API - Features - Part 2: Coordinate Reference Systems by Reference](http://docs.opengeospatial.org/is/18-058/18-058.html)
+- comes wit built in
+  - `CORS` support
+  - `GZIP` response encoding
 
 ## Getting Started with Docker
 

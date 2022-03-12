@@ -9,10 +9,14 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import com.github.sebastianfrey.joa.models.Bbox;
+import com.github.sebastianfrey.joa.models.Crs;
 import com.github.sebastianfrey.joa.models.Datetime;
-import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.ItemsQuery;
+import com.github.sebastianfrey.joa.resources.annotations.SupportedCrs;
 import com.github.sebastianfrey.joa.resources.annotations.ValidBbox;
+import com.github.sebastianfrey.joa.resources.annotations.ValidCrs;
 import com.github.sebastianfrey.joa.resources.annotations.ValidDatetime;
+import com.github.sebastianfrey.joa.utils.CrsUtils;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -25,7 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *
  * @author sfrey
  */
-public class FeatureQueryRequest extends FeatureQuery {
+public class ItemsQueryRequest extends ItemsQuery {
 
   @Context
   UriInfo uriInfo;
@@ -42,11 +46,27 @@ public class FeatureQueryRequest extends FeatureQuery {
   @DefaultValue("0")
   private Long offset;
 
+  @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
+      in = ParameterIn.QUERY, style = ParameterStyle.FORM)
+  @QueryParam("crs")
+  @DefaultValue(CrsUtils.CRS84_URI)
+  @ValidCrs
+  @SupportedCrs
+  private Crs crs;
+
   @Parameter(required = false, explode = Explode.FALSE, style = ParameterStyle.FORM,
       in = ParameterIn.QUERY, array = @ArraySchema(minItems = 4, maxItems = 6))
   @QueryParam("bbox")
   @ValidBbox
   private Bbox bbox;
+
+  @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
+      in = ParameterIn.QUERY, style = ParameterStyle.FORM)
+  @QueryParam("bbox-crs")
+  @DefaultValue(CrsUtils.CRS84_URI)
+  @ValidCrs
+  @SupportedCrs
+  private Crs bboxCrs;
 
   @Parameter(schema = @Schema(type = "string"), style = ParameterStyle.FORM, required = false,
       explode = Explode.FALSE, in = ParameterIn.QUERY)
@@ -63,7 +83,7 @@ public class FeatureQueryRequest extends FeatureQuery {
     this.limit = limit;
   }
 
-  public FeatureQueryRequest limit(Integer limit) {
+  public ItemsQueryRequest limit(Integer limit) {
     setLimit(limit);
     return this;
   }
@@ -77,16 +97,32 @@ public class FeatureQueryRequest extends FeatureQuery {
     this.offset = offset;
   }
 
-  public FeatureQueryRequest offset(Long offset) {
+  public ItemsQueryRequest offset(Long offset) {
     setOffset(offset);
     return this;
   }
 
   @Override
+  public Crs getCrs() {
+    if (crs == null || !crs.validate()) {
+      return null;
+    }
+
+    return crs;
+  }
+
+  public void setCrs(Crs crs) {
+    this.crs = crs;
+  }
+
+  public ItemsQueryRequest crs(Crs crs) {
+    setCrs(crs);
+    return this;
+  }
+
+  @Override
   public Bbox getBbox() {
-    try {
-      bbox.validate();
-    } catch (Exception ex) {
+    if (bbox == null || !bbox.validate()) {
       return null;
     }
 
@@ -103,8 +139,22 @@ public class FeatureQueryRequest extends FeatureQuery {
     this.bbox = bbox;
   }
 
-  public FeatureQueryRequest bbox(Bbox bbox) {
+  public ItemsQueryRequest bbox(Bbox bbox) {
     this.bbox = bbox;
+    return this;
+  }
+
+  @Override
+  public Crs getBboxCrs() {
+    return bboxCrs;
+  }
+
+  public void setBboxCrs(Crs bboxCrs) {
+    this.bboxCrs = bboxCrs;
+  }
+
+  public ItemsQueryRequest bboxCrs(Crs bboxCrs) {
+    setBboxCrs(bboxCrs);
     return this;
   }
 
@@ -129,7 +179,7 @@ public class FeatureQueryRequest extends FeatureQuery {
     this.datetime = datetime;
   }
 
-  public FeatureQueryRequest datetime(Datetime datetime) {
+  public ItemsQueryRequest datetime(Datetime datetime) {
     this.datetime = datetime;
     return this;
   }

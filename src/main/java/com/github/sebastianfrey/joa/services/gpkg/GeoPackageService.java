@@ -17,13 +17,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
-import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.ItemsQuery;
 import com.github.sebastianfrey.joa.models.Bbox;
+import com.github.sebastianfrey.joa.models.Crs;
 import com.github.sebastianfrey.joa.models.Collection;
 import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
+import com.github.sebastianfrey.joa.models.ItemQuery;
 import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Schemas;
 import com.github.sebastianfrey.joa.models.Service;
@@ -35,6 +38,7 @@ import com.github.sebastianfrey.joa.models.schema.type.GenericType;
 import com.github.sebastianfrey.joa.models.schema.type.ObjectType;
 import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.utils.CrsUtils;
+import com.github.sebastianfrey.joa.utils.ProjectionUtils;
 import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
@@ -50,6 +54,9 @@ import mil.nga.geopackage.features.user.FeatureResultSet;
 import mil.nga.geopackage.features.user.FeatureRow;
 import mil.nga.geopackage.geom.GeoPackageGeometryData;
 import mil.nga.geopackage.user.ColumnValue;
+import mil.nga.proj.Projection;
+import mil.nga.proj.ProjectionTransform;
+import mil.nga.sf.Geometry;
 import mil.nga.sf.GeometryEnvelope;
 import mil.nga.sf.GeometryType;
 import mil.nga.sf.geojson.Feature;
@@ -63,12 +70,30 @@ import mil.nga.sf.geojson.FeatureConverter;
  * @author sfrey
  */
 public class GeoPackageService implements OGCAPIService {
+
   private File workspace;
   private String runtime;
 
   public GeoPackageService(String workspace, String runtime) {
     this.workspace = new File(workspace);
     this.runtime = runtime;
+
+    init();
+  }
+
+  private void init() {
+    for (Service service : getServices()) {
+      try (GeoPackage gpkg = loadService(service.getServiceId())) {
+        for (String featureTable : gpkg.getFeatureTables()) {
+          FeatureDao featureDao = gpkg.getFeatureDao(featureTable);
+
+          Long crs = featureDao.getSrsId();
+          Projection projection = featureDao.getContents().getProjection();
+
+          ProjectionUtils.addProjection(CrsUtils.parse(crs), projection);
+        }
+      }
+    }
   }
 
   @Override
@@ -104,10 +129,11 @@ public class GeoPackageService implements OGCAPIService {
   @Override
   public Conformance getConformance(String serviceId) {
     Conformance conformance = new Conformance().serviceId(serviceId)
-        .conformsTo(Conformance.FEATURES_CORE)
-        .conformsTo(Conformance.FEATURES_OAS30)
-        .conformsTo(Conformance.FEATURES_GEOJSON)
-        .conformsTo(Conformance.FEATURES_HTML);
+        .conformsTo(Conformance.FEATURES_1_CORE)
+        .conformsTo(Conformance.FEATURES_1_OAS30)
+        .conformsTo(Conformance.FEATURES_1_GEOJSON)
+        .conformsTo(Conformance.FEATURES_1_HTML)
+        .conformsTo(Conformance.FEATURES_2_CRS);
 
     return conformance;
   }
@@ -121,14 +147,15 @@ public class GeoPackageService implements OGCAPIService {
    */
   @Override
   public Collections getCollections(String serviceId) {
-    Collections collections = new Collections().serviceId(serviceId).title(serviceId);
+    Collections collections =
+        new Collections().serviceId(serviceId).title(serviceId).crs(ProjectionUtils.getCRSList());
 
     try (GeoPackage gpkg = loadService(serviceId)) {
 
       List<String> collectionIds = gpkg.getFeatureTables();
 
       for (String collectionId : collectionIds) {
-        Collection collection = getCollection(gpkg, serviceId, collectionId);
+        Collection collection = getCollection(gpkg, serviceId, collectionId).crs(Set.of("#/crs"));
 
         collections.collection(collection);
       }
@@ -174,7 +201,7 @@ public class GeoPackageService implements OGCAPIService {
    * @return
    */
   @Override
-  public GeoPackageItems getItems(String serviceId, String collectionId, FeatureQuery query)
+  public GeoPackageItems getItems(String serviceId, String collectionId, ItemsQuery query)
       throws Exception {
     GeoPackageItems items = new GeoPackageItems().serviceId(serviceId)
         .collectionId(collectionId)
@@ -216,13 +243,16 @@ public class GeoPackageService implements OGCAPIService {
           .idColumn(featureDao.getIdColumnName());
 
       GeometryEnvelope bbox = null;
-
       FeatureResultSet featureResultSet = result.getFeatureResultSet();
+
+      ProjectionTransform transformation =
+          ProjectionUtils.getTransformation(featureDao, query.getCrs());
+
       try {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          Feature feature = createFeature(featureRow);
+          Feature feature = createFeature(featureRow, transformation);
           if (feature != null) {
             items.feature(feature);
           }
@@ -261,7 +291,8 @@ public class GeoPackageService implements OGCAPIService {
    * @return
    */
   @Override
-  public GeoPackageItem getItem(String serviceId, String collectionId, Long featureId) {
+  public GeoPackageItem getItem(String serviceId, String collectionId, Long featureId,
+      ItemQuery query) {
     try (GeoPackage gpkg = loadService(serviceId)) {
       FeatureDao featureDao = loadCollection(gpkg, collectionId);
       FeatureResultSet featureResultSet = featureDao.queryForId(featureId);
@@ -269,7 +300,9 @@ public class GeoPackageService implements OGCAPIService {
         while (featureResultSet.moveToNext()) {
           FeatureRow featureRow = featureResultSet.getRow();
 
-          Feature feature = createFeature(featureRow);
+          ProjectionTransform transformation =
+              ProjectionUtils.getTransformation(featureDao, query.getCrs());
+          Feature feature = createFeature(featureRow, transformation);
 
           return new GeoPackageItem().serviceId(serviceId)
               .collectionId(collectionId)
@@ -393,7 +426,6 @@ public class GeoPackageService implements OGCAPIService {
 
       // enable spatialite
       loadSpatialiteRuntime(gpkg);
-
     } catch (SQLException ex) {
       if (gpkg != null) {
         gpkg.close();
@@ -447,8 +479,14 @@ public class GeoPackageService implements OGCAPIService {
     String collectionId = contents.getTableName();
     String title = contents.getIdentifier();
     String description = contents.getDescription();
-    String crs = CrsUtils.epsg(contents.getSrsId());
+    String crs = CrsUtils.parse(contents.getSrsId());
     GeometryEnvelope envelope = contents.getBoundingBox().buildEnvelope();
+
+    ProjectionTransform transformation =
+        ProjectionUtils.getTransformation(featureDao, new Crs(CrsUtils.CRS84_URI));
+    if (transformation != null) {
+      ProjectionUtils.reprojectGeometryEnvelope(envelope, transformation);
+    }
 
     Bbox bbox = new Bbox().minX(envelope.getMinX())
         .minY(envelope.getMinY())
@@ -465,19 +503,31 @@ public class GeoPackageService implements OGCAPIService {
         .collectionId(collectionId)
         .title(title)
         .description(description)
-        .crs(crs)
+        .crs(ProjectionUtils.getCRSList())
+        .storageCrs(crs)
         .itemType("feature")
-        .spatial(new Spatial().bbox(bbox).crs(crs))
+        .spatial(new Spatial().bbox(bbox).crs(CrsUtils.CRS84_URI))
         .interval(temporal);
 
     return collection;
   }
 
   public Feature createFeature(FeatureRow featureRow) {
+    return createFeature(featureRow, null);
+  }
+
+  public Feature createFeature(FeatureRow featureRow, ProjectionTransform transformation) {
     Feature feature = null;
 
     GeoPackageGeometryData geometryData = featureRow.getGeometry();
     if (geometryData != null && !geometryData.isEmpty()) {
+
+      Geometry geometry = geometryData.getGeometry();
+
+      if (transformation != null) {
+        ProjectionUtils.reproject(geometry, transformation);
+      }
+
       feature = FeatureConverter.toFeature(geometryData.getGeometry());
 
       feature.setProperties(new HashMap<>());

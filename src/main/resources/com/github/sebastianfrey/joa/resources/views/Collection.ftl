@@ -38,7 +38,7 @@
         </p>
         <div class="w-full flex justify-end">
           <#assign itemsLink = collection.getFirstLinkByRelAndType("items", "text/html") />
-          <@components.link href = "${itemsLink.getUri().toString()}" title = "${itemsLink.getTitle()}">
+          <@components.link href = "${itemsLink.getUri().toString()}" title = "${itemsLink.getTitle()}" class = "flex">
             ${messages.get("view.data")}
           </@components.link>
         </div>
@@ -46,16 +46,14 @@
           <@components.spatial spatial = collection.getExtent().getSpatial()>
             <@components.h2>${messages.get("spatial.extent")}</@components.h2>
           </@components.spatial>
+          <@components.crs crs = [collection.getStorageCrs()]>
+            <@components.h2>${messages.get("storage.crs")}</@components.h2>
+          </@components.crs>
         </div>
         <div class="pb-4 w-full">
           <@components.temporal temporal = collection.getExtent().getTemporal()>
             <@components.h2>${messages.get("temporal.extent")}</@components.h2>
           </@components.temporal>
-        </div>
-        <div class="pb-4 w-full">
-          <@components.crs crs = collection.getCrs()>
-            <@components.h2>${messages.get("supported.crs")}</@components.h2>
-          </@components.crs>
         </div>
         <div class="pb-4 w-full">
           <@components.links links = [collection.getFirstLinkByRel("http://www.opengis.net/def/rel/ogc/1.0/queryables")]>
@@ -65,6 +63,11 @@
         <@components.links links = collection.getLinks()>
           <@components.h2>${messages.get("links")}</@components.h2>
         </@components.links>
+        <div class="pb-4 w-full">
+          <@components.crs crs = collection.getCrs()>
+            <@components.h2>${messages.get("supported.crs")}</@components.h2>
+          </@components.crs>
+        </div>
       </@components.griditem>
     </@components.grid>
 
