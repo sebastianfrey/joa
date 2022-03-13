@@ -3,7 +3,7 @@
 <#import "Components.ftl" as components>
 <#import "Icons.ftl" as icons>
 
-<@layout.layout title = "${item.getServiceId()} - ${item.getCollectionId()} - ${messages.get(\"items\")}">
+<@layout.layout title = "${items.getServiceId()} - ${items.getCollectionId()} - ${messages.get(\"items\")}">
   <@components.nav>
     <@components.navlist>
       <@components.navitem href = context.toAbsoluteUrl("")>

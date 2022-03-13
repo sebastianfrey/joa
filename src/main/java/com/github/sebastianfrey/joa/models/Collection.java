@@ -1,8 +1,8 @@
 package com.github.sebastianfrey.joa.models;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * @author sfrey
  * @see "http://schemas.opengis.net/ogcapi/features/part1/1.0/openapi/schemas/collection.yaml"
  */
-@JsonPropertyOrder({"id", "title", "description", "itemType", "crs", "links"})
+@JsonPropertyOrder({"id", "title", "description", "itemType","extent",  "storageCrs", "links", "crs"})
 @JsonIgnoreProperties({"serviceId", "collectionId"})
 public class Collection extends Linkable {
   private String serviceId = "";
@@ -21,7 +21,8 @@ public class Collection extends Linkable {
   private String description = "";
   private Extent extent = new Extent();
   private String itemType;
-  private List<String> crs = new ArrayList<>();
+  private Set<String> crs = new HashSet<>();
+  private String storageCrs = "";
 
   /**
    * returns the id property from a Collection instance
@@ -149,11 +150,11 @@ public class Collection extends Linkable {
    *
    * @return List of supported crs
    */
-  public List<String> getCrs() {
+  public Set<String> getCrs() {
     return crs;
   }
 
-  public void setCrs(List<String> crs) {
+  public void setCrs(Set<String> crs) {
     this.crs = crs;
   }
 
@@ -161,13 +162,31 @@ public class Collection extends Linkable {
     this.crs.add(crs);
   }
 
-  public Collection crs(List<String> crs) {
+  public Collection crs(Set<String> crs) {
     setCrs(crs);
     return this;
   }
 
   public Collection crs(String crs) {
     this.crs.add(crs);
+    return this;
+  }
+
+  /**
+   * returns the storaget crs property from a Collection instance
+   *
+   * @return The collection storage crs
+   */
+  public String getStorageCrs() {
+    return storageCrs;
+  }
+
+  public void setStorageCrs(String storageCrs) {
+    this.storageCrs = storageCrs;
+  }
+
+  public Collection storageCrs(String storageCrs) {
+    this.storageCrs = storageCrs;
     return this;
   }
 
@@ -190,4 +209,6 @@ public class Collection extends Linkable {
     getExtent().getTemporal().addInterval(interval);
     return this;
   }
+
+
 }

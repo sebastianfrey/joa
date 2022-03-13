@@ -16,10 +16,11 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonIgnoreProperties({"serviceId"})
 public class Conformance extends Linkable {
 
-  public final static String FEATURES_CORE = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core";
-  public final static String FEATURES_OAS30 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30";
-  public final static String FEATURES_GEOJSON = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson";
-  public final static String FEATURES_HTML = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html";
+  public final static String FEATURES_1_CORE = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core";
+  public final static String FEATURES_1_OAS30 = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/oas30";
+  public final static String FEATURES_1_GEOJSON = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson";
+  public final static String FEATURES_1_HTML = "http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/html";
+  public final static String FEATURES_2_CRS = "http://www.opengis.net/spec/ogcapi-features-2/1.0/conf/crs";
 
   @JsonIgnore
   private String serviceId;

@@ -8,6 +8,7 @@ import com.github.sebastianfrey.joa.resources.filters.RewriteFormatQueryParamToA
 import com.github.sebastianfrey.joa.services.OGCAPIService;
 import com.github.sebastianfrey.joa.resources.filters.AlternateLinksResponseFilter;
 import com.github.sebastianfrey.joa.resources.filters.ContextAwareViewResponseFilter;
+import com.github.sebastianfrey.joa.resources.filters.ContentCrsResponseFilter;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.linking.DeclarativeLinkingFeature;
 import org.glassfish.jersey.server.ServerProperties;
@@ -40,6 +41,9 @@ public class JoaFeature implements Feature {
 
     // context access for Freemarker templates
     context.register(ContextAwareViewResponseFilter.class);
+
+    // Sets Content-Crs Header
+    context.register(ContentCrsResponseFilter.class);
 
     // setup dependency injection for CollectionService
     context.register(new AbstractBinder() {

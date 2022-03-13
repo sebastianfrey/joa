@@ -29,7 +29,8 @@ import com.github.sebastianfrey.joa.resources.annotations.OpenAPILinks;
 import com.github.sebastianfrey.joa.resources.annotations.QueryableLinks;
 import com.github.sebastianfrey.joa.resources.annotations.ServiceLinks;
 import com.github.sebastianfrey.joa.resources.annotations.ServicesLinks;
-import com.github.sebastianfrey.joa.resources.request.FeatureQueryRequest;
+import com.github.sebastianfrey.joa.resources.request.ItemQueryRequest;
+import com.github.sebastianfrey.joa.resources.request.ItemsQueryRequest;
 import com.github.sebastianfrey.joa.resources.views.CollectionView;
 import com.github.sebastianfrey.joa.resources.views.CollectionsView;
 import com.github.sebastianfrey.joa.resources.views.ConformanceView;
@@ -126,14 +127,14 @@ public class OGCAPIServiceResource {
   @ItemsLinks
   public ItemsView getItems(@PathParam("serviceId") String serviceId,
       @PathParam("collectionId") String collectionId,
-      @BeanParam @Valid FeatureQueryRequest featureQuery) throws Exception {
+      @BeanParam @Valid ItemsQueryRequest itemsQuery) throws Exception {
     final Set<String> queryables =
         getQueryables(serviceId, collectionId).getQueryables().getColumns();
 
     // validate query parameters
-    featureQuery.validateQueryParameters(queryables);
+    itemsQuery.validateQueryParameters(queryables);
 
-    Items<?> items = ogcApiService.getItems(serviceId, collectionId, featureQuery);
+    Items<?> items = ogcApiService.getItems(serviceId, collectionId, itemsQuery);
     return new ItemsView(items);
   }
 
@@ -142,8 +143,9 @@ public class OGCAPIServiceResource {
   @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_GEO_JSON})
   @ItemLinks
   public ItemView getItem(@PathParam("serviceId") String serviceId,
-      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId) {
-    Item<?> item = ogcApiService.getItem(serviceId, collectionId, featureId);
+      @PathParam("collectionId") String collectionId, @PathParam("featureId") Long featureId,
+      @BeanParam @Valid ItemQueryRequest itemQuery) {
+    Item<?> item = ogcApiService.getItem(serviceId, collectionId, featureId, itemQuery);
     return new ItemView(item);
   }
 }

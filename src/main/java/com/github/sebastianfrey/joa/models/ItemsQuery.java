@@ -9,11 +9,11 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.MultivaluedMap;
 
 /**
- * The FeatureQuery model represents the OGC API parameters list for an items query.
+ * The ItemsQuery model represents the OGC API parameters list for an items query.
  */
-public abstract class FeatureQuery {
+public abstract class ItemsQuery extends ItemQuery {
 
-  public static List<String> RESERVED_QUERY_PARAMS = List.of("f", "datetime", "bbox", "limit", "offset");
+  public static List<String> RESERVED_QUERY_PARAMS = List.of("f", "datetime", "bbox", "limit", "offset", "crs", "bbox-crs");
 
   /**
    * returns the raw query string from an items query.
@@ -30,6 +30,15 @@ public abstract class FeatureQuery {
    * @return The spatial extent.
    */
   public abstract Bbox getBbox();
+
+  /**
+   * The optional bbox-crs parameter, which allows to specify the bbox CRS.
+   *
+   * @see "http://schemas.opengis.net/ogcapi/features/part2/1.0/openapi/parameters/bbox-crs.yaml"
+   *
+   * @return The bbox-crs.
+   */
+  public abstract Crs getBboxCrs();
 
   /**
    * The optional datetime parameter, which allows to query by a temporal extent.
