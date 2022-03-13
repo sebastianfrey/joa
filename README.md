@@ -6,6 +6,7 @@ A lightweight, simple and easy to use OGC API implementation built with [Dropwiz
 
 - implements the [OGC API - Features](https://www.ogc.org/standards/ogcapi-features) standard
 - follows a minimialistic aproach, which allows **Zero Config** deployment of an **OGC API**.
+- provides a simple HTML based UI for browsing services, collections and data
 - supports currently the following backends:
   - [GeoPackage](https://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
 - conforms to the following standards:
