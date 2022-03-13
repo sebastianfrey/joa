@@ -4,18 +4,21 @@ A lightweight, simple and easy to use OGC API implementation built with [Dropwiz
 
 ## Features
 
-- implements the [OGC API - Features](https://www.ogc.org/standards/ogcapi-features) standard
-- follows a minimialistic aproach, which allows **Zero Config** deployment of an **OGC API**.
-- provides a simple HTML based UI for browsing services, collections and data
-- supports currently the following backends:
+- Implements the [OGC API - Features](https://www.ogc.org/standards/ogcapi-features) standard
+- Follows a minimialistic aproach, which allows **Zero Config** deployment of an **OGC API**.
+- Supports currently the following backends:
   - [GeoPackage](https://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
-- conforms to the following standards:
+- Conforms to the following standards:
   - [OGC API - Features - Part 1: Core](http://docs.opengeospatial.org/is/17-069r3/17-069r3.html)
   - [OGC API - Features - Part 2: Coordinate Reference Systems by Reference](http://docs.opengeospatial.org/is/18-058/18-058.html)
-- comes with built in
-  - `CORS` support
+- Provides a simple HTML based UI for browsing services, collections and data
+- Supports standard query parameters: `bbox`, `bbox-crs`, `datetime`, `limit` and `crs`
+- Supports simple filtering by property: `propertyA=<value>&propertyB=<value>`
+- Supports additional query parameters: `offset`
+- Comes with built in support for
+  - `CORS`
   - `GZIP` response encoding
-  - `HTTP` and `HTTPS` support
+  - `HTTP` and `HTTPS`
 
 ## Getting Started with Docker
 
