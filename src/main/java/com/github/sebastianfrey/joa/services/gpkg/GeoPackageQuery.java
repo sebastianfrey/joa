@@ -2,6 +2,8 @@ package com.github.sebastianfrey.joa.services.gpkg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.ws.rs.core.MultivaluedMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sebastianfrey.joa.models.Bbox;
@@ -59,12 +61,10 @@ public class GeoPackageQuery {
     return featureDao.getIdColumnName();
   }
 
-  public String where(StringBuilder whereBuilder, List<String> whereArgs) throws Exception {
+  public void where(StringBuilder whereBuilder, List<String> whereArgs) throws Exception {
     buildDatetimeWhere(whereBuilder, whereArgs);
     buildQueryWhere(whereBuilder, whereArgs);
     buildBboxWhere(whereBuilder, whereArgs);
-
-    return null;
   }
 
   public void buildDatetimeWhere(StringBuilder whereBuilder, List<String> whereArgs) {
@@ -120,13 +120,17 @@ public class GeoPackageQuery {
       return;
     }
 
-    List<String> columnNames = List.of(featureDao.getColumnNames());
+    Map<String, FeatureColumn> columns = featureDao.getColumns()
+        .stream()
+        .collect(Collectors.toMap((column) -> column.getName(), (column) -> column));
 
-    parameters.forEach((columnName, values) -> {
-      if (!columnNames.contains(columnName)
+    parameters.keySet().forEach((columnName) -> {
+      final List<String> values = parameters.get(columnName);
+      if (!columns.containsKey(columnName)
           || ItemsQuery.RESERVED_QUERY_PARAMS.contains(columnName)) {
         return;
       }
+      FeatureColumn column = columns.get(columnName);
 
       whereBuilder.append(" AND (");
 
@@ -136,7 +140,20 @@ public class GeoPackageQuery {
         }
 
         whereBuilder.append(columnName).append(" = ?");
-        whereArgs.add(values.get(i));
+
+        String value = values.get(i);
+        switch (column.getDataType()) {
+          case BOOLEAN:
+            if ("true".equals(value)) {
+              value = "1";
+            } else if ("false".equals(value)) {
+              value = "0";
+            }
+            break;
+          default:
+            break;
+        }
+        whereArgs.add(value);
       }
 
       whereBuilder.append(")");

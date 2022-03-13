@@ -31,7 +31,7 @@ public class Crs {
       return false;
     }
 
-    if (!CrsUtils.CRS84.equals(code)) {
+    if (!CrsUtils.CRS84_ID.equals(code)) {
       try {
         Long.valueOf(code);
       } catch (NumberFormatException ex) {

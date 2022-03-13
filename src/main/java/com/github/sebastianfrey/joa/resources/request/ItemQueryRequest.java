@@ -17,7 +17,7 @@ public class ItemQueryRequest extends ItemQuery {
   @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
       in = ParameterIn.QUERY, style = ParameterStyle.FORM)
   @QueryParam("crs")
-  @DefaultValue(CrsUtils.CRS84_URI)
+  @DefaultValue(CrsUtils.CRS84)
   @ValidCrs
   @SupportedCrs
   private Crs crs;

@@ -473,9 +473,11 @@ public class OGCAPIServiceResourceTest {
     EXT.target("/service1/collections/collection1/items")
         .queryParam("f", "json")
         .queryParam("bbox", "12.0,12.0,13.0,13.0")
+        .queryParam("bbox-crs", CrsUtils.CRS84)
         .queryParam("datetime", "2011-04-15T20:08:18Z")
         .queryParam("limit", "20")
         .queryParam("offset", "100")
+        .queryParam("crs", CrsUtils.CRS84)
         .request()
         .get(TestItems.class);
 
@@ -491,14 +493,24 @@ public class OGCAPIServiceResourceTest {
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
     assertThat(itemsQueryCaptor.getValue()).satisfies((query) -> {
+      assertThat(query).isNotNull();
+
       // verify query parameters
       assertThat(query.getLimit()).isEqualTo(20);
       assertThat(query.getOffset()).isEqualTo(Long.valueOf(100));
+      assertThat(query.getCrs()).satisfies((crs) -> {
+        assertThat(crs).isNotNull();
+        assertThat(crs.getUri()).isEqualTo(CrsUtils.CRS84);
+      });
       assertThat(query.getBbox()).satisfies((bbox) -> {
         assertThat(bbox.getMinX()).isEqualTo(12.0);
         assertThat(bbox.getMinY()).isEqualTo(12.0);
         assertThat(bbox.getMaxX()).isEqualTo(13.0);
         assertThat(bbox.getMaxY()).isEqualTo(13.0);
+      });
+      assertThat(query.getBboxCrs()).satisfies((crs) -> {
+        assertThat(crs).isNotNull();
+        assertThat(crs.getUri()).isEqualTo(CrsUtils.CRS84);
       });
       assertThat(query.getDatetime()).satisfies((datetime) -> {
         assertThat(datetime.getRawValue()).isEqualTo("2011-04-15T20:08:18Z");
@@ -592,6 +604,7 @@ public class OGCAPIServiceResourceTest {
 
     TestItem found = EXT.target("/service1/collections/collection1/items/1")
         .queryParam("f", "json")
+        .queryParam("crs", CrsUtils.CRS84)
         .request()
         .get(TestItem.class);
 
@@ -607,7 +620,14 @@ public class OGCAPIServiceResourceTest {
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
     assertThat(featureIdCaptor.getValue()).isEqualTo(Long.valueOf(1));
-    assertThat(itemQueryCaptor.getValue()).isNotNull();
+    assertThat(itemQueryCaptor.getValue()).satisfies((query) -> {
+      assertThat(query).isNotNull();
+
+      assertThat(query.getCrs()).satisfies((crs) -> {
+        assertThat(crs).isNotNull();
+        assertThat(crs.getUri()).isEqualTo(CrsUtils.CRS84);
+      });
+    });
 
     assertThat(found.getId()).isNotEmpty();
     assertThat(found.getBbox()).isNotEmpty();
@@ -697,6 +717,39 @@ public class OGCAPIServiceResourceTest {
   }
 
   @Test
+  public void should_throw_http_400_for_invalid_bboxCrs_query_parameter() throws Exception {
+    when(DAO.getQueryables("service1", "collection1")).thenReturn(queryables);
+    doReturn(items).when(DAO)
+        .getItems(eq("service1"), eq("collection1"), any(ItemsQueryRequest.class));
+
+    Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .queryParam("bbox", "12.0,12.0,13.0,13.0")
+        .queryParam("bbox-crs", "0")
+        .request()
+        .get();
+
+    assertThat(response.getStatus()).isEqualTo(400);
+  }
+
+  @Test
+  public void should_throw_http_400_for_unsupported_bboxCrs_query_parameter() throws Exception {
+    when(DAO.getQueryables("service1", "collection1")).thenReturn(queryables);
+    doReturn(items).when(DAO)
+        .getItems(eq("service1"), eq("collection1"), any(ItemsQueryRequest.class));
+
+    Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .queryParam("bbox", "12.0,12.0,13.0,13.0")
+        .queryParam("bbox-crs", CrsUtils.parse(0))
+        .request()
+        .get();
+
+    assertThat(response.getStatus()).isEqualTo(400);
+  }
+
+
+  @Test
   public void should_throw_http_400_for_invalid_datetime_query_parameter() throws Exception {
     when(DAO.getQueryables("service1", "collection1")).thenReturn(queryables);
     doReturn(items).when(DAO)
@@ -721,6 +774,36 @@ public class OGCAPIServiceResourceTest {
     response = EXT.target("/service1/collections/collection1/items")
         .queryParam("f", "json")
         .queryParam("datetime", "../..")
+        .request()
+        .get();
+
+    assertThat(response.getStatus()).isEqualTo(400);
+  }
+
+  @Test
+  public void should_throw_http_400_for_invalid_crs_query_parameter() throws Exception {
+    when(DAO.getQueryables("service1", "collection1")).thenReturn(queryables);
+    doReturn(items).when(DAO)
+        .getItems(eq("service1"), eq("collection1"), any(ItemsQueryRequest.class));
+
+    Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .queryParam("crs", "0")
+        .request()
+        .get();
+
+    assertThat(response.getStatus()).isEqualTo(400);
+  }
+
+  @Test
+  public void should_throw_http_400_for_unsupported_crs_query_parameter() throws Exception {
+    when(DAO.getQueryables("service1", "collection1")).thenReturn(queryables);
+    doReturn(items).when(DAO)
+        .getItems(eq("service1"), eq("collection1"), any(ItemsQueryRequest.class));
+
+    Response response = EXT.target("/service1/collections/collection1/items")
+        .queryParam("f", "json")
+        .queryParam("crs", CrsUtils.parse(0))
         .request()
         .get();
 

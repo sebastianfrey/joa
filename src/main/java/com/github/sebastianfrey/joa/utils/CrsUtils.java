@@ -4,29 +4,29 @@ import mil.nga.proj.ProjectionConstants;
 
 public class CrsUtils {
 
-  public static final String CRS84 = "CRS84";
-  public static final String CRS84_URI = "http://www.opengis.net/def/crs/OGC/1.3/" + CRS84;
+  public static final String CRS84_ID = "CRS84";
+  public static final String CRS84 = "http://www.opengis.net/def/crs/OGC/1.3/" + CRS84_ID;
 
-  public static final String EPSG_BASE_URI = "http://www.opengis.net/def/crs/EPSG/0/";
+  public static final String EPSG_BASE = "http://www.opengis.net/def/crs/EPSG/0/";
 
   public static String crs84() {
-    return CRS84_URI;
+    return CRS84;
   }
 
   public static String parse(String crs) {
     if ("4326".equals(crs) || "CRS84".equals(crs)) {
-      return CRS84_URI;
+      return CRS84;
     }
 
-    if (crs.equals(CRS84_URI)) {
+    if (crs.equals(CRS84)) {
       return crs;
     }
 
-    if (crs.startsWith(EPSG_BASE_URI)) {
+    if (crs.startsWith(EPSG_BASE)) {
       return crs;
     }
 
-    return EPSG_BASE_URI + crs;
+    return EPSG_BASE + crs;
   }
 
   public static String parse(Long crsId) {
@@ -41,9 +41,9 @@ public class CrsUtils {
     if (crsUri == null) {
       return null;
     }
-    if (crsUri.equals(CRS84_URI)) {
+    if (crsUri.equals(CRS84)) {
       return ProjectionConstants.AUTHORITY_OGC;
-    } else if (crsUri.startsWith(EPSG_BASE_URI)) {
+    } else if (crsUri.startsWith(EPSG_BASE)) {
       return ProjectionConstants.AUTHORITY_EPSG;
     }
 
@@ -54,9 +54,9 @@ public class CrsUtils {
     if (crsUri == null) {
       return null;
     }
-    if (crsUri.startsWith(CRS84_URI)) {
-      return CRS84;
-    } else if (crsUri.startsWith(EPSG_BASE_URI)) {
+    if (crsUri.startsWith(CRS84)) {
+      return CRS84_ID;
+    } else if (crsUri.startsWith(EPSG_BASE)) {
       return crsUri.replace("http://www.opengis.net/def/crs/EPSG/0/", "");
     }
 

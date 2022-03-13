@@ -145,7 +145,7 @@ public class ProjectionUtils {
     if (CRS == null) {
       CRS = new LinkedHashSet<>();
 
-      CRS.add(CrsUtils.CRS84_URI);
+      CRS.add(CrsUtils.CRS84);
       CRS.addAll(PROJECTIONS.keySet());
     }
 

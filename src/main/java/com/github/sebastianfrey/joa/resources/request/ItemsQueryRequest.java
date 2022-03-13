@@ -1,5 +1,8 @@
 package com.github.sebastianfrey.joa.resources.request;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.ws.rs.DefaultValue;
@@ -31,6 +34,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 public class ItemsQueryRequest extends ItemsQuery {
 
+  MultivaluedMap<String, String> queryParamters = new MultivaluedHashMap<>();
+
   @Context
   UriInfo uriInfo;
 
@@ -49,7 +54,7 @@ public class ItemsQueryRequest extends ItemsQuery {
   @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
       in = ParameterIn.QUERY, style = ParameterStyle.FORM)
   @QueryParam("crs")
-  @DefaultValue(CrsUtils.CRS84_URI)
+  @DefaultValue(CrsUtils.CRS84)
   @ValidCrs
   @SupportedCrs
   private Crs crs;
@@ -63,7 +68,7 @@ public class ItemsQueryRequest extends ItemsQuery {
   @Parameter(schema = @Schema(format = "form"), required = false, explode = Explode.FALSE,
       in = ParameterIn.QUERY, style = ParameterStyle.FORM)
   @QueryParam("bbox-crs")
-  @DefaultValue(CrsUtils.CRS84_URI)
+  @DefaultValue(CrsUtils.CRS84)
   @ValidCrs
   @SupportedCrs
   private Crs bboxCrs;
@@ -187,7 +192,12 @@ public class ItemsQueryRequest extends ItemsQuery {
   @Override
   public String getQueryString() {
     if (uriInfo == null) {
-      return "";
+      return queryParamters.entrySet().stream().map((entry) -> {
+        final String parameter = entry.getKey();
+        return entry.getValue().stream().map((value) -> {
+          return parameter + "=" + URLEncoder.encode(value, StandardCharsets.UTF_8);
+        }).collect(Collectors.joining("&"));
+      }).collect(Collectors.joining("&"));
     }
 
     return uriInfo.getRequestUri().getQuery();
@@ -196,9 +206,14 @@ public class ItemsQueryRequest extends ItemsQuery {
   @Override
   public MultivaluedMap<String, String> getQueryParameters() {
     if (uriInfo == null) {
-      return new MultivaluedHashMap<>();
+      return queryParamters;
     }
 
     return uriInfo.getQueryParameters();
+  }
+
+  public ItemsQueryRequest queryParameter(String key, String ...values) {
+    queryParamters.addAll(key, values);
+    return this;
   }
 }

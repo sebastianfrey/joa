@@ -32,7 +32,7 @@ public class ContentCrsResponseFilter implements ContainerResponseFilter {
       String crs = requestContext.getUriInfo().getQueryParameters().getFirst("crs");
 
       if (crs == null) {
-        crs = CrsUtils.CRS84_URI;
+        crs = CrsUtils.CRS84;
       }
 
       responseContext.getHeaders().add("Content-Crs", "<" + crs + ">");

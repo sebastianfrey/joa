@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import com.github.sebastianfrey.joa.models.ItemsQuery;
@@ -277,6 +278,8 @@ public class GeoPackageService implements OGCAPIService {
             }
           }
         }
+      } catch (Exception ex) {
+        throw ex;
       } finally {
         featureResultSet.close();
       }
@@ -442,7 +445,7 @@ public class GeoPackageService implements OGCAPIService {
         gpkg.close();
       }
 
-      throw new WebApplicationException(ex);
+      throw new InternalServerErrorException(ex);
     } catch (GeoPackageException ex) {
       throw new NotFoundException("Service with ID '" + serviceId + "' does not exist.", ex);
     }
@@ -494,7 +497,7 @@ public class GeoPackageService implements OGCAPIService {
     GeometryEnvelope envelope = contents.getBoundingBox().buildEnvelope();
 
     ProjectionTransform transformation =
-        ProjectionUtils.getTransformation(featureDao, new Crs(CrsUtils.CRS84_URI));
+        ProjectionUtils.getTransformation(featureDao, new Crs(CrsUtils.CRS84));
     if (transformation != null) {
       ProjectionUtils.reprojectGeometryEnvelope(envelope, transformation);
     }
@@ -517,7 +520,7 @@ public class GeoPackageService implements OGCAPIService {
         .crs(ProjectionUtils.getCRSList())
         .storageCrs(crs)
         .itemType("feature")
-        .spatial(new Spatial().bbox(bbox).crs(CrsUtils.CRS84_URI))
+        .spatial(new Spatial().bbox(bbox).crs(CrsUtils.CRS84))
         .interval(temporal);
 
     return collection;
