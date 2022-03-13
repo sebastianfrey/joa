@@ -1,20 +1,20 @@
 # JOA - Java OGC API (Work In Progress)
 
-An OGC API implementation built with Dropwizard.
+A lightweight, simple and easy to use OGC API implementation built with [Dropwizard](https://www.dropwizard.io/).
 
-## About
+## Features
 
-JOA
-
+- implements the [OGC API - Features](https://www.ogc.org/standards/ogcapi-features) standard
 - follows a minimialistic aproach, which allows **Zero Config** deployment of an **OGC API**.
 - supports currently the following backends:
   - [GeoPackage](https://www.geopackage.org/) (powerd by [NGA's GeoPackage Java lib](https://github.com/ngageoint/geopackage-java))
 - conforms to the following standards:
   - [OGC API - Features - Part 1: Core](http://docs.opengeospatial.org/is/17-069r3/17-069r3.html)
   - [OGC API - Features - Part 2: Coordinate Reference Systems by Reference](http://docs.opengeospatial.org/is/18-058/18-058.html)
-- comes wit built in
+- comes with built in
   - `CORS` support
   - `GZIP` response encoding
+  - `HTTP` and `HTTPS` support
 
 ## Getting Started with Docker
 
