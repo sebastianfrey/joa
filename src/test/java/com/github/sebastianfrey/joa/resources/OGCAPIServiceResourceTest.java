@@ -444,16 +444,16 @@ public class OGCAPIServiceResourceTest {
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<ItemsQueryRequest> featureQueryCaptor =
+    ArgumentCaptor<ItemsQueryRequest> itemsQueryCaptor =
         ArgumentCaptor.forClass(ItemsQueryRequest.class);
 
     verify(DAO).getItems(serviceIdCaptor.capture(), collectionIdCaptor.capture(),
-        featureQueryCaptor.capture());
+        itemsQueryCaptor.capture());
 
     // verify captures
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
-    assertThat(featureQueryCaptor.getValue()).satisfies((query) -> {
+    assertThat(itemsQueryCaptor.getValue()).satisfies((query) -> {
       // validate default parametersvalue
       assertThat(query.getLimit()).isEqualTo(10);
       assertThat(query.getOffset()).isEqualTo(Long.valueOf(0));
@@ -481,16 +481,16 @@ public class OGCAPIServiceResourceTest {
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<ItemsQueryRequest> featureQueryCaptor =
+    ArgumentCaptor<ItemsQueryRequest> itemsQueryCaptor =
         ArgumentCaptor.forClass(ItemsQueryRequest.class);
 
     verify(DAO).getItems(serviceIdCaptor.capture(), collectionIdCaptor.capture(),
-        featureQueryCaptor.capture());
+        itemsQueryCaptor.capture());
 
     // verify captures
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
-    assertThat(featureQueryCaptor.getValue()).satisfies((query) -> {
+    assertThat(itemsQueryCaptor.getValue()).satisfies((query) -> {
       // verify query parameters
       assertThat(query.getLimit()).isEqualTo(20);
       assertThat(query.getOffset()).isEqualTo(Long.valueOf(100));
@@ -521,15 +521,15 @@ public class OGCAPIServiceResourceTest {
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<ItemsQueryRequest> featureQueryCaptor =
+    ArgumentCaptor<ItemsQueryRequest> itemsQueryCaptor =
         ArgumentCaptor.forClass(ItemsQueryRequest.class);
 
     verify(DAO).getItems(serviceIdCaptor.capture(), collectionIdCaptor.capture(),
-        featureQueryCaptor.capture());
+        itemsQueryCaptor.capture());
 
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
-    assertThat(featureQueryCaptor.getValue()).isNotNull();
+    assertThat(itemsQueryCaptor.getValue()).isNotNull();
 
     assertThat(found.getLinks()).satisfies((links) -> {
       assertThat(links).isNotEmpty();
@@ -558,15 +558,15 @@ public class OGCAPIServiceResourceTest {
 
     ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
     ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
-    ArgumentCaptor<ItemsQueryRequest> featureQueryCaptor =
+    ArgumentCaptor<ItemsQueryRequest> itemsQueryCaptor =
         ArgumentCaptor.forClass(ItemsQueryRequest.class);
 
     verify(DAO).getItems(serviceIdCaptor.capture(), collectionIdCaptor.capture(),
-        featureQueryCaptor.capture());
+        itemsQueryCaptor.capture());
 
     assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
     assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
-    assertThat(featureQueryCaptor.getValue()).isNotNull();
+    assertThat(itemsQueryCaptor.getValue()).isNotNull();
 
     assertThat(found.getLinks()).satisfies((links) -> {
       assertThat(links).isNotEmpty();
@@ -586,14 +586,28 @@ public class OGCAPIServiceResourceTest {
         .property("integer", 1)
         .property("string", "abc");
 
-    doReturn(item).when(DAO).getItem("service1", "collection1", Long.valueOf(1), new ItemQueryRequest());
+    doReturn(item).when(DAO)
+        .getItem(eq("service1"), eq("collection1"), eq(Long.valueOf(1)),
+            any(ItemQueryRequest.class));
 
     TestItem found = EXT.target("/service1/collections/collection1/items/1")
         .queryParam("f", "json")
         .request()
         .get(TestItem.class);
 
-    verify(DAO).getItem("service1", "collection1", Long.valueOf(1), new ItemQueryRequest());
+    ArgumentCaptor<String> serviceIdCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<String> collectionIdCaptor = ArgumentCaptor.forClass(String.class);
+    ArgumentCaptor<Long> featureIdCaptor = ArgumentCaptor.forClass(Long.class);
+    ArgumentCaptor<ItemQueryRequest> itemQueryCaptor =
+        ArgumentCaptor.forClass(ItemQueryRequest.class);
+
+    verify(DAO).getItem(serviceIdCaptor.capture(), collectionIdCaptor.capture(),
+        featureIdCaptor.capture(), itemQueryCaptor.capture());
+
+    assertThat(serviceIdCaptor.getValue()).isEqualTo("service1");
+    assertThat(collectionIdCaptor.getValue()).isEqualTo("collection1");
+    assertThat(featureIdCaptor.getValue()).isEqualTo(Long.valueOf(1));
+    assertThat(itemQueryCaptor.getValue()).isNotNull();
 
     assertThat(found.getId()).isNotEmpty();
     assertThat(found.getBbox()).isNotEmpty();

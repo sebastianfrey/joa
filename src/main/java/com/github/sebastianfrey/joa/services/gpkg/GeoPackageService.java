@@ -43,6 +43,8 @@ import com.google.common.io.MoreFiles;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.ContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sqlite.SQLiteConnection;
 import org.sqlite.core.DB;
 import mil.nga.geopackage.GeoPackage;
@@ -71,6 +73,8 @@ import mil.nga.sf.geojson.FeatureConverter;
  */
 public class GeoPackageService implements OGCAPIService {
 
+  private final static Logger logger = LoggerFactory.getLogger(GeoPackageService.class);
+
   private File workspace;
   private String runtime;
 
@@ -82,17 +86,24 @@ public class GeoPackageService implements OGCAPIService {
   }
 
   private void init() {
-    for (Service service : getServices()) {
-      try (GeoPackage gpkg = loadService(service.getServiceId())) {
-        for (String featureTable : gpkg.getFeatureTables()) {
-          FeatureDao featureDao = gpkg.getFeatureDao(featureTable);
+    try {
+      for (Service service : getServices()) {
+        try (GeoPackage gpkg = loadService(service.getServiceId())) {
+          for (String featureTable : gpkg.getFeatureTables()) {
+            FeatureDao featureDao = gpkg.getFeatureDao(featureTable);
 
-          Long crs = featureDao.getSrsId();
-          Projection projection = featureDao.getContents().getProjection();
+            Long crs = featureDao.getSrsId();
+            Projection projection = featureDao.getContents().getProjection();
 
-          ProjectionUtils.addProjection(CrsUtils.parse(crs), projection);
+            ProjectionUtils.addProjection(CrsUtils.parse(crs), projection);
+          }
+        } catch (Exception ex) {
+          logger.error("Failed to load projections for service " + service.getServiceId() + ".gpkg",
+              ex);
         }
       }
+    } catch (Exception ex) {
+      logger.error("Failed to load services. Cannot fetch projections.", ex);
     }
   }
 
