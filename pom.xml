@@ -21,7 +21,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>2.0.28</dropwizard.version>
-        <geopackage.version>6.2.0</geopackage.version>
+        <geopackage.version>6.6.0</geopackage.version>
         <swagger.version>2.1.13</swagger.version>
         <bullwinkle.version>v1.4.6</bullwinkle.version>
         <assertj.version>3.22.0</assertj.version>
