@@ -23,7 +23,7 @@ public class QueryParamExceptionHandler extends LoggingExceptionMapper<QueryPara
 
   @Override
   public Response toResponse(QueryParamException exception) {
-    String message = "invalid value for parameter '" + exception.getParameterName() + "'";
+    String message = "invalid value for parameter " + exception.getParameterName();
 
     return Response.status(400)
         .type(MediaType.APPLICATION_JSON_TYPE)

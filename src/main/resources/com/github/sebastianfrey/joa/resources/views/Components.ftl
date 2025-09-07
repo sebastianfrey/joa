@@ -97,7 +97,7 @@
 </#macro>
 
 <#macro link href title = "" class = "">
-  <a class="flex flex-row text-sm text-[#caae53] hover:underline ${class}" href="${href}" title="${title}">
+  <a class="flex-row text-sm text-[#caae53] hover:underline w-auto ${class}" href="${href}" title="${title}">
     <#nested>
     <!--<@icons.externallink class = "stroke-[#caae53] pl-1" />-->
   </a>

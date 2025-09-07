@@ -1,8 +1,10 @@
 package com.github.sebastianfrey.joa.models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -19,6 +21,7 @@ public class Collections extends Linkable implements Iterable<Collection> {
   private String title = "";
   private String description = "";
   private List<Collection> collections = new ArrayList<>();
+  private Set<String> crs = new HashSet<>();
 
   /**
    * returns the serviceId property from a Collections instance
@@ -98,6 +101,25 @@ public class Collections extends Linkable implements Iterable<Collection> {
 
   public Collections collection(Collection collection) {
     addCollection(collection);
+    return this;
+  }
+
+
+  /**
+   * returns the crs property from a Collections instance
+   *
+   * @return List of crs
+   */
+  public Set<String> getCrs() {
+    return crs;
+  }
+
+  public void setCrs(Set<String> crs) {
+    this.crs = crs;
+  }
+
+  public Collections crs(Set<String> crs) {
+    setCrs(crs);
     return this;
   }
 

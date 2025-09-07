@@ -1,10 +1,11 @@
 package com.github.sebastianfrey.joa.services;
 
-import com.github.sebastianfrey.joa.models.FeatureQuery;
+import com.github.sebastianfrey.joa.models.ItemsQuery;
 import com.github.sebastianfrey.joa.models.Collection;
 import com.github.sebastianfrey.joa.models.Collections;
 import com.github.sebastianfrey.joa.models.Conformance;
 import com.github.sebastianfrey.joa.models.Item;
+import com.github.sebastianfrey.joa.models.ItemQuery;
 import com.github.sebastianfrey.joa.models.Items;
 import com.github.sebastianfrey.joa.models.Queryables;
 import com.github.sebastianfrey.joa.models.Service;
@@ -98,11 +99,11 @@ public interface OGCAPIService {
    *
    * @param serviceId The ID of the service.
    * @param collectionId The ID of the collection.
-   * @param query The query
+   * @param query The query.
    *
    * @return The queried items
    */
-  public Items<?> getItems(String serviceId, String collectionId, FeatureQuery query) throws Exception;
+  public Items<?> getItems(String serviceId, String collectionId, ItemsQuery query) throws Exception;
 
   /**
    * returns a specific item (Feature) from an OGC API collection from a service by its id.
@@ -110,10 +111,11 @@ public interface OGCAPIService {
    * @param serviceId The ID of the service.
    * @param collectionId The ID of the collection.
    * @param featureId The ID of the item.
+   * @param query The query.
    *
    * @return The specific item
    */
-  public Item<?> getItem(String serviceId, String collectionId, Long featureId);
+  public Item<?> getItem(String serviceId, String collectionId, Long featureId, ItemQuery query);
 
   /**
    * returns the queryables from an OGC API collection from a service by its id.
