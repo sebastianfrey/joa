@@ -17,7 +17,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-          cache: maven
       - name: Install dependencies
         run: >
           sudo apt-get update && export DEBIAN_FRONTEND=noninteractive \
